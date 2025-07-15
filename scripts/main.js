@@ -130,28 +130,37 @@ class IntuneUpdatesTracker {
                 }
             }
             
-            // Load notices
+            // Load notices from both service directories
             let notices = [];
             try {
-                const noticesIndexResponse = await fetch('./data/notices/index.json');
-                if (noticesIndexResponse.ok) {
-                    const noticesIndexData = await noticesIndexResponse.json();
-                    const noticeFiles = noticesIndexData.noticeFiles || [];
-                    
-                    // Load individual notice files
-                    for (const noticeFile of noticeFiles) {
-                        try {
-                            const noticeResponse = await fetch(`./data/${noticeFile.path}`);
-                            if (noticeResponse.ok) {
-                                const notice = await noticeResponse.json();
-                                notices.push(notice);
+                // List of service directories to check for notices
+                const serviceDirectories = ['intune', 'entra'];
+                
+                for (const service of serviceDirectories) {
+                    try {
+                        const noticesIndexResponse = await fetch(`./data/notices/${service}/index.json`);
+                        if (noticesIndexResponse.ok) {
+                            const noticesIndexData = await noticesIndexResponse.json();
+                            const noticeFiles = noticesIndexData.noticeFiles || [];
+                            
+                            // Load individual notice files
+                            for (const noticeFile of noticeFiles) {
+                                try {
+                                    const noticeResponse = await fetch(`./data/${noticeFile.path}`);
+                                    if (noticeResponse.ok) {
+                                        const notice = await noticeResponse.json();
+                                        notices.push(notice);
+                                    }
+                                } catch (noticeError) {
+                                    console.warn(`Error loading notice file ${noticeFile.path}:`, noticeError);
+                                }
                             }
-                        } catch (noticeError) {
-                            console.warn(`Error loading notice file ${noticeFile.path}:`, noticeError);
+                        } else {
+                            console.warn(`Notices index file not found for service: ${service}`);
                         }
+                    } catch (serviceNoticeError) {
+                        console.warn(`Error loading notices for service ${service}:`, serviceNoticeError);
                     }
-                } else {
-                    console.warn('Notices index file not found');
                 }
             } catch (noticesError) {
                 console.error('Error loading notices:', noticesError);

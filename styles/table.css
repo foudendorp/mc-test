@@ -97,6 +97,42 @@
     color: #558b2f;
 }
 
+/* Entra ID specific categories */
+.category-identity-management {
+    background-color: #f3e5f5;
+    color: #6a1b9a;
+}
+
+.category-conditional-access {
+    background-color: #e8eaf6;
+    color: #3f51b5;
+}
+
+.category-authentication {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.category-identity-governance {
+    background-color: #e0f2f1;
+    color: #00695c;
+}
+
+.category-privileged-identity {
+    background-color: #fce4ec;
+    color: #c2185b;
+}
+
+.category-external-identities {
+    background-color: #e1f5fe;
+    color: #0277bd;
+}
+
+.category-application-management {
+    background-color: #f9fbe7;
+    color: #689f38;
+}
+
 /* Service badges */
 .service-badge {
     padding: 4px 8px;

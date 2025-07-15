@@ -259,6 +259,7 @@ async function fetchAllServiceUpdates() {
 function mapTopicToCategory(topicText) {
     const topic = topicText.toLowerCase();
     
+    // Intune-specific mappings
     if (topic.includes('app') && topic.includes('management')) return 'app-management';
     if (topic.includes('device') && topic.includes('configuration')) return 'device-configuration';
     if (topic.includes('device') && topic.includes('management')) return 'device-management';
@@ -267,11 +268,22 @@ function mapTopicToCategory(topicText) {
     if (topic.includes('monitor') || topic.includes('troubleshoot')) return 'monitor-troubleshoot';
     if (topic.includes('microsoft') && topic.includes('intune') && topic.includes('suite')) return 'intune-suite';
     
-    // Default mappings
-    if (topic.includes('app')) return 'app-management';
+    // Entra ID-specific mappings
+    if (topic.includes('identity') && topic.includes('management')) return 'identity-management';
+    if (topic.includes('conditional') && topic.includes('access')) return 'conditional-access';
+    if (topic.includes('multi-factor') || topic.includes('mfa')) return 'authentication';
+    if (topic.includes('authentication')) return 'authentication';
+    if (topic.includes('identity') && topic.includes('governance')) return 'identity-governance';
+    if (topic.includes('privileged') && topic.includes('identity')) return 'privileged-identity';
+    if (topic.includes('external') && topic.includes('identities')) return 'external-identities';
+    if (topic.includes('application') && topic.includes('management')) return 'application-management';
+    
+    // General mappings
+    if (topic.includes('app') || topic.includes('application')) return 'app-management';
     if (topic.includes('device')) return 'device-management';
     if (topic.includes('security')) return 'device-security';
     if (topic.includes('configuration') || topic.includes('policy')) return 'device-configuration';
+    if (topic.includes('identity')) return 'identity-management';
     
     return 'device-management'; // Default category
 }

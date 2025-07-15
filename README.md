@@ -1,18 +1,26 @@
-# Intune Updates Tracker
+# Microsoft Services Updates Tracker
 
-A modern, responsive web application that tracks and displays the latest Microsoft Intune updates, features, and announcements. Built as an Azure Static Web App with a clean, professional interface.
+A modern, responsive web application that tracks and displays the latest updates from Microsoft Intune and Entra ID. Built as an Azure Static Web App with automated data generation and a clean, professional interface.
 
-![Intune Updates Tracker](https://img.shields.io/badge/Status-Active-green) ![Azure Static Web Apps](https://img.shields.io/badge/Azure-Static%20Web%20App-blue) ![License](https://img.shields.io/badge/License-MIT-yellow)
+![Microsoft Updates Tracker](https://img.shields.io/badge/Status-Active-green) ![Azure Static Web Apps](https://img.shields.io/badge/Azure-Static%20Web%20App-blue) ![License](https://img.shields.io/badge/License-MIT-yellow) ![Services](https://img.shields.io/badge/Services-Intune%20%2B%20Entra%20ID-blue)
 
 ## 🚀 Features
 
-- **Real-time Updates**: Automatically fetches the latest information from Microsoft Learn
-- **Smart Search**: Quickly find specific updates, features, or topics
-- **Advanced Filtering**: Filter by category, date, or service release
+### Multi-Service Support
+- **Microsoft Intune**: Device management and mobile application management updates
+- **Microsoft Entra ID**: Identity and access management updates
+- **Service Separation**: Clean organization with service-specific data directories
+- **Service Badges**: Visual indicators to distinguish between services
+
+### Advanced Functionality
+- **Automated Data Generation**: Node.js script fetches and processes updates from Microsoft Learn
+- **Smart Change Detection**: Only updates files when content actually changes
+- **Service-Specific Notices**: Important announcements organized by service
+- **Real-time Updates**: Automatically deployed via GitHub Actions
+- **Smart Search**: Find updates across all services with advanced filtering
 - **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
-- **Modern UI**: Clean, professional interface inspired by Microsoft's design language
-- **Fast Loading**: Optimized for performance with efficient caching
-- **Accessibility**: Built with accessibility best practices
+- **Modern UI**: Clean interface with service-specific color coding
+- **Performance Optimized**: Efficient caching and smart file updates
 
 ## 📱 Live Demo
 
@@ -20,25 +28,76 @@ Visit the live application: [https://your-static-web-app-url.azurestaticapps.net
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Hosting**: Azure Static Web Apps
-- **Styling**: Modern CSS Grid and Flexbox
-- **Icons**: Font Awesome
-- **Fonts**: Segoe UI (Microsoft's design system)
+### Frontend
+- **HTML5**: Semantic markup with accessibility features
+- **CSS3**: Modern styling with CSS Grid, Flexbox, and custom properties
+- **Vanilla JavaScript**: ES6+ features for optimal performance
+- **Font Awesome**: Professional icon library
+
+### Backend Data Generation
+- **Node.js**: Server-side data processing
+- **JSDOM**: HTML parsing for Microsoft Learn pages
+- **Crypto**: Content hashing for change detection
+- **Automated Workflows**: GitHub Actions for deployment
+
+### Hosting & Infrastructure
+- **Azure Static Web Apps**: Global CDN and automatic HTTPS
+- **GitHub Actions**: CI/CD pipeline with automated data generation
+- **Service-Separated Storage**: Organized JSON data structure
 
 ## 📁 Project Structure
 
 ```
 mc-test/
-├── index.html              # Main HTML file
+├── index.html                    # Main HTML file
 ├── styles/
-│   └── main.css            # Main stylesheet
+│   ├── main.css                 # Main stylesheet
+│   └── table.css                # Table and service badge styles
 ├── scripts/
-│   └── main.js             # Application logic
-├── assets/                 # Images and icons
-├── package.json            # Project configuration
-├── staticwebapp.config.json # Azure Static Web App config
-└── README.md               # This file
+│   ├── main.js                  # Frontend application logic
+│   └── generate-data.js         # Node.js data generation script
+├── data/                        # Generated JSON data
+│   ├── index.json              # Main index with all services
+│   ├── updates/
+│   │   ├── intune/             # Microsoft Intune updates
+│   │   └── entra/              # Microsoft Entra ID updates
+│   └── notices/
+│       ├── intune/             # Intune-specific notices
+│       └── entra/              # Entra ID-specific notices
+├── .github/
+│   └── workflows/
+│       └── azure-static-web-apps-*.yml  # Deployment workflow
+├── package.json                 # Node.js dependencies
+├── staticwebapp.config.json     # Azure Static Web App config
+└── README.md                    # This file
+```
+
+## 🔧 Data Generation Process
+
+### Automated Workflow
+1. **GitHub Actions Trigger**: On push to main branch or scheduled runs
+2. **Multi-Service Fetching**: Script fetches from both service URLs:
+   - Microsoft Intune: `https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new`
+   - Microsoft Entra ID: `https://learn.microsoft.com/en-us/entra/fundamentals/whats-new`
+3. **Content Processing**: Parses HTML, extracts updates and notices
+4. **Service Separation**: Organizes data into service-specific directories
+5. **Change Detection**: Only updates files when content actually changes
+6. **Deployment**: Azure Static Web Apps automatically deploys the updated site
+
+### Service Configuration
+```javascript
+const SERVICES = {
+    intune: {
+        name: 'Intune',
+        url: 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new',
+        tag: 'Intune'
+    },
+    entra: {
+        name: 'Entra ID', 
+        url: 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new',
+        tag: 'Entra'
+    }
+};
 ```
 
 ## 🚀 Getting Started
@@ -57,18 +116,23 @@ mc-test/
    cd mc-test
    ```
 
-2. **Install dependencies (optional)**
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. **Start local development server**
+3. **Generate sample data (optional)**
+   ```bash
+   node scripts/generate-data.js
+   ```
+
+4. **Start local development server**
    ```bash
    npm run dev
    ```
    Or simply open `index.html` in your browser.
 
-4. **View the application**
+5. **View the application**
    Open your browser and navigate to `http://localhost:8080` (or the URL shown in your terminal).
 
 ## ☁️ Azure Deployment
@@ -97,7 +161,7 @@ az group create --name rg-intune-tracker --location "East US"
 
 # Create static web app
 az staticwebapp create \
-  --name intune-updates-tracker \
+  --name microsoft-services-tracker \
   --resource-group rg-intune-tracker \
   --source https://github.com/foudendorp/mc-test \
   --location "East US" \
@@ -118,12 +182,52 @@ az staticwebapp create \
 
 ### Environment Variables
 
-Create a `.env` file in the root directory (for future API integrations):
+For future API integrations, create a `.env` file in the root directory:
 
 ```env
-# API Configuration (when implementing backend scraping)
-INTUNE_API_ENDPOINT=https://your-api-endpoint.com
+# Microsoft Learn URLs (currently hardcoded in generate-data.js)
+INTUNE_LEARN_URL=https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new
+ENTRA_LEARN_URL=https://learn.microsoft.com/en-us/entra/fundamentals/whats-new
+
+# Data generation settings
 REFRESH_INTERVAL=3600000
+ENABLE_CHANGE_DETECTION=true
+```
+
+### Service Configuration
+
+To add new Microsoft services, update the `SERVICES` object in `scripts/generate-data.js`:
+
+```javascript
+const SERVICES = {
+    intune: {
+        name: 'Intune',
+        url: 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new',
+        tag: 'Intune'
+    },
+    entra: {
+        name: 'Entra ID',
+        url: 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new',
+        tag: 'Entra'
+    },
+    // Add new services here
+    defender: {
+        name: 'Defender',
+        url: 'https://learn.microsoft.com/en-us/defender/whats-new',
+        tag: 'Defender'
+    }
+};
+```
+
+### Adding Service Badges
+
+Add corresponding CSS classes in `styles/table.css`:
+
+```css
+.service-defender {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
 ```
 
 ### Customization
@@ -144,30 +248,40 @@ REFRESH_INTERVAL=3600000
 - Update `scripts/main.js` to modify the mock data or API endpoints
 - Customize categories and filters in the JavaScript configuration
 
-## 🔄 Data Source Integration
+## 🔄 Data Architecture
 
-### Current Implementation
-The app currently uses mock data that mirrors the structure of Microsoft Learn content.
+### Service-Separated Structure
+The application uses a sophisticated data architecture that separates content by service:
 
-### Future Implementation Options
+```json
+{
+  "lastGenerated": "2025-07-15T10:30:00.000Z",
+  "totalUpdates": 156,
+  "totalFiles": 48,
+  "totalNotices": 12,
+  "services": ["Intune", "Entra"],
+  "monthlyGroups": [...],
+  "dataFiles": [
+    {
+      "filename": "2025-07-15.json",
+      "path": "updates/intune/2025-07-15.json",
+      "service": "Intune",
+      "updates": 8
+    }
+  ]
+}
+```
 
-1. **Azure Function Backend**
-   ```javascript
-   // api/updates.js
-   module.exports = async function (context, req) {
-     // Scrape Microsoft Learn page
-     // Parse and return structured data
-   };
-   ```
+### Content Processing
+- **HTML Parsing**: Extracts structured data from Microsoft Learn pages
+- **Content Identification**: Automatically detects service tags and categories
+- **Change Detection**: Uses SHA-256 hashing to detect content changes
+- **Fallback Data**: Provides sample data when live fetching fails
 
-2. **GitHub Actions Scraper**
-   - Set up scheduled workflow to scrape content
-   - Store data in JSON files in repository
-   - Trigger site rebuild when data changes
-
-3. **Third-party API**
-   - Use RSS feeds or unofficial APIs
-   - Transform data to match application schema
+### Smart Updates
+- **Deterministic IDs**: Content-based IDs prevent duplicate entries
+- **Timestamp Management**: Separates content hashes from deployment timestamps
+- **Service Tagging**: Every update includes service attribution
 
 ## 📊 Analytics & Monitoring
 
@@ -204,13 +318,25 @@ Add tracking code to `index.html`:
 
 ## 🎨 Design System
 
-The application follows Microsoft's Fluent Design principles:
+The application follows Microsoft's Fluent Design principles with service-specific enhancements:
 
+### Service Color Coding
+- **Intune**: Blue theme (`#0277bd`) for device management
+- **Entra ID**: Purple theme (`#6a1b9a`) for identity management  
+- **System**: Gray theme (`#424242`) for system notices
+
+### Design Elements
 - **Typography**: Segoe UI font family
-- **Colors**: Microsoft brand colors
 - **Spacing**: Consistent 8px grid system
+- **Service Badges**: Color-coded indicators for easy service identification
 - **Animations**: Subtle transitions and hover effects
 - **Accessibility**: WCAG 2.1 AA compliance
+
+### UI Components
+- **Service Filters**: Multi-service filtering capabilities
+- **Responsive Tables**: Mobile-optimized data display
+- **Modal Popups**: Detailed view with service attribution
+- **Loading States**: Professional loading indicators
 
 ## 🤝 Contributing
 
@@ -226,10 +352,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Microsoft for providing comprehensive Intune documentation
+- Microsoft for providing comprehensive documentation on Intune and Entra ID
 - Azure Static Web Apps team for the excellent hosting platform
+- Node.js community for powerful server-side JavaScript tools
 - Font Awesome for the beautiful icons
-- The IT community for feedback and suggestions
+- The IT community for feedback and suggestions on multi-service support
 
 ## 📞 Support
 
@@ -241,7 +368,16 @@ If you encounter any issues or have questions:
 
 ## 🗺️ Roadmap
 
-- [ ] Backend API for real-time scraping
+### Current Features ✅
+- [x] Multi-service support (Intune + Entra ID)
+- [x] Automated data generation with Node.js
+- [x] Service-separated data architecture
+- [x] Smart change detection
+- [x] Service-specific badges and filtering
+- [x] Responsive design with mobile optimization
+
+### Planned Enhancements 🚧
+- [ ] Additional Microsoft services (Defender, Purview, etc.)
 - [ ] PWA capabilities with offline support
 - [ ] Email notifications for new updates
 - [ ] RSS feed generation
@@ -249,7 +385,9 @@ If you encounter any issues or have questions:
 - [ ] Export functionality (PDF, CSV)
 - [ ] Integration with Microsoft Graph API
 - [ ] Multi-language support
+- [ ] Advanced analytics dashboard
+- [ ] Service-specific notification preferences
 
 ---
 
-**Disclaimer**: This is an unofficial tool. Microsoft, Intune, and related trademarks are property of Microsoft Corporation. All content is sourced from official Microsoft documentation.
+**Disclaimer**: This is an unofficial tool. Microsoft, Intune, Entra ID, and related trademarks are property of Microsoft Corporation. All content is sourced from official Microsoft Learn documentation.
