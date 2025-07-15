@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
 import { JSDOM } from 'jsdom';
+import crypto from 'crypto';
 
 const MICROSOFT_LEARN_URL = 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new';
 const DATA_DIR = './data';
@@ -244,16 +245,25 @@ async function generateDataFiles() {
         console.log(`Processed ${weeklyUpdates.size} weeks of updates`);
         console.log(`Found ${notices.length} notices`);
         
-        // Generate individual week files
+        // Generate individual week files (only if changed)
         const dataFiles = [];
         let totalUpdates = 0;
+        let filesUpdated = 0;
         
         for (const [date, weekData] of weeklyUpdates) {
             const filename = `${date}.json`;
+            const filePath = `${UPDATES_DIR}/${filename}`;
             const updateCount = weekData.topics.reduce((sum, topic) => sum + topic.updates.length, 0);
             
             if (updateCount > 0) {
-                writeFileSync(`${UPDATES_DIR}/${filename}`, JSON.stringify(weekData, null, 2));
+                // Check if content has changed before writing
+                if (hasContentChanged(filePath, weekData)) {
+                    writeFileSync(filePath, JSON.stringify(weekData, null, 2));
+                    filesUpdated++;
+                    console.log(`✅ Updated updates/${filename} with ${updateCount} updates`);
+                } else {
+                    console.log(`⏭️  Skipped updates/${filename} (no changes)`);
+                }
                 
                 dataFiles.push({
                     filename: filename,
@@ -265,9 +275,10 @@ async function generateDataFiles() {
                 });
                 
                 totalUpdates += updateCount;
-                console.log(`Generated updates/${filename} with ${updateCount} updates`);
             }
         }
+        
+        console.log(`📁 Files processed: ${dataFiles.length}, Files updated: ${filesUpdated}`);
         
         // If no data was scraped, create fallback data
         if (dataFiles.length === 0) {
@@ -276,34 +287,55 @@ async function generateDataFiles() {
             return;
         }
         
-        // Generate notices file
+        // Generate notices file (only if changed)
+        const noticesFilePath = `${NOTICES_DIR}/notices.json`;
         if (notices.length > 0) {
             const noticesData = {
                 lastUpdated: new Date().toISOString(),
                 notices: notices
             };
-            writeFileSync(`${NOTICES_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
-            console.log(`Generated notices/notices.json with ${notices.length} notices`);
+            
+            if (hasContentChanged(noticesFilePath, noticesData)) {
+                writeFileSync(noticesFilePath, JSON.stringify(noticesData, null, 2));
+                console.log(`✅ Updated notices/notices.json with ${notices.length} notices`);
+            } else {
+                console.log(`⏭️  Skipped notices/notices.json (no changes)`);
+            }
         } else {
             // Create minimal notices file
             const noticesData = {
                 lastUpdated: new Date().toISOString(),
                 notices: []
             };
-            writeFileSync(`${NOTICES_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
-            console.log('Generated empty notices/notices.json');
+            
+            if (hasContentChanged(noticesFilePath, noticesData)) {
+                writeFileSync(noticesFilePath, JSON.stringify(noticesData, null, 2));
+                console.log('✅ Updated empty notices/notices.json');
+            } else {
+                console.log('⏭️  Skipped empty notices/notices.json (no changes)');
+            }
         }
         
-        // Generate index file
+        // Group data files by month
+        const monthlyGroups = groupDataFilesByMonth(dataFiles);
+        
+        // Generate index file with monthly grouping (only if changed)
         const indexData = {
             lastGenerated: new Date().toISOString(),
             totalUpdates: totalUpdates,
             totalFiles: dataFiles.length,
-            dataFiles: dataFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
+            totalMonths: monthlyGroups.length,
+            monthlyGroups: monthlyGroups,
+            dataFiles: dataFiles.sort((a, b) => new Date(b.date) - new Date(a.date)) // Keep individual files for backward compatibility
         };
         
-        writeFileSync(`${DATA_DIR}/index.json`, JSON.stringify(indexData, null, 2));
-        console.log(`Generated index.json with ${dataFiles.length} data files`);
+        const indexFilePath = `${DATA_DIR}/index.json`;
+        if (hasContentChanged(indexFilePath, indexData)) {
+            writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
+            console.log(`✅ Updated index.json with ${dataFiles.length} data files grouped into ${monthlyGroups.length} months`);
+        } else {
+            console.log('⏭️  Skipped index.json (no changes)');
+        }
         
         console.log('Data generation completed successfully!');
         console.log(`Total: ${totalUpdates} updates across ${dataFiles.length} weeks`);
@@ -394,6 +426,72 @@ async function createFallbackData() {
     console.log('Generated fallback index.json');
     
     console.log('Fallback data creation completed');
+}
+
+// Utility functions for change detection and monthly grouping
+function generateFileHash(content) {
+    return crypto.createHash('sha256').update(JSON.stringify(content)).digest('hex');
+}
+
+function fileExists(filePath) {
+    return existsSync(filePath);
+}
+
+function readExistingFile(filePath) {
+    try {
+        if (fileExists(filePath)) {
+            return JSON.parse(readFileSync(filePath, 'utf8'));
+        }
+    } catch (error) {
+        console.warn(`Error reading existing file ${filePath}:`, error.message);
+    }
+    return null;
+}
+
+function hasContentChanged(filePath, newContent) {
+    const existingContent = readExistingFile(filePath);
+    if (!existingContent) return true;
+    
+    const existingHash = generateFileHash(existingContent);
+    const newHash = generateFileHash(newContent);
+    
+    return existingHash !== newHash;
+}
+
+function groupDataFilesByMonth(dataFiles) {
+    const monthlyGroups = new Map();
+    
+    dataFiles.forEach(file => {
+        const date = new Date(file.date);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        const monthName = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+        
+        if (!monthlyGroups.has(monthKey)) {
+            monthlyGroups.set(monthKey, {
+                month: monthName,
+                monthKey: monthKey,
+                date: monthKey + '-01', // First day of month for sorting
+                weeks: [],
+                totalUpdates: 0,
+                serviceReleases: []
+            });
+        }
+        
+        const monthGroup = monthlyGroups.get(monthKey);
+        monthGroup.weeks.push(file);
+        monthGroup.totalUpdates += file.updates;
+        
+        if (file.serviceRelease && !monthGroup.serviceReleases.includes(file.serviceRelease)) {
+            monthGroup.serviceReleases.push(file.serviceRelease);
+        }
+    });
+    
+    // Sort weeks within each month by date (newest first)
+    monthlyGroups.forEach(monthGroup => {
+        monthGroup.weeks.sort((a, b) => new Date(b.date) - new Date(a.date));
+    });
+    
+    return Array.from(monthlyGroups.values()).sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 // Run the generation

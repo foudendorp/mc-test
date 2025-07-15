@@ -752,6 +752,76 @@ body {
     }
 }
 
+/* Monthly Grouping Styles */
+.month-group {
+    margin: 2rem 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.month-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.month-header h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.month-meta {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.service-releases {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.service-release-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.weeks-in-month {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.week-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.week-item .file-header h4 {
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.week-item .file-meta {
+    background: #667eea;
+    color: white;
+    font-size: 0.7rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .header-content {
@@ -801,6 +871,11 @@ body {
         grid-template-columns: 1fr;
         gap: 20px;
     }
+
+    .weeks-in-month {
+        grid-template-columns: 1fr;
+        padding: 0.5rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -825,6 +900,10 @@ body {
     .notices-section h2,
     .about-content h2 {
         font-size: 2rem;
+    }
+
+    .month-header h3 {
+        font-size: 1.3rem;
     }
 }
 

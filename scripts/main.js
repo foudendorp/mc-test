@@ -492,27 +492,71 @@ class IntuneUpdatesTracker {
 
     displayDataFiles() {
         const dataFilesContainer = document.getElementById('dataFilesContainer');
-        if (!dataFilesContainer || !this.indexData.dataFiles) return;
+        if (!dataFilesContainer || !this.indexData) return;
 
-        const filesHtml = this.indexData.dataFiles.map(file => `
-            <div class="data-file-item">
-                <div class="file-header">
-                    <h4>${file.filename}</h4>
-                    <span class="file-meta">${file.updates} updates</span>
+        let filesHtml = '';
+        
+        // Display monthly groups if available
+        if (this.indexData.monthlyGroups && this.indexData.monthlyGroups.length > 0) {
+            filesHtml = this.indexData.monthlyGroups.map(monthGroup => `
+                <div class="month-group">
+                    <div class="month-header">
+                        <h3>${monthGroup.month}</h3>
+                        <span class="month-meta">${monthGroup.totalUpdates} updates across ${monthGroup.weeks.length} weeks</span>
+                        ${monthGroup.serviceReleases.length > 0 ? `
+                            <div class="service-releases">
+                                ${monthGroup.serviceReleases.map(release => `
+                                    <span class="service-release-badge">${release}</span>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="weeks-in-month">
+                        ${monthGroup.weeks.map(file => `
+                            <div class="data-file-item week-item">
+                                <div class="file-header">
+                                    <h4>${file.filename}</h4>
+                                    <span class="file-meta">${file.updates} updates</span>
+                                </div>
+                                <p><strong>Week:</strong> ${file.week}</p>
+                                <p><strong>Date:</strong> ${this.formatDate(file.date)}</p>
+                                ${file.serviceRelease ? `<p><strong>Service Release:</strong> ${file.serviceRelease}</p>` : ''}
+                                <div class="file-actions">
+                                    <a href="./data/${file.path || `updates/${file.filename}`}" target="_blank" class="view-json-btn">
+                                        <i class="fas fa-code"></i> View JSON
+                                    </a>
+                                    <button onclick="window.tracker.downloadFile('${file.path || `updates/${file.filename}`}')" class="download-btn">
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
-                <p><strong>Week:</strong> ${file.week}</p>
-                <p><strong>Date:</strong> ${this.formatDate(file.date)}</p>
-                ${file.serviceRelease ? `<p><strong>Service Release:</strong> ${file.serviceRelease}</p>` : ''}
-                <div class="file-actions">
-                    <a href="./data/${file.path || `updates/${file.filename}`}" target="_blank" class="view-json-btn">
-                        <i class="fas fa-code"></i> View JSON
-                    </a>
-                    <button onclick="window.tracker.downloadFile('${file.path || `updates/${file.filename}`}')" class="download-btn">
-                        <i class="fas fa-download"></i> Download
-                    </button>
+            `).join('');
+        } 
+        // Fall back to individual files if no monthly groups
+        else if (this.indexData.dataFiles) {
+            filesHtml = this.indexData.dataFiles.map(file => `
+                <div class="data-file-item">
+                    <div class="file-header">
+                        <h4>${file.filename}</h4>
+                        <span class="file-meta">${file.updates} updates</span>
+                    </div>
+                    <p><strong>Week:</strong> ${file.week}</p>
+                    <p><strong>Date:</strong> ${this.formatDate(file.date)}</p>
+                    ${file.serviceRelease ? `<p><strong>Service Release:</strong> ${file.serviceRelease}</p>` : ''}
+                    <div class="file-actions">
+                        <a href="./data/${file.path || `updates/${file.filename}`}" target="_blank" class="view-json-btn">
+                            <i class="fas fa-code"></i> View JSON
+                        </a>
+                        <button onclick="window.tracker.downloadFile('${file.path || `updates/${file.filename}`}')" class="download-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `).join('');
+        }
 
         dataFilesContainer.innerHTML = filesHtml;
     }
@@ -541,19 +585,38 @@ class IntuneUpdatesTracker {
         }
         
         if (totalWeeksElement) {
-            const uniqueWeeks = new Set(this.updates.map(update => update.week));
-            totalWeeksElement.textContent = uniqueWeeks.size;
+            // Use monthly groups if available, otherwise fall back to unique weeks
+            if (this.indexData?.monthlyGroups) {
+                totalWeeksElement.textContent = this.indexData.monthlyGroups.length;
+                // Update the label to show "Total Months"
+                const labelElement = totalWeeksElement.nextElementSibling;
+                if (labelElement && labelElement.classList.contains('stat-label')) {
+                    labelElement.textContent = 'Total Months';
+                }
+            } else {
+                const uniqueWeeks = new Set(this.updates.map(update => update.week));
+                totalWeeksElement.textContent = uniqueWeeks.size;
+            }
         }
         
         if (totalNoticesElement) {
             totalNoticesElement.textContent = this.notices.length;
         }
 
-        // Update the "This Week" stat to show "Total Weeks" instead
+        // Update the "This Week" stat to show "Total Months" or "Total Weeks"
         const thisWeekElement = document.getElementById('thisWeek');
         if (thisWeekElement) {
-            const uniqueWeeks = new Set(this.updates.map(update => update.week));
-            thisWeekElement.textContent = uniqueWeeks.size;
+            if (this.indexData?.monthlyGroups) {
+                thisWeekElement.textContent = this.indexData.monthlyGroups.length;
+                // Update the label
+                const labelElement = thisWeekElement.nextElementSibling;
+                if (labelElement && labelElement.classList.contains('stat-label')) {
+                    labelElement.textContent = 'Total Months';
+                }
+            } else {
+                const uniqueWeeks = new Set(this.updates.map(update => update.week));
+                thisWeekElement.textContent = uniqueWeeks.size;
+            }
         }
     }
 
