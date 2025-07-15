@@ -1,0 +1,31 @@
+{
+  "name": "intune-updates-tracker",
+  "version": "1.0.0",
+  "description": "A modern web application to track Microsoft Intune updates and announcements",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx live-server",
+    "build": "echo 'No build step required for static site'",
+    "test": "echo 'No tests configured'"
+  },
+  "keywords": [
+    "microsoft",
+    "intune",
+    "updates",
+    "tracker",
+    "azure",
+    "static-web-app"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/foudendorp/mc-test.git"
+  },
+  "homepage": "https://foudendorp.github.io/mc-test"
+}

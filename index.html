@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Intune Updates Tracker</title>
+    <meta name="description" content="Stay updated with the latest Microsoft Intune features, updates, and announcements">
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <h1>Intune Updates</h1>
+                </div>
+                <nav class="nav">
+                    <a href="#home" class="nav-link active">Home</a>
+                    <a href="#updates" class="nav-link">Updates</a>
+                    <a href="#notices" class="nav-link">Notices</a>
+                    <a href="#about" class="nav-link">About</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>Stay Updated with Microsoft Intune</h2>
+                    <p>Track the latest features, updates, and announcements from Microsoft Intune. Get insights into new capabilities, security enhancements, and service releases.</p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number" id="totalUpdates">0</span>
+                            <span class="stat-label">Total Updates</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="thisWeek">0</span>
+                            <span class="stat-label">This Week</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="lastRefresh">--</span>
+                            <span class="stat-label">Last Refresh</span>
+                        </div>
+                    </div>
+                    <button class="cta-button" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Updates
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search and Filter Section -->
+        <section class="search-section">
+            <div class="container">
+                <div class="search-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search updates, features, or keywords...">
+                    </div>
+                    <div class="filter-controls">
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="device-management">Device Management</option>
+                            <option value="app-management">App Management</option>
+                            <option value="device-security">Device Security</option>
+                            <option value="device-configuration">Device Configuration</option>
+                            <option value="intune-apps">Intune Apps</option>
+                            <option value="notices">Notices</option>
+                        </select>
+                        <select id="timeFilter">
+                            <option value="all">All Time</option>
+                            <option value="7days">Last 7 days</option>
+                            <option value="30days">Last 30 days</option>
+                            <option value="90days">Last 90 days</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Updates Section -->
+        <section id="updates" class="updates-section">
+            <div class="container">
+                <h2>Latest Updates</h2>
+                <div class="loading" id="loadingSpinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Loading updates...</span>
+                </div>
+                <div class="updates-grid" id="updatesContainer">
+                    <!-- Updates will be dynamically inserted here -->
+                </div>
+                <div class="load-more">
+                    <button class="load-more-btn" id="loadMoreBtn" style="display: none;">
+                        Load More Updates
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notices Section -->
+        <section id="notices" class="notices-section">
+            <div class="container">
+                <h2>Important Notices</h2>
+                <div class="notices-container" id="noticesContainer">
+                    <!-- Notices will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="container">
+                <div class="about-content">
+                    <h2>About This Tracker</h2>
+                    <p>This tracker aggregates and displays the latest updates from Microsoft Intune's official documentation. It provides an easy-to-browse interface for IT professionals and administrators to stay current with new features, security updates, and service announcements.</p>
+                    
+                    <div class="features-grid">
+                        <div class="feature">
+                            <i class="fas fa-sync"></i>
+                            <h3>Real-time Updates</h3>
+                            <p>Automatically fetches the latest information from Microsoft Learn</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-search"></i>
+                            <h3>Smart Search</h3>
+                            <p>Quickly find specific updates, features, or topics</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-filter"></i>
+                            <h3>Advanced Filtering</h3>
+                            <p>Filter by category, date, or service release</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h3>Responsive Design</h3>
+                            <p>Works perfectly on desktop, tablet, and mobile devices</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Intune Updates Tracker</h3>
+                    <p>Unofficial tracker for Microsoft Intune updates. All content sourced from official Microsoft documentation.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/whats-new" target="_blank">Official Microsoft Learn</a></li>
+                        <li><a href="https://docs.microsoft.com/en-us/mem/intune/" target="_blank">Intune Documentation</a></li>
+                        <li><a href="https://github.com/foudendorp/mc-test" target="_blank">GitHub Repository</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Disclaimer</h3>
+                    <p>This is an independent project. Microsoft, Intune, and related trademarks are property of Microsoft Corporation.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Intune Updates Tracker. Built with ❤️ for the IT community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Error</h3>
+            <p id="errorMessage"></p>
+        </div>
+    </div>
+
+    <script src="./scripts/main.js"></script>
+</body>
+</html>
