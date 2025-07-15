@@ -179,17 +179,19 @@ async function fetchIntuneUpdates() {
             }
             
             if (content) {
-                notices.push({
+                // Create notice without timestamp for consistent content
+                const noticeData = {
                     id: generateContentId(header.textContent.trim(), '', content), // Deterministic ID based on content
                     title: header.textContent.trim(),
                     content: content.trim(),
                     date: new Date().toISOString().split('T')[0],
-                    lastUpdated: new Date().toISOString(),
                     type: 'warning',
                     category: 'plan-for-change',
                     status: 'active',
                     source: 'microsoft-learn'
-                });
+                };
+                
+                notices.push(noticeData);
             }
         });
         
@@ -305,7 +307,13 @@ async function generateDataFiles() {
                 const filePath = `${NOTICES_DIR}/${filename}`;
                 
                 if (hasContentChanged(filePath, notice)) {
-                    writeFileSync(filePath, JSON.stringify(notice, null, 2));
+                    // Add timestamp only when writing
+                    const noticeWithTimestamp = {
+                        ...notice,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    writeFileSync(filePath, JSON.stringify(noticeWithTimestamp, null, 2));
                     noticesUpdated++;
                     console.log(`✅ Updated notices/${filename}`);
                 } else {
@@ -425,16 +433,21 @@ async function createFallbackData() {
     console.log('Generated fallback updates/2025-07-14.json');
     
     // Create fallback notices
-    const fallbackNotice = {
+    const fallbackNoticeBase = {
         id: generateContentId("Data Generation Notice", "", "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn."),
         title: "Data Generation Notice",
         content: "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn.",
         date: new Date().toISOString().split('T')[0],
-        lastUpdated: new Date().toISOString(),
         type: "info",
         category: "system",
         status: "active",
         source: "system"
+    };
+    
+    // Add timestamp when writing
+    const fallbackNotice = {
+        ...fallbackNoticeBase,
+        lastUpdated: new Date().toISOString()
     };
     
     const noticeFilename = `${fallbackNotice.date}-data-generation-notice.json`;
