@@ -1,0 +1,65 @@
+{
+  "week": "Week of December 16, 2024 (Service release 2412)",
+  "date": "2024-12-16",
+  "serviceRelease": "Service release 2412",
+  "topics": [
+    {
+      "topic": "App management",
+      "category": "app-management",
+      "updates": [
+        {
+          "id": 1752579409148.869,
+          "title": "Increased scale for Customization policies",
+          "content": "You can now create up to 25 policies that customize the Company Portal and Intune app experience. The previous maximum number of Customization policies was 10. Navigate to the Intune admin center, and select Tenant administration > Customization. For more information about customizing the Company Portal and Intune apps, see Customizing the user experience.",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device security",
+      "category": "device-security",
+      "updates": [
+        {
+          "id": 1752579409149.7205,
+          "title": "Support for tamper protection in policies for Security settings management for Microsoft Defender for Endpoint",
+          "content": "You can now manage the Microsoft Defender for Endpoint CSP setting for tamper protection on unenrolled devices you manage as part of the Defender for Endpoint security settings management scenario. With this support, tamper protection configurations from Windows Security Experience profiles for Antivirus policies now apply to all devices instead of only to those that are enrolled with Intune.",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device configuration",
+      "category": "device-configuration",
+      "updates": [
+        {
+          "id": 1752579409152.3264,
+          "title": "Ending support for administrative templates when creating a new configuration profile",
+          "content": "Customers cannot create new Administrative Templates configuration profile through Devices > Configuration > Create > New policy > Windows 10 and later > Administrative Templates. A (retired) tag is seen next to Administrative Templates and the Create button is now greyed out. Other templates continue to be supported. However, customers can now use the Settings Catalog for creating new Administrative Templates configuration profile by navigating to Devices > Configuration > Create > New policy > Windows 10 and later > Settings Catalog. There are no changes in the following UI experiences: For more information, see Use ADMX templates on Windows 10/11 devices in Microsoft Intune. Applies to:",
+          "features": [
+            "Editing an existing Administrative template.",
+            "Deleting an existing Administrative template.",
+            "Adding, modifying, or deleting settings in an existing Administrative template.",
+            "Imported Administrative templates (Preview) template, which is used for Custom ADMX.",
+            "Windows"
+          ],
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device management",
+      "category": "device-management",
+      "updates": [
+        {
+          "id": 1752579409157.048,
+          "title": "More Wi-Fi configurations are now available for personally-owned work profile devices",
+          "content": "Intune Wi-Fi configuration profiles for Android Enterprise personally-owned work profile devices now support configuration of pre-shared keys and proxy settings. You can find these settings in the admin console in Devices > Manage devices > Configuration > Create > New Policy. Set Platform to Android Enterprise and then in the Personally-Owned Work Profile section, select Wi-Fi and then select the Create button. In the Configuration settings tab, when you select Basic Wi-Fi type, several new options are available: It was possible to configure these in the past with Custom Configuration policies, but going forward, we recommend setting these in the Wi-Fi Configuration profile, because Intune is ending support for Custom policies in April 2024.. For more information, see Wi-Fi settings for personally-owned work profile devices.. Applies to:",
+          "features": [
+            "Android Enterprise"
+          ],
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    }
+  ]
+}

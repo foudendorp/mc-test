@@ -1,7 +1,7 @@
 {
-  "lastGenerated": "2025-07-15T13:25:00Z",
-  "totalUpdates": 10,
-  "totalFiles": 3,
+  "lastGenerated": "2025-07-15T11:36:49.216Z",
+  "totalUpdates": 103,
+  "totalFiles": 19,
   "dataFiles": [
     {
       "filename": "2025-07-14.json",
@@ -13,19 +13,147 @@
     },
     {
       "filename": "2025-06-23.json",
-      "path": "updates/2025-06-23.json", 
+      "path": "updates/2025-06-23.json",
       "week": "Week of June 23, 2025 (Service release 2506)",
       "date": "2025-06-23",
-      "serviceRelease": "2506",
-      "updates": 8
+      "serviceRelease": "Service release 2506",
+      "updates": 9
     },
     {
       "filename": "2025-06-09.json",
       "path": "updates/2025-06-09.json",
-      "week": "Week of June 9, 2025", 
+      "week": "Week of June 9, 2025",
       "date": "2025-06-09",
       "serviceRelease": null,
       "updates": 1
+    },
+    {
+      "filename": "2025-05-26.json",
+      "path": "updates/2025-05-26.json",
+      "week": "Week of May 26, 2025 (Service release 2505)",
+      "date": "2025-05-26",
+      "serviceRelease": "Service release 2505",
+      "updates": 9
+    },
+    {
+      "filename": "2025-04-28.json",
+      "path": "updates/2025-04-28.json",
+      "week": "Week of April 28, 2025",
+      "date": "2025-04-28",
+      "serviceRelease": null,
+      "updates": 2
+    },
+    {
+      "filename": "2025-04-21.json",
+      "path": "updates/2025-04-21.json",
+      "week": "Week of April 21, 2025 (Service release 2504)",
+      "date": "2025-04-21",
+      "serviceRelease": "Service release 2504",
+      "updates": 12
+    },
+    {
+      "filename": "2025-04-14.json",
+      "path": "updates/2025-04-14.json",
+      "week": "Week of April 14, 2025",
+      "date": "2025-04-14",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-03-17.json",
+      "path": "updates/2025-03-17.json",
+      "week": "Week of March 17, 2025 (Service release 2503)",
+      "date": "2025-03-17",
+      "serviceRelease": "Service release 2503",
+      "updates": 7
+    },
+    {
+      "filename": "2025-03-03.json",
+      "path": "updates/2025-03-03.json",
+      "week": "Week of March 03, 2025",
+      "date": "2025-03-03",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-02-24.json",
+      "path": "updates/2025-02-24.json",
+      "week": "Week of February 24, 2025 (Service release 2502)",
+      "date": "2025-02-24",
+      "serviceRelease": "Service release 2502",
+      "updates": 12
+    },
+    {
+      "filename": "2025-02-17.json",
+      "path": "updates/2025-02-17.json",
+      "week": "Week of February 17, 2025",
+      "date": "2025-02-17",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-02-10.json",
+      "path": "updates/2025-02-10.json",
+      "week": "Week of February 10, 2025",
+      "date": "2025-02-10",
+      "serviceRelease": null,
+      "updates": 2
+    },
+    {
+      "filename": "2025-02-05.json",
+      "path": "updates/2025-02-05.json",
+      "week": "Week of February 5, 2025 (Service release 2501)",
+      "date": "2025-02-05",
+      "serviceRelease": "Service release 2501",
+      "updates": 5
+    },
+    {
+      "filename": "2025-01-27.json",
+      "path": "updates/2025-01-27.json",
+      "week": "Week of January 27, 2025",
+      "date": "2025-01-27",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-01-20.json",
+      "path": "updates/2025-01-20.json",
+      "week": "Week of January 20, 2025",
+      "date": "2025-01-20",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2024-12-30.json",
+      "path": "updates/2024-12-30.json",
+      "week": "Week of December 30, 2024",
+      "date": "2024-12-30",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2024-12-16.json",
+      "path": "updates/2024-12-16.json",
+      "week": "Week of December 16, 2024 (Service release 2412)",
+      "date": "2024-12-16",
+      "serviceRelease": "Service release 2412",
+      "updates": 4
+    },
+    {
+      "filename": "2024-12-09.json",
+      "path": "updates/2024-12-09.json",
+      "week": "Week of December 9, 2024",
+      "date": "2024-12-09",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2024-12-02.json",
+      "path": "updates/2024-12-02.json",
+      "week": "Week of December 2, 2024",
+      "date": "2024-12-02",
+      "serviceRelease": null,
+      "updates": 32
     }
   ]
 }
