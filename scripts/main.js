@@ -125,6 +125,7 @@ class IntuneUpdatesTracker {
                                         topic: topic.topic,
                                         date: fileData.date,
                                         week: fileData.week || fileData.month, // Handle both week and month structures
+                                        service: fileData.service || update.service, // Ensure service field is set
                                         serviceRelease: fileData.serviceRelease
                                     });
                                 });
@@ -194,8 +195,8 @@ class IntuneUpdatesTracker {
         const warningDiv = document.createElement('div');
         warningDiv.className = 'alert alert-warning';
         warningDiv.innerHTML = `
-            <strong>⚠️ Data Loading Issue:</strong> Unable to load JSON data files. 
-            Displaying sample data. Please check the browser console for details.
+            <strong>⚠️ No Data Available:</strong> All data files have been cleared. 
+            Please regenerate data to see updates and notices.
         `;
         
         const container = document.querySelector('.container');
@@ -204,36 +205,11 @@ class IntuneUpdatesTracker {
         }
         
         return {
-            updates: [
-                {
-                    id: 1,
-                    title: "Microsoft Copilot in Intune",
-                    subtitle: "Explore Intune data with natural language",
-                    content: "You can now use Microsoft Copilot in Intune to explore your Intune data using natural language, take action on the results, manage policies and settings, understand your security posture, and troubleshoot device issues.",
-                    features: [
-                        "Explore your Intune data using natural language queries",
-                        "Conversational chat experience for device troubleshooting",
-                        "Policy and setting management assistance"
-                    ],
-                    link: "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new",
-                    category: "device-management",
-                    topic: "Device management",
-                    date: "2025-07-14",
-                    week: "Week of July 14, 2025"
-                }
-            ],
-            notices: [
-                {
-                    id: 1,
-                    title: "Data Loading Notice",
-                    content: "The system is loading data from JSON files. If this message persists, there may be an issue with data generation.",
-                    date: "2025-07-15",
-                    type: "info"
-                }
-            ],
+            updates: [],
+            notices: [],
             indexData: {
                 dataFiles: [],
-                totalUpdates: 1
+                totalUpdates: 0
             }
         };
     }
@@ -331,6 +307,10 @@ class IntuneUpdatesTracker {
         const categoryFilter = this.categoryFilter?.value || '';
         const timeFilter = this.timeFilter?.value || '';
 
+        console.log('=== FILTER DEBUG ===');
+        console.log('Selected service filter:', `"${serviceFilter}"`);
+        console.log('All available services:', [...new Set(this.updates.map(u => u.service))]);
+
         this.filteredUpdates = this.updates.filter(update => {
             // Search filter
             const matchesSearch = !searchTerm || 
@@ -350,9 +330,26 @@ class IntuneUpdatesTracker {
             // Time filter
             const matchesTime = this.checkTimeFilter(update.date, timeFilter);
 
+            // Debug individual update filtering
+            if (serviceFilter && serviceFilter !== 'all') {
+                console.log(`Update "${update.title.substring(0, 30)}..." - service: "${update.service}" - matches: ${matchesService}`);
+            }
+
             return matchesSearch && matchesService && matchesCategory && matchesTime;
         });
 
+        console.log('Total filtered updates:', this.filteredUpdates.length);
+        
+        // Log service breakdown of filtered results
+        if (serviceFilter && serviceFilter !== 'all') {
+            const serviceBreakdown = {};
+            this.filteredUpdates.forEach(update => {
+                const service = update.service || 'no-service';
+                serviceBreakdown[service] = (serviceBreakdown[service] || 0) + 1;
+            });
+            console.log('Service breakdown of filtered results:', serviceBreakdown);
+        }
+        
         this.currentPage = 1;
         this.displayUpdates();
     }
@@ -393,27 +390,106 @@ class IntuneUpdatesTracker {
                 </div>
             `;
         } else {
-            this.updatesContainer.innerHTML = `
-                <div class="updates-table-container">
-                    <table class="updates-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Month</th>
-                                <th>Service</th>
-                                <th>Category</th>
-                                <th>Title</th>
-                                <th>Topic</th>
-                                <th>Features</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${this.displayedUpdates.map(update => this.createUpdateRow(update)).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            // Separate Entra and Intune updates
+            const entraUpdates = this.displayedUpdates.filter(update => update.service === 'Entra');
+            const intuneUpdates = this.displayedUpdates.filter(update => update.service !== 'Entra');
+                  // Debug logging
+        console.log('=== DISPLAY UPDATES DEBUG ===');
+        console.log('Total displayed updates:', this.displayedUpdates.length);
+        console.log('Entra updates:', entraUpdates.length);
+        console.log('Intune updates:', intuneUpdates.length);
+        
+        // Check for service field issues
+        const servicesFound = [...new Set(this.displayedUpdates.map(u => u.service))];
+        console.log('Unique services found:', servicesFound);
+        
+        // Check current filter state
+        console.log('Current service filter:', this.serviceFilter ? this.serviceFilter.value : 'none');
+        
+        // Log some sample updates to see their structure
+        if (this.displayedUpdates.length > 0) {
+            console.log('Sample update service fields:');
+            this.displayedUpdates.slice(0, 3).forEach((update, index) => {
+                console.log(`  Update ${index}: service="${update.service}", title="${update.title.substring(0, 50)}..."`);
+            });
+        }
+            
+            // Check for undefined/null services
+            const noServiceUpdates = this.displayedUpdates.filter(u => !u.service);
+            console.log('Updates with no service field:', noServiceUpdates.length);
+            
+            if (entraUpdates.length > 0) {
+                console.log('First Entra update service field:', `"${entraUpdates[0].service}"`);
+                console.log('Entra update structure:', entraUpdates[0]);
+            }
+            if (intuneUpdates.length > 0) {
+                console.log('First Intune update service field:', `"${intuneUpdates[0].service}"`);
+            }
+            
+            let html = '';
+            
+            // Check current service filter
+            const serviceFilterValue = this.serviceFilter ? this.serviceFilter.value : 'all';
+            
+            // If a specific service is selected, show unified table view
+            if (serviceFilterValue !== 'all' && serviceFilterValue !== '') {
+                html += `
+                    <div class="unified-updates-section">
+                        <h2 class="service-section-title">
+                            <span class="service-badge service-${serviceFilterValue.toLowerCase()}">${serviceFilterValue === 'Entra' ? 'Microsoft Entra ID' : serviceFilterValue === 'Intune' ? 'Microsoft Intune' : serviceFilterValue}</span>
+                        </h2>
+                        <div class="updates-table-container">
+                            <table class="updates-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Month</th>
+                                        <th>Service</th>
+                                        <th>Category</th>
+                                        <th>Topic</th>
+                                        <th>Type</th>
+                                        <th>Features</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${this.displayedUpdates.map(update => this.createUpdateRow(update)).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Default view: Show all updates in unified table
+                html += `
+                    <div class="unified-updates-section">
+                        <h2 class="service-section-title">
+                            <span class="service-badge">All Microsoft Cloud Updates</span>
+                        </h2>
+                        <div class="updates-table-container">
+                            <table class="updates-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Month</th>
+                                        <th>Service</th>
+                                        <th>Category</th>
+                                        <th>Topic</th>
+                                        <th>Type</th>
+                                        <th>Features</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${this.displayedUpdates.map(update => this.createUpdateRow(update)).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            this.updatesContainer.innerHTML = html;
         }
 
         // Show/hide load more button
@@ -429,6 +505,10 @@ class IntuneUpdatesTracker {
         const featuresCount = update.features ? update.features.length : 0;
         const monthName = this.extractMonthFromWeek(update.week || update.date);
         
+        // Extract type from title
+        const type = this.extractTypeFromTitle(update.title);
+        
+        // This function should only handle Intune updates - Entra updates go through createGroupedEntraUpdates
         return `
             <tr class="update-row" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
                 <td data-label="Date">${formattedDate}</td>
@@ -439,8 +519,8 @@ class IntuneUpdatesTracker {
                 <td data-label="Category">
                     <span class="category-badge category-${update.category}">${categoryName}</span>
                 </td>
-                <td data-label="Title">${this.truncateText(update.title, 50)}</td>
-                <td data-label="Topic">${this.truncateText(update.topic, 25)}</td>
+                <td data-label="Topic">${this.truncateText(update.title, 50)}</td>
+                <td data-label="Type">${this.truncateText(type, 25)}</td>
                 <td data-label="Features">${featuresCount > 0 ? `${featuresCount} features` : 'N/A'}</td>
                 <td data-label="Action">
                     <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showUpdateModal('${update.id}')">
@@ -448,6 +528,88 @@ class IntuneUpdatesTracker {
                     </button>
                 </td>
             </tr>
+        `;
+    }
+
+    createGroupedEntraUpdates(entraUpdates) {
+        // Group updates by month
+        const updatesByMonth = {};
+        
+        entraUpdates.forEach(update => {
+            const monthName = this.extractMonthFromWeek(update.week || update.date);
+            if (!updatesByMonth[monthName]) {
+                updatesByMonth[monthName] = [];
+            }
+            updatesByMonth[monthName].push(update);
+        });
+        
+        // Sort months by date (most recent first)
+        const sortedMonths = Object.keys(updatesByMonth).sort((a, b) => {
+            // Parse month names like "June 2025" into dates for proper sorting
+            const parseMonthYear = (monthYear) => {
+                const parts = monthYear.split(' ');
+                if (parts.length === 2) {
+                    const month = parts[0];
+                    const year = parts[1];
+                    return new Date(`${month} 1, ${year}`);
+                }
+                return new Date(monthYear);
+            };
+            
+            const dateA = parseMonthYear(a);
+            const dateB = parseMonthYear(b);
+            return dateB - dateA;
+        });
+        
+        let html = '';
+        
+        sortedMonths.forEach(monthName => {
+            const monthUpdates = updatesByMonth[monthName];
+            
+            // Sort updates within each month by date (most recent first)
+            monthUpdates.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Add month header
+            html += `<div class="month-section">`;
+            html += `<h3 class="month-header">${monthName}</h3>`;
+            
+            // Add all updates for this month (without individual month headers)
+            monthUpdates.forEach(update => {
+                html += this.createEntraUpdateCard(update, false); // false = don't show month
+            });
+            
+            html += `</div>`;
+        });
+        
+        return html;
+    }
+    
+    createEntraUpdateCard(update, showMonth = true) {
+        const categoryName = this.formatCategoryName(update.category);
+        const type = this.extractTypeFromTitle(update.title);
+        const monthName = this.extractMonthFromWeek(update.week || update.date);
+        
+        return `
+            <div class="entra-update-card" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
+                <div class="update-header">
+                    ${showMonth ? `<h3 class="update-month">${monthName}</h3>` : ''}
+                    <h4 class="update-topic">${update.title}</h4>
+                </div>
+                <div class="update-meta">
+                    <div class="meta-row"><strong>Type:</strong> ${type}</div>
+                    <div class="meta-row"><strong>Service Category:</strong> <span class="category-badge category-${update.category}">${categoryName}</span></div>
+                    ${update.productCapability ? `<div class="meta-row"><strong>Product Capability:</strong> ${update.productCapability}</div>` : ''}
+                </div>
+                <div class="update-description">
+                    <p>${this.truncateText(update.content, 200)}</p>
+                </div>
+                <div class="update-actions">
+                    <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showUpdateModal('${update.id}')">
+                        <i class="fas fa-eye"></i> View Details
+                    </button>
+                </div>
+            </div>
+            <hr class="update-separator">
         `;
     }
 
@@ -700,19 +862,13 @@ class IntuneUpdatesTracker {
         
         if (deploymentDateElement && deploymentTimeElement) {
             // Use the lastGenerated time from the index data if available
-            console.log('Index data for deployment time:', this.indexData);
-            
             let deploymentDate;
             if (this.indexData && this.indexData.lastGenerated) {
                 deploymentDate = new Date(this.indexData.lastGenerated);
-                console.log('Using lastGenerated from indexData:', this.indexData.lastGenerated);
             } else {
                 // Fallback to current date if no lastGenerated available
                 deploymentDate = new Date();
-                console.log('No lastGenerated found, using current date');
             }
-            
-            console.log('Final deployment date:', deploymentDate);
             
             deploymentDateElement.textContent = deploymentDate.toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -724,11 +880,6 @@ class IntuneUpdatesTracker {
                 hour: '2-digit',
                 minute: '2-digit',
                 timeZoneName: 'short'
-            });
-        } else {
-            console.error('Deployment date/time elements not found:', {
-                deploymentDateElement,
-                deploymentTimeElement
             });
         }
     }
@@ -785,6 +936,8 @@ class IntuneUpdatesTracker {
 
         const formattedDate = this.formatDate(update.date);
         const categoryName = this.formatCategoryName(update.category);
+        const type = this.extractTypeFromTitle(update.title);
+        const monthName = this.extractMonthFromWeek(update.week || update.date);
         
         const featuresHtml = update.features ? 
             update.features.map(feature => `<li>${feature}</li>`).join('') : '<li>No specific features listed</li>';
@@ -804,19 +957,24 @@ class IntuneUpdatesTracker {
                                 <strong>Date:</strong> ${formattedDate}
                             </div>
                             <div class="meta-item">
-                                <strong>Week:</strong> ${update.week}
+                                <strong>Month:</strong> ${monthName}
                             </div>
                             <div class="meta-item">
                                 <strong>Service:</strong> 
                                 <span class="service-badge service-${(update.service || 'unknown').toLowerCase()}">${update.service || 'Unknown'}</span>
                             </div>
                             <div class="meta-item">
-                                <strong>Category:</strong> 
+                                <strong>Service Category:</strong> 
                                 <span class="category-badge category-${update.category}">${categoryName}</span>
                             </div>
                             <div class="meta-item">
-                                <strong>Topic:</strong> ${update.topic}
+                                <strong>Type:</strong> ${type}
                             </div>
+                            ${update.productCapability && update.service === 'Entra' ? `
+                                <div class="meta-item">
+                                    <strong>Product Capability:</strong> ${update.productCapability}
+                                </div>
+                            ` : ''}
                             ${update.serviceRelease ? `
                                 <div class="meta-item">
                                     <strong>Service Release:</strong> ${update.serviceRelease}
@@ -872,6 +1030,25 @@ class IntuneUpdatesTracker {
 
     truncateText(text, maxLength) {
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
+
+    extractTypeFromTitle(title) {
+        // Extract type from title for Entra updates
+        if (title.includes('General Availability')) {
+            return 'General Availability';
+        } else if (title.includes('Public Preview')) {
+            return 'Public Preview';
+        } else if (title.includes('Deprecated')) {
+            return 'Deprecated';
+        } else if (title.includes('Plan for change')) {
+            return 'Plan for change';
+        } else if (title.includes('Changed feature')) {
+            return 'Changed feature';
+        } else if (title.includes('New feature')) {
+            return 'New feature';
+        } else {
+            return 'Update';
+        }
     }
 
     debounce(func, wait) {

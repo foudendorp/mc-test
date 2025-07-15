@@ -57,12 +57,55 @@ function isNextMonthHeader(element) {
     return /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
 }
 
+// Helper function to check if the previous element is a header (to avoid double-parsing lists)
+function isPreviousElementHeader(element) {
+    let prev = element.previousElementSibling;
+    let lookBack = 0;
+    let foundParagraphCount = 0;
+    
+    console.log(`    Checking if previous element is header for list...`);
+    
+    // Look back up to 10 elements to find a header, but be smart about it
+    while (prev && lookBack < 10) {
+        console.log(`    Looking back ${lookBack + 1}: ${prev.tagName} - "${prev.textContent.trim().substring(0, 50)}..."`);
+        
+        // If we find a header, this list should be part of that header's content
+        if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(prev.tagName)) {
+            console.log(`    Found header ${prev.tagName}, list belongs to header`);
+            return true;
+        }
+        
+        // Count paragraphs - if we find too many, this might be a different section
+        if (prev.tagName === 'P') {
+            foundParagraphCount++;
+            // If we've found more than 8 paragraphs, this list is probably standalone
+            if (foundParagraphCount > 8) {
+                console.log(`    Found too many paragraphs (${foundParagraphCount}), treating as standalone`);
+                break;
+            }
+        }
+        
+        // If we find another significant structural element, stop looking
+        if (['UL', 'OL', 'TABLE'].includes(prev.tagName) && prev.textContent.trim()) {
+            console.log(`    Found blocking element ${prev.tagName}, stopping search`);
+            break;
+        }
+        
+        prev = prev.previousElementSibling;
+        lookBack++;
+    }
+    
+    console.log(`    No header found within reasonable distance, treating as standalone list`);
+    return false;
+}
+
 // Helper function to parse update elements
 function parseUpdateElement(currentElement, service) {
     const updateTitle = currentElement.textContent.trim();
     let content = '';
     let features = [];
     let link = '';
+    const htmlParts = [];
     
     // Get content from following elements
     let nextEl = currentElement.nextElementSibling;
@@ -71,10 +114,25 @@ function parseUpdateElement(currentElement, service) {
             const text = nextEl.textContent.trim();
             if (text) {
                 content += (content ? ' ' : '') + text;
+                // Preserve HTML for better formatting
+                htmlParts.push(`<p>${extractHTMLContent(nextEl)}</p>`);
             }
         } else if (nextEl.tagName === 'UL') {
             const listItems = Array.from(nextEl.querySelectorAll('li'));
             features.push(...listItems.map(li => li.textContent.trim()));
+            // Preserve HTML list structure
+            const listHTML = extractHTMLContent(nextEl);
+            if (listHTML.trim()) {
+                htmlParts.push(`<ul>${listHTML}</ul>`);
+            }
+        } else if (nextEl.tagName === 'OL') {
+            const listItems = Array.from(nextEl.querySelectorAll('li'));
+            features.push(...listItems.map(li => li.textContent.trim()));
+            // Preserve HTML list structure
+            const listHTML = extractHTMLContent(nextEl);
+            if (listHTML.trim()) {
+                htmlParts.push(`<ol>${listHTML}</ol>`);
+            }
         }
         
         // Look for links
@@ -101,11 +159,14 @@ function parseUpdateElement(currentElement, service) {
         title = title.substring(0, dashIndex).trim();
     }
     
+    // Create content with HTML markup for proper display
+    const htmlContent = htmlParts.length > 0 ? htmlParts.join('') : `<p>${content || 'No additional details available.'}</p>`;
+    
     return {
         id: generateContentId(title, subtitle, content), // Deterministic ID based on content
         title: title,
         subtitle: subtitle || undefined,
-        content: content || 'No additional details available.',
+        content: htmlContent, // Now includes HTML markup
         features: features.length > 0 ? features : undefined,
         service: service.tag, // Add service tag to individual updates
         link: link || service.url
@@ -259,34 +320,38 @@ async function fetchServiceUpdates(service) {
         
         noticeHeaders.forEach(header => {
             let content = '';
+            const htmlParts = [];
             let nextEl = header.nextElementSibling;
             
             while (nextEl && !['H2', 'H3', 'H4'].includes(nextEl.tagName)) {
                 if (nextEl.tagName === 'P') {
-                    // Preserve HTML markup by converting to markdown-like syntax
-                    let htmlContent = nextEl.innerHTML.trim();
+                    // Preserve HTML markup for better formatting
+                    const text = nextEl.textContent.trim();
+                    const htmlContent = extractHTMLContent(nextEl);
                     
-                    // Convert HTML to markdown-like syntax
-                    htmlContent = htmlContent
-                        .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**') // <strong> to **bold**
-                        .replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**') // <b> to **bold**
-                        .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*') // <em> to *italic*
-                        .replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*') // <i> to *italic*
-                        .replace(/<code[^>]*>(.*?)<\/code>/gi, '`$1`') // <code> to `code`
-                        .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)') // <a> to [text](url)
-                        .replace(/<br\s*\/?>/gi, '\n') // <br> to newline
-                        .replace(/<[^>]+>/g, ''); // Remove any remaining HTML tags
+                    content += (content ? '\n' : '') + text;
+                    htmlParts.push(`<p>${htmlContent}</p>`);
+                } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
+                    // Include list content in notices
+                    const listItems = Array.from(nextEl.querySelectorAll('li'));
+                    const listText = listItems.map(li => '• ' + li.textContent.trim()).join('\n');
+                    const listHTML = extractHTMLContent(nextEl);
                     
-                    content += (content ? '\n' : '') + htmlContent;
+                    content += (content ? '\n' : '') + listText;
+                    htmlParts.push(`<${nextEl.tagName.toLowerCase()}>${listHTML}</${nextEl.tagName.toLowerCase()}>`);
                 }
                 nextEl = nextEl.nextElementSibling;
             }
             
             if (content) {
+                // Create content with HTML markup for proper display
+                const htmlContent = htmlParts.length > 0 ? htmlParts.join('') : `<p>${content}</p>`;
+                
                 // Create notice without timestamp for consistent content
                 const noticeData = {
                     id: generateContentId(header.textContent.trim(), '', content), // Deterministic ID based on content
                     title: header.textContent.trim(),
+                    content: htmlContent, // Now includes HTML markup
                     content: content.trim(),
                     date: new Date().toISOString().split('T')[0],
                     service: service.tag, // Add service tag to notices
@@ -629,7 +694,7 @@ async function createFallbackData() {
                         id: generateContentId("Microsoft Copilot in Intune", "Explore Intune data with natural language", "You can now use Microsoft Copilot in Intune to explore your Intune data using natural language, take action on the results, manage policies and settings, understand your security posture, and troubleshoot device issues."),
                         title: "Microsoft Copilot in Intune",
                         subtitle: "Explore Intune data with natural language",
-                        content: "You can now use Microsoft Copilot in Intune to explore your Intune data using natural language, take action on the results, manage policies and settings, understand your security posture, and troubleshoot device issues.",
+                        content: "<p>You can now use Microsoft Copilot in Intune to explore your Intune data using natural language, take action on the results, manage policies and settings, understand your security posture, and troubleshoot device issues.</p><ul><li>Explore your Intune data using natural language queries</li><li>Conversational chat experience for device troubleshooting</li><li>Policy and setting management assistance</li></ul>",
                         features: [
                             "Explore your Intune data using natural language queries",
                             "Conversational chat experience for device troubleshooting",
@@ -661,7 +726,7 @@ async function createFallbackData() {
                         id: generateContentId("Microsoft Entra ID Updates", "Latest identity management features", "Microsoft Entra ID continues to evolve with new features for identity and access management, providing better security and user experience."),
                         title: "Microsoft Entra ID Updates",
                         subtitle: "Latest identity management features",
-                        content: "Microsoft Entra ID continues to evolve with new features for identity and access management, providing better security and user experience.",
+                        content: "<p>Microsoft Entra ID continues to evolve with new features for identity and access management, providing better security and user experience.</p><ul><li>Enhanced conditional access policies</li><li>Improved multi-factor authentication</li><li>Better integration with Microsoft 365</li></ul>",
                         features: [
                             "Enhanced conditional access policies",
                             "Improved multi-factor authentication",
@@ -682,7 +747,7 @@ async function createFallbackData() {
     const fallbackNoticeBase = {
         id: generateContentId("Data Generation Notice", "", "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn."),
         title: "Data Generation Notice",
-        content: "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn.",
+        content: "<p>This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn.</p>",
         date: new Date().toISOString().split('T')[0],
         service: "System",
         type: "info",
@@ -879,32 +944,111 @@ function groupDataFilesByMonth(dataFiles) {
 async function parseEntraUpdates(document, service) {
     const weeklyUpdates = new Map();
     
-    // For Entra ID, look for month-based headers (e.g., "July 2025", "June 2025")
-    const monthHeaders = Array.from(document.querySelectorAll('h2'))
-        .filter(h2 => {
-            const text = h2.textContent.trim();
-            return /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
-        });
+    console.log(`\n=== DEBUGGING ENTRA STRUCTURE ===`);
+    console.log(`Processing ${service.name} from ${service.url}`);
     
-    console.log(`Found ${monthHeaders.length} month sections for ${service.name}`);
+    // First, let's understand the actual page structure
+    const allElements = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, table, div.tabpanel'));
+    console.log(`\nFound ${allElements.length} structural elements`);
     
-    // Debug: Let's also check what H2 elements we do find
-    const allH2s = Array.from(document.querySelectorAll('h2'));
-    console.log(`Total H2 elements: ${allH2s.length}`);
-    allH2s.slice(0, 5).forEach(h2 => {
-        console.log(`H2 text: "${h2.textContent.trim()}"`);
+    // Log first 15 elements to understand structure
+    allElements.slice(0, 15).forEach((el, index) => {
+        const text = el.textContent.trim().substring(0, 100);
+        console.log(`${index}: ${el.tagName} - "${text}..."`);
     });
     
+    // Look for month-based headers (e.g., "July 2025", "June 2025")
+    const monthHeaders = Array.from(document.querySelectorAll('h2, h3'))
+        .filter(header => {
+            const text = header.textContent.trim();
+            const isMonth = /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
+            if (isMonth) {
+                console.log(`Found month header: "${text}" (${header.tagName})`);
+            }
+            return isMonth;
+        });
+    
+    console.log(`\nFound ${monthHeaders.length} month sections for ${service.name}`);
+    
+    // If no month headers found, try a different approach
+    if (monthHeaders.length === 0) {
+        console.log('No month headers found, trying alternative parsing...');
+        
+        // Look for tabpanel divs which might contain the content
+        const tabPanels = Array.from(document.querySelectorAll('div[role="tabpanel"], .tabpanel'));
+        console.log(`Found ${tabPanels.length} tab panels`);
+        
+        tabPanels.forEach((panel, index) => {
+            console.log(`Tab panel ${index}: ${panel.textContent.trim().substring(0, 200)}...`);
+            
+            // Look for month headers within tab panels
+            const innerMonthHeaders = Array.from(panel.querySelectorAll('h2, h3, h4'))
+                .filter(header => {
+                    const text = header.textContent.trim();
+                    return /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
+                });
+            
+            if (innerMonthHeaders.length > 0) {
+                console.log(`Found ${innerMonthHeaders.length} month headers in tab panel ${index}`);
+                monthHeaders.push(...innerMonthHeaders);
+            }
+        });
+        
+        // If still no month headers, try looking for any content that might be updates
+        if (monthHeaders.length === 0) {
+            console.log('Still no month headers, looking for table-based content...');
+            
+            // Look for tables that might contain the updates
+            const tables = Array.from(document.querySelectorAll('table'));
+            console.log(`Found ${tables.length} tables`);
+            
+            tables.forEach((table, index) => {
+                const rows = table.querySelectorAll('tr');
+                console.log(`Table ${index}: ${rows.length} rows`);
+                if (rows.length > 1) {
+                    // This might be our updates table
+                    const headers = Array.from(rows[0].querySelectorAll('th, td')).map(cell => cell.textContent.trim());
+                    console.log(`Table ${index} headers:`, headers);
+                    
+                    // Create a synthetic month entry for the current date
+                    const currentDate = new Date();
+                    const monthText = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                    const monthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
+                    
+                    const monthData = {
+                        month: monthText,
+                        date: monthDate,
+                        service: service.tag,
+                        serviceRelease: null,
+                        topics: []
+                    };
+                    
+                    parseTableUpdates(table, monthData);
+                    
+                    if (monthData.topics.length > 0) {
+                        console.log(`Parsed ${monthData.topics.length} topics from table ${index}`);
+                        weeklyUpdates.set(monthDate, monthData);
+                    }
+                }
+            });
+        }
+    }
+    
+    // Process found month headers
     for (const monthHeader of monthHeaders) {
         const monthText = monthHeader.textContent.trim();
-        console.log(`Processing ${service.name}: ${monthText}`);
+        console.log(`\n=== Processing ${service.name}: ${monthText} ===`);
         
-        // Extract date from month header (use first day of month)
-        const monthDate = new Date(monthText + ' 01').toISOString().split('T')[0];
+        // Extract date from month header (use last day of previous month to match the pattern)
+        const [monthName, year] = monthText.split(' ');
+        const monthIndex = new Date(Date.parse(monthName + " 1, 2000")).getMonth();
+        const monthDate = new Date(parseInt(year), monthIndex, 1);
+        const lastDayOfMonth = new Date(parseInt(year), monthIndex + 1, 0);
+        const dateString = lastDayOfMonth.toISOString().split('T')[0];
         
         const monthData = {
             month: monthText,
-            date: monthDate,
+            date: dateString,
             service: service.tag,
             serviceRelease: null,
             topics: []
@@ -914,19 +1058,32 @@ async function parseEntraUpdates(document, service) {
         let currentElement = monthHeader.nextElementSibling;
         let foundUpdates = 0;
         
+        console.log(`Looking for content after month header...`);
+        
         while (currentElement && !isNextMonthHeader(currentElement)) {
-            // Look for update entries in various formats
             if (currentElement.tagName === 'TABLE') {
-                // Handle table-based updates
+                console.log(`Found table, parsing...`);
                 parseTableUpdates(currentElement, monthData);
-            } else if (currentElement.tagName === 'UL' || currentElement.tagName === 'OL') {
-                // Handle list-based updates
+                foundUpdates++;
+            } else if ((currentElement.tagName === 'UL' || currentElement.tagName === 'OL') && 
+                       !isPreviousElementHeader(currentElement)) {
+                // Only parse standalone lists, not lists that follow headers (those are handled by header parsing)
+                console.log(`Found standalone list, checking if it should be parsed...`);
+                console.log(`List content preview: "${currentElement.textContent.trim().substring(0, 100)}..."`);
+                console.log(`isPreviousElementHeader result: ${isPreviousElementHeader(currentElement)}`);
                 parseListUpdates(currentElement, monthData);
-            } else if (currentElement.tagName === 'DIV' && currentElement.querySelector('h3, h4')) {
-                // Handle section-based updates
+                foundUpdates++;
+            } else if (currentElement.tagName === 'DIV' && currentElement.querySelector('h3, h4, table')) {
+                console.log(`Found div with content, parsing...`);
+                // Check for tables within the div
+                const tables = currentElement.querySelectorAll('table');
+                tables.forEach(table => parseTableUpdates(table, monthData));
+                
+                // Check for direct sections
                 parseSectionUpdates(currentElement, monthData);
-            } else if (currentElement.tagName === 'H3') {
-                // Direct H3 sections
+                foundUpdates++;
+            } else if (currentElement.tagName === 'H3' || currentElement.tagName === 'H4') {
+                console.log(`Found ${currentElement.tagName}: "${currentElement.textContent.trim().substring(0, 50)}..."`);
                 parseDirectSection(currentElement, monthData);
                 foundUpdates++;
             }
@@ -934,15 +1091,24 @@ async function parseEntraUpdates(document, service) {
             currentElement = currentElement.nextElementSibling;
         }
         
-        console.log(`Found ${foundUpdates} H3 elements in ${monthText}`);
+        console.log(`Found ${foundUpdates} potential update elements in ${monthText}`);
+        console.log(`Total topics created: ${monthData.topics.length}`);
+        monthData.topics.forEach(topic => {
+            console.log(`  Topic: "${topic.topic}" (${topic.updates.length} updates)`);
+        });
         
-        // Only add months that have topics with updates
+        // Add months that have topics with updates
         const hasUpdates = monthData.topics.some(topic => topic.updates && topic.updates.length > 0);
-        console.log(`Month ${monthText} has updates: ${hasUpdates}, topics: ${monthData.topics.length}`);
         if (hasUpdates) {
-            weeklyUpdates.set(monthDate, monthData);
+            console.log(`✅ Adding month ${monthText} with ${monthData.topics.reduce((sum, topic) => sum + topic.updates.length, 0)} total updates`);
+            weeklyUpdates.set(dateString, monthData);
+        } else {
+            console.log(`❌ Skipping month ${monthText} - no updates found`);
         }
     }
+    
+    console.log(`\n=== ENTRA PARSING COMPLETE ===`);
+    console.log(`Total months with updates: ${weeklyUpdates.size}`);
     
     return weeklyUpdates;
 }
@@ -967,14 +1133,19 @@ function parseTableUpdates(table, monthData) {
             const serviceCategory = extractTextContent(serviceCategoryCell);
             const productCapability = productCapabilityCell ? extractTextContent(productCapabilityCell) : null;
             
+            // Get HTML content for better formatting
+            const descriptionHTML = extractHTMLContent(descriptionCell);
+            const contentHTML = descriptionHTML ? `<div>${descriptionHTML}</div>` : `<p>${title}</p>`;
+            const finalContent = contentHTML + (productCapability ? ` <span class="product-capability">- ${productCapability}</span>` : '');
+            
             // Convert to frontend-compatible format with correct mapping
             const update = {
                 id: generateContentId(title, type, title),
                 title: title, // Topic (Title) from Microsoft Learn
                 subtitle: type ? `Type: ${type}` : undefined,
-                content: title + (productCapability ? ` - ${productCapability}` : ''),
+                content: finalContent, // Now includes HTML markup
                 service: 'Entra',
-                link: extractLinks(descriptionCell)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
+                link: extractLinks(descriptionCell)[0]?.url || 'whats-new-archive'
             };
             
             // Use Product Capability as the topic (for "Topic" column)
@@ -1002,14 +1173,18 @@ function parseListUpdates(list, monthData) {
     items.forEach(item => {
         const text = extractTextContent(item);
         if (text.trim()) {
+            // Get HTML content for better formatting
+            const itemHTML = extractHTMLContent(item);
+            const contentHTML = itemHTML ? `<div>${itemHTML}</div>` : `<p>${text}</p>`;
+            
             // Convert to frontend-compatible format
             const update = {
                 id: generateContentId(text, 'Update', text),
                 title: text,
                 subtitle: undefined,
-                content: text,
+                content: contentHTML, // Now includes HTML markup
                 service: 'Entra',
-                link: extractLinks(item)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
+                link: extractLinks(item)[0]?.url || 'whats-new-archive'
             };
             
             // Find or create general topic
@@ -1088,8 +1263,9 @@ function parseEntraUpdateFromHeader(header, date) {
     let productCapability = null;
     let currentElement = header.nextElementSibling;
     const descriptionParts = [];
+    const htmlParts = [];
     
-    // Look for the Type/Service category/Product capability line
+    // Look for the Type/Service category/Product capability line and collect all content
     while (currentElement && !['H1', 'H2', 'H3', 'H4'].includes(currentElement.tagName)) {
         const text = extractTextContent(currentElement);
         
@@ -1097,9 +1273,9 @@ function parseEntraUpdateFromHeader(header, date) {
         if (text.includes('Type:') && text.includes('Service category:')) {
             console.log(`Found structured metadata: "${text}"`);
             // Parse the structured line like: "Type: New featureService category: Conditional AccessProduct capability: Identity Security & Protection"
-            const typeMatch = text.match(/Type:\s*([^A-Z]*?)(?=Service category:|Product capability:|$)/);
-            const serviceCategoryMatch = text.match(/Service category:\s*([^A-Z]*?)(?=Product capability:|Type:|$)/);
-            const productCapabilityMatch = text.match(/Product capability:\s*([^A-Z]*?)(?=Type:|Service category:|$)/);
+            const typeMatch = text.match(/Type:\s*([^]+?)(?=Service category:|Product capability:|$)/);
+            const serviceCategoryMatch = text.match(/Service category:\s*([^]+?)(?=Product capability:|Type:|$)/);
+            const productCapabilityMatch = text.match(/Product capability:\s*([^]+?)(?=Type:|Service category:|$)/);
             
             if (typeMatch) {
                 type = typeMatch[1].trim();
@@ -1114,30 +1290,45 @@ function parseEntraUpdateFromHeader(header, date) {
                 console.log(`Extracted productCapability: "${productCapability}"`);
             }
         } else if (currentElement.tagName === 'P' && text.trim() && !text.includes('Type:')) {
-            // Regular description paragraph
+            // Regular description paragraph - preserve HTML
             descriptionParts.push(text);
+            htmlParts.push(`<p>${extractHTMLContent(currentElement)}</p>`);
+        } else if (currentElement.tagName === 'UL' || currentElement.tagName === 'OL') {
+            // Include list content as part of the update description - preserve HTML structure
+            const listItems = Array.from(currentElement.querySelectorAll('li'));
+            const textContent = listItems.map(item => '• ' + extractTextContent(item)).join('\n');
+            const htmlContent = extractHTMLContent(currentElement);
+            
+            if (textContent.trim()) {
+                descriptionParts.push('The following combinations are supported:\n' + textContent);
+                htmlParts.push(`<p>The following combinations are supported:</p><${currentElement.tagName.toLowerCase()}>${htmlContent}</${currentElement.tagName.toLowerCase()}>`);
+            }
         }
         
         currentElement = currentElement.nextElementSibling;
         
-        // Limit description content
-        if (descriptionParts.length >= 3) break;
+        // Don't limit description content too much, we want complete updates
+        if (descriptionParts.length >= 5) break;
     }
     
     if (descriptionParts.length > 0) {
         description = descriptionParts.join(' ');
     }
     
+    // Create content with HTML markup for proper display
+    const htmlContent = htmlParts.length > 0 ? htmlParts.join('') : `<p>${description}</p>`;
+    const finalContent = htmlContent + (productCapability ? ` <span class="product-capability">- ${productCapability}</span>` : '');
+    
     // Convert to frontend-compatible format with correct field mapping
     const update = {
         id: generateContentId(title, type, description),
         title: title, // Topic (Title) from Microsoft Learn
         subtitle: type ? `Type: ${type}` : undefined,
-        content: description + (productCapability ? ` - ${productCapability}` : ''),
+        content: finalContent, // Now includes HTML markup
         service: 'Entra',
         serviceCategory: serviceCategory, // Keep for topic assignment logic
         productCapability: productCapability, // Keep for topic assignment logic  
-        link: extractLinks(header.parentElement)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
+        link: extractLinks(header.parentElement)[0]?.url || 'whats-new-archive'
     };
     
     console.log(`Created update:`, JSON.stringify(update, null, 2));
@@ -1185,6 +1376,28 @@ function parseUpdateFromHeader(header, date) {
 function extractTextContent(element) {
     if (!element) return '';
     return element.textContent.trim().replace(/\s+/g, ' ');
+}
+
+// Extract HTML content from element while preserving structure
+function extractHTMLContent(element) {
+    if (!element) return '';
+    
+    // Clean up the HTML while preserving structure
+    let html = element.innerHTML;
+    
+    // Clean up Microsoft Learn specific classes and attributes
+    html = html.replace(/\s*class="[^"]*"/g, '');
+    html = html.replace(/\s*id="[^"]*"/g, '');
+    html = html.replace(/\s*data-[^=]*="[^"]*"/g, '');
+    html = html.replace(/\s*role="[^"]*"/g, '');
+    html = html.replace(/\s*aria-[^=]*="[^"]*"/g, '');
+    
+    // Clean up empty attributes and extra whitespace
+    html = html.replace(/\s+>/g, '>');
+    html = html.replace(/>\s+</g, '><');
+    html = html.trim();
+    
+    return html;
 }
 
 // Extract links from element
@@ -1245,22 +1458,42 @@ function mapServiceCategoryToCategory(serviceCategory) {
     
     // Direct mappings for Microsoft Learn Service Categories
     const categoryMap = {
+        // Exact Microsoft Learn categories
         'conditional access': 'conditional-access',
-        'authentication': 'authentication', 
+        'authentications (login)': 'authentication',
+        'authentications (logins)': 'authentication', 
+        'authentication': 'authentication',
+        'mfa': 'authentication',
+        'provisioning': 'identity-governance',
+        'lifecycle workflows': 'identity-governance',
+        'identity governance': 'identity-governance',
+        'entitlement management': 'identity-governance',
+        'microsoft entra connect': 'hybrid-identity',
+        'microsoft entra domain services': 'directory-services',
         'identity protection': 'identity-protection',
         'privileged identity management': 'privileged-identity',
         'applications': 'application-management',
+        'directory management': 'directory-services',
+        'user management': 'directory-services',
         'devices': 'device-management',
-        'identity governance': 'identity-governance',
         'external identities': 'external-identities',
+        'b2c - consumer identity management': 'external-identities',
+        'b2b/b2c': 'external-identities',
         'hybrid identity': 'hybrid-identity',
         'monitoring & health': 'monitoring',
-        'general': 'identity-management',
-        'licensing': 'licensing',
-        'directory services': 'directory-services',
         'reporting': 'monitoring',
         'audit logs': 'monitoring',
-        'security': 'identity-protection'
+        'ms graph': 'application-management',
+        'rbac': 'privileged-identity',
+        'managed identities for azure resources': 'identity-protection',
+        'azure ad graph': 'application-management',
+        'legacy msonline and azuread powershell modules': 'application-management',
+        'other': 'identity-management',
+        'general': 'identity-management',
+        'licensing': 'licensing',
+        'security': 'identity-protection',
+        'extensibility': 'application-management',
+        '3rd party integration': 'application-management'
     };
     
     // Check for exact matches first
@@ -1270,17 +1503,17 @@ function mapServiceCategoryToCategory(serviceCategory) {
     
     // Check for partial matches for common Microsoft Learn categories
     if (lowerCategory.includes('conditional access')) return 'conditional-access';
-    if (lowerCategory.includes('authentication') || lowerCategory.includes('mfa') || lowerCategory.includes('multi-factor')) return 'authentication';
-    if (lowerCategory.includes('identity protection') || lowerCategory.includes('security')) return 'identity-protection';
-    if (lowerCategory.includes('privileged identity') || lowerCategory.includes('pim')) return 'privileged-identity';
-    if (lowerCategory.includes('application') || lowerCategory.includes('app')) return 'application-management';
-    if (lowerCategory.includes('device') || lowerCategory.includes('mobile')) return 'device-management';
-    if (lowerCategory.includes('governance') || lowerCategory.includes('entitlement') || lowerCategory.includes('lifecycle')) return 'identity-governance';
-    if (lowerCategory.includes('b2b') || lowerCategory.includes('guest') || lowerCategory.includes('external')) return 'external-identities';
+    if (lowerCategory.includes('authentication') || lowerCategory.includes('login') || lowerCategory.includes('mfa') || lowerCategory.includes('multi-factor')) return 'authentication';
+    if (lowerCategory.includes('provisioning') || lowerCategory.includes('lifecycle') || lowerCategory.includes('governance') || lowerCategory.includes('entitlement')) return 'identity-governance';
     if (lowerCategory.includes('connect') || lowerCategory.includes('hybrid')) return 'hybrid-identity';
+    if (lowerCategory.includes('domain services') || lowerCategory.includes('directory') || lowerCategory.includes('user management')) return 'directory-services';
+    if (lowerCategory.includes('identity protection') || lowerCategory.includes('security')) return 'identity-protection';
+    if (lowerCategory.includes('privileged identity') || lowerCategory.includes('pim') || lowerCategory.includes('rbac')) return 'privileged-identity';
+    if (lowerCategory.includes('application') || lowerCategory.includes('app') || lowerCategory.includes('graph') || lowerCategory.includes('extensibility')) return 'application-management';
+    if (lowerCategory.includes('device') || lowerCategory.includes('mobile')) return 'device-management';
+    if (lowerCategory.includes('b2b') || lowerCategory.includes('b2c') || lowerCategory.includes('guest') || lowerCategory.includes('external')) return 'external-identities';
     if (lowerCategory.includes('monitoring') || lowerCategory.includes('audit') || lowerCategory.includes('log') || lowerCategory.includes('report')) return 'monitoring';
     if (lowerCategory.includes('license') || lowerCategory.includes('billing')) return 'licensing';
-    if (lowerCategory.includes('directory') || lowerCategory.includes('domain')) return 'directory-services';
     
     return 'identity-management'; // Default category for Entra
 }

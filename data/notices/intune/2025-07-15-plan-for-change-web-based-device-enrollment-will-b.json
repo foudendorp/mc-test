@@ -1,12 +1,12 @@
 {
-  "id": 2507394005,
+  "id": 2733394727,
   "title": "Plan for Change: Web based device enrollment will become default method for iOS/iPadOS device enrollment",
-  "content": "Today, when creating iOS/iPadOS enrollment profiles, \"Device enrollment with Company Portal\" is shown as the default method. In an upcoming service release, the default method will change to \"Web based device enrollment\" during profile creation. Additionally for *new* tenants, if no enrollment profile is created, the user will enroll using web-based device enrollment.",
+  "content": "Today, when creating iOS/iPadOS enrollment profiles, \"Device enrollment with Company Portal\" is shown as the default method. In an upcoming service release, the default method will change to \"Web based device enrollment\" during profile creation. Additionally for new tenants, if no enrollment profile is created, the user will enroll using web-based device enrollment.",
   "date": "2025-07-15",
   "service": "Intune",
   "type": "warning",
   "category": "plan-for-change",
   "status": "active",
   "source": "microsoft-learn",
-  "lastUpdated": "2025-07-15T15:40:17.893Z"
+  "lastUpdated": "2025-07-15T19:19:54.920Z"
 }
