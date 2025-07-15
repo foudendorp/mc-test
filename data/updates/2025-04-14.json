@@ -8,7 +8,7 @@
       "category": "device-configuration",
       "updates": [
         {
-          "id": 1752588573648.9167,
+          "id": 1752589344343.8027,
           "title": "Hotpatch updates for Windows 11 Enterprise are now available",
           "content": "Hotpatch updates for Windows 11 Enterprise, version 24H2 for x64 (AMD/Intel) CPU devices are now available. With hotpatch updates, you can deploy and apply security updates faster to help protect your organization from cyberattacks, while minimizing user disruptions.\nFrom the Microsoft Intune admin center, navigate to Devices > Windows updates > Create Windows quality update policy and toggle it to Allow. Enroll and prepare\nThe Windows quality update policy can auto-detect if your targeted devices are eligible for hotpatch updates. Devices running Windows 10 and Windows 11, version 23H2 and lower will continue to receive the standard monthly security updates, helping ensure that your ecosystem stays protected and productive. Maintain robust security with hotpatch updates\nThe general availability of hotpatch technology for Windows clients marks a significant step forward in enhancing security and productivity for Windows 11 Enterprise users.\nHotpatch updates help ensure that devices are secured more quickly and that users stay productive with minimal disruptions. We encourage organizations to take advantage of this new feature to maintain a robust security posture while minimizing the impact on the user experience. Hotpatch updates are generally available on Intel and AMD-powered devices as of April 2, 2025, with the feature becoming available on Arm64 devices at a later date. For more information, see:",
           "features": [
