@@ -1,18 +1,99 @@
 {
-  "lastUpdated": "2025-07-15T16:55:58.639Z",
+  "lastUpdated": "2025-07-15T17:01:53.676Z",
   "service": "Intune",
-  "serviceName": "Microsoft Intune",
-  "totalNotices": 1,
-  "totalFiles": 1,
+  "serviceName": "Intune",
+  "totalNotices": 10,
+  "totalFiles": 10,
   "noticeFiles": [
     {
-      "filename": "2025-07-15-data-generation-notice.json",
-      "path": "notices/system/2025-07-15-data-generation-notice.json",
-      "title": "Data Generation Notice",
+      "filename": "2025-07-15-plan-for-change-intune-is-moving-to-support-ios-ip.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-intune-is-moving-to-support-ios-ip.json",
+      "title": "Plan for Change: Intune is moving to support iOS/iPadOS 17 and later",
       "date": "2025-07-15",
-      "service": "System",
-      "type": "info",
-      "category": "system"
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
+    },
+    {
+      "filename": "2025-07-15-plan-for-change-intune-is-moving-to-support-macos-.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-intune-is-moving-to-support-macos-.json",
+      "title": "Plan for change: Intune is moving to support macOS 14 and higher later this year",
+      "date": "2025-07-15",
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
+    },
+    {
+      "filename": "2025-07-15-plan-for-change-google-play-strong-integrity-defin.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-google-play-strong-integrity-defin.json",
+      "title": "Plan for Change: Google Play strong integrity definition update for Android 13 or above",
+      "date": "2025-07-15",
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
+    },
+    {
+      "filename": "2025-07-15-plan-for-change-new-intune-connector-for-deploying.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-new-intune-connector-for-deploying.json",
+      "title": "Plan for Change: New Intune connector for deploying Microsoft Entra hybrid joined devices using Windows Autopilot",
+      "date": "2025-07-15",
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
+    },
+    {
+      "filename": "2025-07-15-plan-for-change-new-settings-for-apple-ai-features.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-new-settings-for-apple-ai-features.json",
+      "title": "Plan for Change: New settings for Apple AI features; Genmojis, Writing tools, Screen capture",
+      "date": "2025-07-15",
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
+    },
+    {
+      "filename": "2025-07-15-plan-for-change-user-alerts-on-ios-for-when-screen.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-user-alerts-on-ios-for-when-screen.json",
+      "title": "Plan for change: User alerts on iOS for when screen capture actions are blocked",
+      "date": "2025-07-15",
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
+    },
+    {
+      "filename": "2025-07-15-plan-for-change-blocking-screen-capture-in-the-lat.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-blocking-screen-capture-in-the-lat.json",
+      "title": "Plan for Change: Blocking screen capture in the latest Intune App SDK for iOS and Intune App Wrapping Tool for iOS",
+      "date": "2025-07-15",
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
+    },
+    {
+      "filename": "2025-07-15-plan-for-change-implement-strong-mapping-for-scep-.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-implement-strong-mapping-for-scep-.json",
+      "title": "Plan for Change: Implement strong mapping for SCEP and PKCS certificates",
+      "date": "2025-07-15",
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
+    },
+    {
+      "filename": "2025-07-15-plan-for-change-web-based-device-enrollment-will-b.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-web-based-device-enrollment-will-b.json",
+      "title": "Plan for Change: Web based device enrollment will become default method for iOS/iPadOS device enrollment",
+      "date": "2025-07-15",
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
+    },
+    {
+      "filename": "2025-07-15-plan-for-change-intune-ending-support-for-android-.json",
+      "path": "notices/intune/2025-07-15-plan-for-change-intune-ending-support-for-android-.json",
+      "title": "Plan for Change: Intune ending support for Android device administrator on devices with GMS access in December 2024",
+      "date": "2025-07-15",
+      "service": "Intune",
+      "type": "warning",
+      "category": "plan-for-change"
     }
   ]
 }

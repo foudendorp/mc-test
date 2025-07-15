@@ -1,0 +1,3705 @@
+{
+  "month": "January 2025",
+  "date": "2025-01-01",
+  "service": "Entra",
+  "serviceRelease": null,
+  "topics": [
+    {
+      "topic": "General",
+      "category": "General",
+      "updates": [
+        {
+          "id": 2516081325,
+          "title": "Public Preview - Manage Lifecycle Workflows with Microsoft Security CoPilot in Microsoft Entra",
+          "description": "Customers can now manage, and customize, Lifecycle Workflows using natural language with Microsoft Security CoPilot. Our Lifecycle Workflows (LCW) Copilot solution provides step-by-step guidance to perform key workflow configuration and execution tasks using natural language. It allows customers to quickly get rich insights to help monitor, and troubleshoot, workflows for compliance. For more information, see: Manage employee lifecycle using Microsoft Security Copilot (Preview).",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 1766534045,
+          "title": "General Availability - Microsoft Entra PowerShell",
+          "description": "Manage and automate Microsoft Entra resources programmatically with the scenario-focused Microsoft Entra PowerShell module. For more information, see: Microsoft Entra PowerShell module now generally available.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 1188337123,
+          "title": "General Availability - Improving visibility into downstream tenant sign-ins",
+          "description": "Microsoft Security wants to ensure that all customers are aware of how to notice when a partner is accessing a downstream tenant's resources. Interactive sign-in logs currently provide a list of sign in events, but there's no clear indication of which logins are from partners accessing downstream tenant resources. For example, when reviewing the logs, you might see a series of events, but without any additional context, it’s difficult to tell whether these logins are from a partner accessing another tenant’s data. Here's a list of steps that one can take to clarify which logins are associated with partner tenants: After seeing a partner logging into a downstream tenant’s resources, an important follow-up activity to perform is to validate the activities that might have occurred in the downstream environment. Some examples of logs to look at are Microsoft Entra Audit logs for Microsoft Entra ID events, Microsoft 365 Unified Audit Log (UAL) for Microsoft 365 and Microsoft Entra ID events, and/or the Azure Monitor activity log for Azure events. By following these steps, you're able to clearly identify when a partner is logging into a downstream tenant’s resources and subsequent activity in the environment, enhancing your ability to manage and monitor cross-tenant access efficiently.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 3850803887,
+          "title": "Public Preview - Auditing administrator events in Microsoft Entra Connect",
+          "description": "We have released a new version of Microsoft Entra Connect, version 2.4.129.0, that supports the logging of the changes an administrator makes on the Connect Sync Wizard and PowerShell. For more information, see: Auditing administrator events in Microsoft Entra Connect Sync (Public Preview). Where supported, we'll also autoupgrade customers to this version of Microsoft Entra Connect in February 2025. For customers who wish to be autoupgraded, ensure that you have auto-upgrade configured. For upgrade-related guidance, see Microsoft Entra Connect: Upgrade from a previous version to the latest.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 3119528473,
+          "title": "Public Preview - Flexible Federated Identity Credentials",
+          "description": "Flexible Federated Identity Credentials extend the existing Federated Identity Credential model by providing the ability to use wildcard matching against certain claims. Currently available for GitHub, GitLab, and Terraform Cloud scenarios, this functionality can be used to lower the total number of FICs required to managed similar scenarios. For more information, see: Flexible federated identity credentials (preview).",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 689699998,
+          "title": "General Availability - Real-time Password Spray Detection in Microsoft Entra ID Protection",
+          "description": "Traditionally, password spray attacks are detected post breach or as part of hunting activity. Now, we’ve enhanced Microsoft Entra ID Protection to detect password spray attacks in real-time before the attacker ever obtains a token. This reduces remediation from hours to seconds by interrupting attacks during the sign-in flow. Risk-based Conditional Access can automatically respond to this new signal by raising session risk, immediately challenging the sign-in attempt, and stopping password spray attempts in their tracks. This cutting-edge detection, now Generally Available, works alongside existing detections for advanced attacks such as Adversary-in-the-Middle (AitM) phishing and token theft, to ensure comprehensive coverage against modern attacks. For more information, see: What is Microsoft Entra ID Protection?",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 3976530161,
+          "title": "General Availability - Protected actions for hard deletions",
+          "description": "Customers can now configure Conditional Access policies to protect against early hard deletions. Protected action for hard deletion protects hard deletion of users, Microsoft 365 groups, and applications. For more information, see: What are protected actions in Microsoft Entra ID?.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 1717179274,
+          "title": "Public Preview - Elevate Access events are now exportable via Microsoft Entra Audit Logs",
+          "description": "This feature enables administrators to export and stream Elevate Access events to both first-party and third-party SIEM solutions via Microsoft Entra Audit logs. It enhances detection and improves logging capabilities, allowing visibility into who in their tenant has utilized Elevate Access. For more information on how to use the feature, see: View elevate access log entries.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 652264779,
+          "title": "Deprecated - Action Required by February 1, 2025: Azure AD Graph retirement",
+          "description": "The Azure AD Graph API service was [deprecated] in 2020. Retirement of the Azure AD Graph API service began in September 2024, and the next phase of this retirement starts February 1, 2025. This phase will impact new and existing applications unless action is taken. The latest updates on Azure AD Graph retirement can be found here: Take action by February 1: Azure AD Graph is retiring. Starting from February 1, both new and existing applications will be prevented from calling Azure AD Graph APIs, unless they're configured for an extension. You might not see impact right away, as we’re rolling out this change in stages across tenants. We anticipate full deployment of this change around the end of February, and by the end of March for national cloud deployments. If you haven't already, it's now urgent to review the applications on your tenant to see which ones depend on Azure AD Graph API access, and mitigate or migrate these before the February 1 cutoff date. For applications that haven't migrated to Microsoft Graph APIs, an extension can be set to allow the application access to Azure AD Graph through June 30, 2025.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 3381254978,
+          "title": "General Availability - Microsoft Entra Connect Version 2.4.129.0",
+          "description": "On January 15, 2025, we released Microsoft Entra Connect Sync Version 2.4.129.0 which supports auditing administrator events. More details are available in the release notes. We'll automatically upgrade eligible customers to this latest version of Microsoft Entra Connect in February 2025. For customers who wish to be autoupgraded, ensure that you have auto-upgrade configured.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        },
+        {
+          "id": 1409962203,
+          "title": "Deprecated - Take action to avoid impact when legacy MSOnline and AzureAD PowerShell modules retire",
+          "description": "As announced in Microsoft Entra change announcements and in the Microsoft Entra Blog, the MSOnline, and Microsoft Azure AD PowerShell modules (for Microsoft Entra ID) retired on March 30, 2024. The retirement for MSOnline PowerShell module starts in early April 2025, and ends in late May 2025. If you're using MSOnline PowerShell, you must take action by March 30, 2025 to avoid impact after the retirement by migrating any use of MSOnline to Microsoft Graph PowerShell SDK or Microsoft Entra PowerShell. Key points",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": [
+            {
+              "text": "Archive for What's new in Microsoft Entra",
+              "url": "whats-new-archive"
+            },
+            {
+              "text": "Fluent",
+              "url": "https://microsoft.design/articles/four-principles-for-the-future-of-design/"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "default background image",
+              "url": "https://aka.ms/entradefaultbackground"
+            },
+            {
+              "text": "Company Branding",
+              "url": "how-to-customize-branding"
+            },
+            {
+              "text": "Quickstart API-driven inbound provisioning with Graph Explorer",
+              "url": "../identity/app-provisioning/inbound-provisioning-api-graph-explorer"
+            },
+            {
+              "text": "Per-Policy Reporting",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact"
+            },
+            {
+              "text": "Insights and Reporting",
+              "url": "../identity/conditional-access/howto-conditional-access-insights-reporting"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Provision custom security attributes from HR sources",
+              "url": "../identity/app-provisioning/provision-custom-security-attributes"
+            },
+            {
+              "text": "Audience reporting",
+              "url": "../identity/conditional-access/troubleshoot-conditional-access#audience-reporting"
+            },
+            {
+              "text": "Configure cross-tenant synchronization",
+              "url": "../identity/multi-tenant-organizations/cross-tenant-synchronization-configure"
+            },
+            {
+              "text": "Microsoft cloud applications",
+              "url": "../identity/conditional-access/concept-conditional-access-cloud-apps#microsoft-cloud-applications"
+            },
+            {
+              "text": "How trust relationships work for forests in Active Directory",
+              "url": "../identity/domain-services/concepts-forest-trust"
+            },
+            {
+              "text": "How to configure Microsoft Entra certificate-based authentication",
+              "url": "../identity/authentication/how-to-certificate-based-authentication"
+            },
+            {
+              "text": "Understanding CRL validation",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#understanding-crl-validation"
+            },
+            {
+              "text": "Certificate Authority (CA) Scoping (Preview)",
+              "url": "../identity/authentication/concept-certificate-based-authentication-technical-deep-dive#certificate-authority-ca-scoping-preview"
+            },
+            {
+              "text": "SAML/WS-Fed identity providers",
+              "url": "../external-id/direct-federation-overview"
+            },
+            {
+              "text": "Create a custom authentication extension for attribute collection start and submit events",
+              "url": "../identity-platform/custom-extension-attribute-collection"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Policy impact",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "How to use the Global Secure Access deployment logs (preview)",
+              "url": "../global-secure-access/how-to-view-deployment-logs"
+            },
+            {
+              "text": "Conditional Access Optimization Agent in Microsoft Entra",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393"
+            },
+            {
+              "text": "Microsoft Entra Conditional Access optimization agent",
+              "url": "../identity/conditional-access/agent-optimization"
+            },
+            {
+              "text": "Suggested access packages in My Access (Preview)",
+              "url": "../id-governance/entitlement-management-suggested-access-packages"
+            },
+            {
+              "text": "conditionalAccessRoot: evaluate",
+              "url": "/en-us/graph/api/conditionalaccessroot-evaluate"
+            },
+            {
+              "text": "Revoke all refresh tokens for user (Preview)",
+              "url": "../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user-preview"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "official documentation",
+              "url": "../workload-id/workload-identity-federation-config-app-trust-managed-identity"
+            },
+            {
+              "text": "Microsoft Entra Connector account",
+              "url": "../identity/hybrid/connect/reference-connect-accounts-permissions"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "version history page",
+              "url": "../identity/hybrid/connect/reference-connect-version-history"
+            },
+            {
+              "text": "Privilege Control for Cloud Entitlements (PCCE)",
+              "url": "https://delinea.com/products/privilege-control-for-cloud-entitlements"
+            },
+            {
+              "text": "Important change announcement: Microsoft Entra Permissions Management end of sale and retirement",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/important-change-announcement-microsoft-entra-permissions-management-end-of-sale/4399382"
+            },
+            {
+              "text": "Track and investigate identity activities with linkable identifiers in Microsoft Entra (preview)",
+              "url": "../identity/authentication/how-to-authentication-track-linkable-identifiers"
+            },
+            {
+              "text": "Require reauthentication every time",
+              "url": "../identity/conditional-access/concept-session-lifetime#require-reauthentication-every-time"
+            },
+            {
+              "text": "Custom attributes for Microsoft Entra Domain Services",
+              "url": "../identity/domain-services/concepts-custom-attributes"
+            },
+            {
+              "text": "Policy impact (Preview)",
+              "url": "../identity/conditional-access/concept-conditional-access-report-only#policy-impact-preview"
+            },
+            {
+              "text": "App Management Policy Framework",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta"
+            },
+            {
+              "text": "audiences",
+              "url": "/en-us/graph/api/resources/applicationauthenticationmethodpolicy?view=graph-rest-beta#what-restrictions-can-be-managed-in-microsoft-graph"
+            },
+            {
+              "text": "audiencesConfiguration resource type",
+              "url": "/en-us/graph/api/resources/audiencesconfiguration"
+            },
+            {
+              "text": "Microsoft Entra Connect pane",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted"
+            },
+            {
+              "text": "Microsoft Download Center",
+              "url": "https://www.microsoft.com/en-us/download/details.aspx?id=47594"
+            },
+            {
+              "text": "Secure Future Initiative",
+              "url": "https://www.microsoft.com/trust-center/security/secure-future-initiative"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/whats-new-in-microsoft-entra---september-2024/4253153"
+            },
+            {
+              "text": "2.4.18.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24180"
+            },
+            {
+              "text": "2.4.21.0",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#24210"
+            },
+            {
+              "text": "Minimum versions",
+              "url": "../identity/hybrid/connect/harden-update-ad-fs-pingfederate#minimum-versions"
+            },
+            {
+              "text": "legacy MFA and SSPR policies",
+              "url": "../identity/authentication/concept-authentication-methods-manage#legacy-mfa-and-sspr-policies"
+            },
+            {
+              "text": "converged authentication methods policy",
+              "url": "../identity/authentication/concept-authentication-methods-manage"
+            },
+            {
+              "text": "the migration toggle",
+              "url": "../identity/authentication/how-to-authentication-methods-manage#start-the-migration"
+            },
+            {
+              "text": "How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID",
+              "url": "../identity/authentication/how-to-authentication-methods-manage"
+            },
+            {
+              "text": "Add or update a user's profile information and settings in the Microsoft Entra admin center",
+              "url": "how-to-manage-user-profile-info"
+            },
+            {
+              "text": "Authentication methods in Microsoft Entra ID - QR code authentication method (Preview)",
+              "url": "../identity/authentication/concept-authentication-qr-code"
+            },
+            {
+              "text": "Custom SAML/WS-Fed identity providers",
+              "url": "../external-id/customers/concept-authentication-methods-customers#custom-samlws-fed-identity-providers"
+            },
+            {
+              "text": "System-preferred multifactor authentication - Authentication methods policy",
+              "url": "../identity/authentication/concept-system-preferred-multifactor-authentication"
+            },
+            {
+              "text": "Microsoft Graph permissions reference",
+              "url": "/en-us/graph/permissions-reference"
+            },
+            {
+              "text": "Manage employee lifecycle using Microsoft Security Copilot (Preview)",
+              "url": "copilot-entra-lifecycle-workflow"
+            },
+            {
+              "text": "Microsoft Entra PowerShell module now generally available",
+              "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/microsoft-entra-powershell-module-now-generally-available/4365718"
+            },
+            {
+              "text": "Auditing administrator events in Microsoft Entra Connect Sync (Public Preview)",
+              "url": "../identity/hybrid/connect/admin-audit-logging"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "Microsoft Entra Connect: Upgrade from a previous version to the latest",
+              "url": "../identity/hybrid/connect/how-to-upgrade-previous-version"
+            },
+            {
+              "text": "Flexible federated identity credentials (preview)",
+              "url": "../workload-id/workload-identities-flexible-federated-identity-credentials"
+            },
+            {
+              "text": "What is Microsoft Entra ID Protection?",
+              "url": "../id-protection/overview-identity-protection"
+            },
+            {
+              "text": "What are protected actions in Microsoft Entra ID?",
+              "url": "../identity/role-based-access-control/protected-actions-overview"
+            },
+            {
+              "text": "View elevate access log entries",
+              "url": "/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal%2Centra-audit-logs#view-elevate-access-log-entries"
+            },
+            {
+              "text": "Retirement of the Azure AD Graph API service",
+              "url": "https://techcommunity.microsoft.com/t5/microsoft-entra-blog/june-2024-update-on-azure-ad-graph-api-retirement/ba-p/4094534"
+            },
+            {
+              "text": "Take action by February 1: Azure AD Graph is retiring",
+              "url": "https://aka.ms/AzureADGraphRetirement"
+            },
+            {
+              "text": "an extension",
+              "url": "/en-us/graph/applications-authenticationbehaviors?tabs=http#allow-extended-azure-ad-graph-access-until-june-30-2025"
+            },
+            {
+              "text": "Azure AD Graph API retirement",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-azure-ad-graph-api-retirement/4090533"
+            },
+            {
+              "text": "release notes",
+              "url": "../identity/hybrid/connect/reference-connect-version-history#241290"
+            },
+            {
+              "text": "ensure that you have auto-upgrade configured",
+              "url": "../identity/hybrid/connect/how-to-connect-install-automatic-upgrade"
+            },
+            {
+              "text": "change announcements",
+              "url": "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ChangeManagementHubList.ReactView"
+            },
+            {
+              "text": "Blog",
+              "url": "https://techcommunity.microsoft.com/blog/identity/important-update-deprecation-of-azure-ad-powershell-and-msonline-powershell-modu/4094536"
+            },
+            {
+              "text": "Microsoft Graph PowerShell SDK",
+              "url": "/en-us/powershell/microsoftgraph/installation"
+            },
+            {
+              "text": "Microsoft Entra PowerShell",
+              "url": "/en-us/powershell/entra-powershell/installation"
+            },
+            {
+              "text": "Action required: MSOnline and AzureAD PowerShell retirement - 2025 info and resources",
+              "url": "https://techcommunity.microsoft.com/blog/identity/action-required-msonline-and-azuread-powershell-retirement---2025-info-and-resou/4364991"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "General Updates",
+      "category": "General",
+      "updates": [
+        {
+          "id": 1177716518,
+          "title": "Take note of the \"ServiceProvider\" value in the CrossTenantAccessType column: This filter can be applied to refine the log data. When activated, it immediately isolates events related to partner logins.",
+          "description": "Take note of the \"ServiceProvider\" value in the CrossTenantAccessType column: This filter can be applied to refine the log data. When activated, it immediately isolates events related to partner logins.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": []
+        },
+        {
+          "id": 1783940894,
+          "title": "This filter can be applied to refine the log data. When activated, it immediately isolates events related to partner logins.",
+          "description": "This filter can be applied to refine the log data. When activated, it immediately isolates events related to partner logins.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": []
+        },
+        {
+          "id": 2925683037,
+          "title": "Utilize the \"Home Tenant ID\" and \"Resource Tenant ID\" Columns: These two columns identify logins coming from the partner’s tenant to a downstream tenant.",
+          "description": "Utilize the \"Home Tenant ID\" and \"Resource Tenant ID\" Columns: These two columns identify logins coming from the partner’s tenant to a downstream tenant.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": []
+        },
+        {
+          "id": 1794009042,
+          "title": "These two columns identify logins coming from the partner’s tenant to a downstream tenant.",
+          "description": "These two columns identify logins coming from the partner’s tenant to a downstream tenant.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": []
+        },
+        {
+          "id": 3204054305,
+          "title": "MSOnline PowerShell will retire, and stop working, between early April 2025 and late May 2025",
+          "description": "MSOnline PowerShell will retire, and stop working, between early April 2025 and late May 2025",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": []
+        },
+        {
+          "id": 4179965481,
+          "title": "AzureAD PowerShell will no longer be supported after March 30, 2025, but its retirement will happen in early July 2025. This postponement is to allow you time to finish the MSOnline PowerShell migration",
+          "description": "AzureAD PowerShell will no longer be supported after March 30, 2025, but its retirement will happen in early July 2025. This postponement is to allow you time to finish the MSOnline PowerShell migration",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": []
+        },
+        {
+          "id": 2254073676,
+          "title": "To ensure customer readiness for MSOnline PowerShell retirement, a series of temporary outage tests will occur for all tenants between January 2025 and March 2025.",
+          "description": "To ensure customer readiness for MSOnline PowerShell retirement, a series of temporary outage tests will occur for all tenants between January 2025 and March 2025.",
+          "type": "Update",
+          "serviceCategory": "General",
+          "productCapability": null,
+          "date": "2025-01-01",
+          "service": "Entra",
+          "links": []
+        }
+      ]
+    }
+  ]
+}
