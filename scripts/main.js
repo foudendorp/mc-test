@@ -277,9 +277,26 @@ class IntuneUpdatesTracker {
                 </div>
             `;
         } else {
-            this.updatesContainer.innerHTML = this.displayedUpdates
-                .map(update => this.createUpdateCard(update))
-                .join('');
+            this.updatesContainer.innerHTML = `
+                <div class="updates-table-container">
+                    <table class="updates-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Week</th>
+                                <th>Category</th>
+                                <th>Title</th>
+                                <th>Topic</th>
+                                <th>Features</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${this.displayedUpdates.map(update => this.createUpdateRow(update)).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
         }
 
         // Show/hide load more button
@@ -289,46 +306,27 @@ class IntuneUpdatesTracker {
         }
     }
 
-    createUpdateCard(update) {
+    createUpdateRow(update) {
         const formattedDate = this.formatDate(update.date);
         const categoryName = this.formatCategoryName(update.category);
+        const featuresCount = update.features ? update.features.length : 0;
         
-        const featuresHtml = update.features ? 
-            update.features.map(feature => `<li>${feature}</li>`).join('') : '';
-
         return `
-            <article class="update-card" data-category="${update.category}">
-                <header class="update-header">
-                    <div class="update-badge">${update.week}</div>
-                    <div class="update-meta">
-                        <span class="update-category">${categoryName}</span>
-                        <span class="update-date">${formattedDate}</span>
-                    </div>
-                </header>
-                
-                <div class="update-body">
-                    <h3 class="update-title">${update.title}</h3>
-                    <p class="update-subtitle">${update.subtitle || ''}</p>
-                    <p class="update-topic"><strong>Topic:</strong> ${update.topic}</p>
-                    <div class="update-content">
-                        ${this.truncateText(update.content, 200)}
-                    </div>
-                    
-                    ${featuresHtml ? `
-                        <div class="update-features">
-                            <h4>Key Features:</h4>
-                            <ul>${featuresHtml}</ul>
-                        </div>
-                    ` : ''}
-                </div>
-                
-                <footer class="update-footer">
-                    <a href="${update.link}" target="_blank" class="learn-more-btn">
-                        <i class="fas fa-external-link-alt"></i>
-                        Learn More
-                    </a>
-                </footer>
-            </article>
+            <tr class="update-row" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
+                <td data-label="Date">${formattedDate}</td>
+                <td data-label="Week">${this.truncateText(update.week, 30)}</td>
+                <td data-label="Category">
+                    <span class="category-badge category-${update.category}">${categoryName}</span>
+                </td>
+                <td data-label="Title">${this.truncateText(update.title, 50)}</td>
+                <td data-label="Topic">${this.truncateText(update.topic, 25)}</td>
+                <td data-label="Features">${featuresCount > 0 ? `${featuresCount} features` : 'N/A'}</td>
+                <td data-label="Action">
+                    <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showUpdateModal('${update.id}')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
         `;
     }
 
@@ -507,6 +505,75 @@ class IntuneUpdatesTracker {
     closeModal() {
         const modals = document.querySelectorAll('.modal-overlay');
         modals.forEach(modal => modal.remove());
+    }
+
+    showUpdateModal(updateId) {
+        const update = this.updates.find(u => u.id == updateId);
+        if (!update) return;
+
+        const formattedDate = this.formatDate(update.date);
+        const categoryName = this.formatCategoryName(update.category);
+        
+        const featuresHtml = update.features ? 
+            update.features.map(feature => `<li>${feature}</li>`).join('') : '<li>No specific features listed</li>';
+
+        const modalHtml = `
+            <div class="modal-overlay" onclick="window.tracker.closeModal()">
+                <div class="modal-content" onclick="event.stopPropagation()">
+                    <div class="modal-header">
+                        <h2>${update.title}</h2>
+                        <button class="modal-close" onclick="window.tracker.closeModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="update-meta-info">
+                            <div class="meta-item">
+                                <strong>Date:</strong> ${formattedDate}
+                            </div>
+                            <div class="meta-item">
+                                <strong>Week:</strong> ${update.week}
+                            </div>
+                            <div class="meta-item">
+                                <strong>Category:</strong> 
+                                <span class="category-badge category-${update.category}">${categoryName}</span>
+                            </div>
+                            <div class="meta-item">
+                                <strong>Topic:</strong> ${update.topic}
+                            </div>
+                            ${update.serviceRelease ? `
+                                <div class="meta-item">
+                                    <strong>Service Release:</strong> ${update.serviceRelease}
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="update-content-full">
+                            <h3>Description</h3>
+                            <p>${update.content}</p>
+                        </div>
+                        
+                        ${update.features ? `
+                            <div class="update-features-full">
+                                <h3>Key Features</h3>
+                                <ul>${featuresHtml}</ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="modal-footer">
+                        <a href="${update.link}" target="_blank" class="learn-more-btn primary">
+                            <i class="fas fa-external-link-alt"></i>
+                            Learn More on Microsoft Learn
+                        </a>
+                        <button onclick="window.tracker.closeModal()" class="close-btn">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
     }
 
     formatDate(dateString) {
