@@ -5,8 +5,10 @@
   "main": "index.html",
   "scripts": {
     "start": "npx serve .",
-    "dev": "npx live-server",
-    "build": "echo 'No build step required for static site'",
+    "dev": "npx live-server", 
+    "generate-data": "node scripts/generate-data.js || node scripts/generate-fallback-data.js",
+    "generate-fallback": "node scripts/generate-fallback-data.js",
+    "build": "npm run generate-data",
     "test": "echo 'No tests configured'"
   },
   "keywords": [
@@ -19,6 +21,11 @@
   ],
   "author": "Your Name",
   "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "node-fetch": "^3.3.2",
+    "jsdom": "^23.0.1"
+  },
   "devDependencies": {
     "live-server": "^1.2.2",
     "serve": "^14.2.1"
@@ -27,5 +34,6 @@
     "type": "git",
     "url": "https://github.com/foudendorp/mc-test.git"
   },
-  "homepage": "https://foudendorp.github.io/mc-test"
+  "homepage": "https://foudendorp.github.io/mc-test",
+  "type": "module"
 }

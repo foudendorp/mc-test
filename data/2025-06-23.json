@@ -1,0 +1,178 @@
+{
+  "week": "Week of June 23, 2025 (Service release 2506)",
+  "date": "2025-06-23",
+  "serviceRelease": "2506",
+  "topics": [
+    {
+      "category": "app-management",
+      "topic": "App management",
+      "updates": [
+        {
+          "id": "2025-06-23-apple-ai-features",
+          "title": "Microsoft Intune support for Apple AI features",
+          "subtitle": "New standalone settings for Genmojis, Writing tools, and screen capture",
+          "content": "Intune app protection policies have new standalone settings for Apple AI features (Genmojis, Writing tools, and screen capture). These settings are supported by apps updated to version 19.7.12+ for Xcode 15, and 20.4.0+ for Xcode 16.",
+          "features": [
+            "Standalone Genmojis control setting",
+            "Writing tools policy management",
+            "Screen capture permission controls",
+            "Support for Xcode 15 (v19.7.12+) and Xcode 16 (v20.4.0+)"
+          ],
+          "link": "https://learn.microsoft.com/en-us/intune/intune-service/apps/app-protection-policy-settings-ios",
+          "platforms": ["iOS", "iPadOS"],
+          "isNew": true
+        },
+        {
+          "id": "2025-06-23-enterprise-app-catalog-esp",
+          "title": "Add Enterprise App Catalog apps to ESP blocking apps list",
+          "subtitle": "Windows Autopilot now supports Enterprise App Catalog apps",
+          "content": "Windows Autopilot now supports Enterprise App Catalog apps. You can select apps from the Enterprise App Catalog as blocking apps in the Enrollment Status Page (ESP) and Device Preparation Page (DPP) profiles.",
+          "features": [
+            "Enterprise App Catalog integration with Autopilot",
+            "ESP blocking apps configuration",
+            "DPP profile app selection",
+            "Ensures app delivery before desktop access"
+          ],
+          "link": "https://learn.microsoft.com/en-us/intune/intune-service/enrollment/windows-enrollment-status",
+          "platforms": ["Windows"],
+          "isNew": true
+        },
+        {
+          "id": "2025-06-23-managed-home-screen-android16",
+          "title": "Managed Home Screen orientation changes with Android 16",
+          "subtitle": "Screen orientation behavior changes for tablets",
+          "content": "Starting with Android 16, Android stops enforcing screen orientation on devices with 600dp and larger display settings. This change impacts the Managed Home Screen (MHS) on devices with larger form factors, like tablets.",
+          "features": [
+            "Android 16 orientation behavior changes",
+            "Affects devices with 600dp+ displays",
+            "Orientation determined by device setting, not MHS"
+          ],
+          "link": "https://developer.android.com/about/versions/16/behavior-changes-16",
+          "platforms": ["Android Enterprise"],
+          "isNew": true
+        }
+      ]
+    },
+    {
+      "category": "device-configuration",
+      "topic": "Device configuration",
+      "updates": [
+        {
+          "id": "2025-06-23-apple-settings-catalog",
+          "title": "New settings available in the Apple settings catalog",
+          "subtitle": "iOS/iPadOS and macOS configuration options",
+          "content": "New settings added to the Apple settings catalog including Idle Reboot Allowed for iOS/iPadOS, Microsoft Edge policy updates for macOS, and Allow Device Identifiers In Attestation.",
+          "features": [
+            "iOS/iPadOS: Idle Reboot Allowed setting",
+            "macOS: Updated Microsoft Edge policies (hundreds of new settings)",
+            "macOS: Allow Device Identifiers In Attestation",
+            "Apple deprecated Identification payload in macOS 15.4"
+          ],
+          "link": "https://learn.microsoft.com/en-us/intune/intune-service/configuration/settings-catalog",
+          "platforms": ["iOS", "iPadOS", "macOS"],
+          "isNew": true
+        },
+        {
+          "id": "2025-06-23-android-bluetooth-settings",
+          "title": "New Block Bluetooth setting in the Android Enterprise settings catalog",
+          "subtitle": "Enhanced Bluetooth control for Android Enterprise devices",
+          "content": "New Block Bluetooth setting and Block Bluetooth Configuration setting for Android Enterprise devices. These settings provide different levels of Bluetooth control and user interaction.",
+          "features": [
+            "Block Bluetooth setting (disables Bluetooth completely)",
+            "Block Bluetooth Configuration setting (prevents user changes)",
+            "Different behavior based on user's previous Bluetooth state",
+            "Enhanced device security options"
+          ],
+          "link": "https://learn.microsoft.com/en-us/intune/intune-service/configuration/settings-catalog-android",
+          "platforms": ["Android Enterprise COPE", "Android Enterprise COBO", "Android Enterprise COSU"],
+          "isNew": true
+        }
+      ]
+    },
+    {
+      "category": "device-management",
+      "topic": "Device management",
+      "updates": [
+        {
+          "id": "2025-06-23-policy-reporting-service-v3",
+          "title": "New reporting system for improved performance and data consistency",
+          "subtitle": "Policy Reporting Service (PRS) V3 rollout",
+          "content": "Microsoft Intune is rolling out the new Policy Reporting Service (PRS) V3. The new system brings faster report generation, improved reliability, and better data consistency.",
+          "features": [
+            "Faster report generation",
+            "Improved reliability and data consistency",
+            "Automatic transition for compliance and device configuration reports",
+            "Quicker updates in Intune admin center",
+            "Fewer issues with stale data"
+          ],
+          "link": "https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/reports",
+          "platforms": ["All platforms"],
+          "isNew": true
+        }
+      ]
+    },
+    {
+      "category": "device-security",
+      "topic": "Device security",
+      "updates": [
+        {
+          "id": "2025-06-23-scep-smime-requirements",
+          "title": "New attributes and S/MIME baseline requirements for SCEP certificate profiles",
+          "subtitle": "Enhanced certificate security requirements",
+          "content": "Intune supports two new attributes for subject name settings in SCEP and PKCS device configuration profiles. Beginning July 16th, public CAs require these attributes for S/MIME certificates.",
+          "features": [
+            "New G={{GivenName}} attribute support",
+            "New SN={{SurName}} attribute support",
+            "Required for S/MIME certificates from public CAs (starting July 16th)",
+            "Enhanced certificate security compliance"
+          ],
+          "link": "https://learn.microsoft.com/en-us/intune/intune-service/protect/certificates-profile-scep#smime-certificate-requirements-for-third-party-public-ca",
+          "platforms": ["All platforms"],
+          "isNew": true
+        }
+      ]
+    },
+    {
+      "category": "intune-apps",
+      "topic": "Intune apps",
+      "updates": [
+        {
+          "id": "2025-06-23-new-protected-apps",
+          "title": "Newly available protected apps for Intune",
+          "subtitle": "Four new protected applications available",
+          "content": "The following protected apps are now available for Microsoft Intune: Datasite for Intune, Mijn InPlanning, Nitro PDF Pro, and SMART TeamWorks.",
+          "features": [
+            "Datasite for Intune by Datasite (iOS)",
+            "Mijn InPlanning by Intus Workforce Solutions (iOS)", 
+            "Nitro PDF Pro by Nitro Software, Inc. (iOS)",
+            "SMART TeamWorks by SMART Technologies ULC (iOS)"
+          ],
+          "link": "https://learn.microsoft.com/en-us/intune/intune-service/apps/apps-supported-intune-apps",
+          "platforms": ["iOS"],
+          "isNew": true
+        }
+      ]
+    },
+    {
+      "category": "monitor-troubleshoot",
+      "topic": "Monitor and troubleshoot",
+      "updates": [
+        {
+          "id": "2025-06-23-windows-hardware-attestation-report",
+          "title": "New status column in Windows hardware attestation report",
+          "subtitle": "Enhanced visibility into attestation errors",
+          "content": "Added a new column, Attest Status, to the Windows hardware attestation report to improve visibility into attestation errors. This column shows error messages received during the attestation process.",
+          "features": [
+            "New Attest Status column in reports",
+            "WinINet error visibility",
+            "HTTP bad request error details",
+            "Enhanced troubleshooting capabilities"
+          ],
+          "link": "https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/reports#windows-hardware-attestation-report-organizational",
+          "platforms": ["Windows"],
+          "isNew": true
+        }
+      ]
+    }
+  ]
+}

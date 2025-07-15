@@ -1,0 +1,28 @@
+{
+  "week": "Week of June 9, 2025",
+  "date": "2025-06-09",
+  "serviceRelease": null,
+  "topics": [
+    {
+      "category": "app-management",
+      "topic": "App management",
+      "updates": [
+        {
+          "id": "2025-06-09-arm64-win32-apps",
+          "title": "ARM64 support for Win32 apps",
+          "subtitle": "Windows ARM64 device support for Win32 applications",
+          "content": "When adding a Win32 app to Intune, you can select an option to check and install the app on Windows devices running ARM64 operating systems. Existing 64-bit Win32 applications will also have ARM64 selected automatically.",
+          "features": [
+            "ARM64 operating system architecture targeting",
+            "Automatic ARM64 selection for existing 64-bit apps",
+            "Dedicated ARM64 device support",
+            "x64 selection no longer targets ARM64 devices"
+          ],
+          "link": "https://learn.microsoft.com/en-us/intune/intune-service/apps/apps-win32-app-management",
+          "platforms": ["Windows"],
+          "isNew": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "notices": [
+    {
+      "id": "ios-17-support-change",
+      "title": "Plan for Change: Intune is moving to support iOS/iPadOS 17 and later",
+      "type": "warning",
+      "priority": "high",
+      "effectiveDate": "2025-Q4",
+      "content": "Later in calendar year 2025, we expect iOS 26 and iPadOS 26 to be released by Apple. Microsoft Intune, including the Intune Company Portal and Intune app protection policies (APP, also known as MAM), requires iOS 17/iPadOS 17 and higher shortly after the iOS/iPadOS 26 release.",
+      "impact": "Devices running iOS/iPadOS 16 and below will no longer be supported",
+      "actionRequired": "Check reporting for affected devices and plan OS upgrades",
+      "link": "https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/supported-devices-browsers"
+    },
+    {
+      "id": "macos-14-support-change", 
+      "title": "Plan for change: Intune is moving to support macOS 14 and higher later this year",
+      "type": "warning",
+      "priority": "high",
+      "effectiveDate": "2025-Q4",
+      "content": "Later in calendar year 2025, we expect macOS Tahoe 26 to be released by Apple. Microsoft Intune, the Company Portal app, and the Intune mobile device management agent support macOS 14 and later.",
+      "impact": "Devices running macOS 13.x and below will not be able to enroll (existing enrollments continue)",
+      "actionRequired": "Upgrade devices to macOS 14+ before the change",
+      "link": "https://support.apple.com/105113"
+    },
+    {
+      "id": "intune-app-sdk-ios-update",
+      "title": "Update to the latest Intune App SDK and Intune App Wrapping Tool for iOS and register your app with Microsoft Entra",
+      "type": "info",
+      "priority": "medium",
+      "effectiveDate": "2025-09-01",
+      "content": "To support the upcoming release of iOS/iPadOS 26 and ensure continued app protection policy enforcement, update to the latest versions of the Intune App SDK and the Intune App Wrapping Tool. SDK v21.0.0+ requires app registration with Microsoft Entra.",
+      "impact": "Apps not updated may fail to function or receive app protection policies on iOS 26",
+      "actionRequired": "Update to latest SDK versions and register apps with Microsoft Entra",
+      "link": "https://github.com/microsoftconnect/ms-intune-app-sdk-ios/releases"
+    },
+    {
+      "id": "google-play-integrity-update",
+      "title": "Plan for Change: Google Play strong integrity definition update for Android 13 or above", 
+      "type": "warning",
+      "priority": "medium",
+      "effectiveDate": "2025-09-30",
+      "content": "Google updated the definition of 'Strong Integrity' for devices running Android 13+, requiring hardware-backed security signals and recent security updates. Microsoft Intune will enforce this change by September 30, 2025.",
+      "impact": "Devices on Android 13+ without recent security updates may be downgraded from Strong Integrity to Device Integrity",
+      "actionRequired": "Ensure devices receive timely security updates and review compliance policies",
+      "link": "https://android-developers.googleblog.com/2024/12/making-play-integrity-api-faster-resilient-private.html"
+    },
+    {
+      "id": "new-intune-connector-autopilot",
+      "title": "Plan for Change: New Intune connector for deploying Microsoft Entra hybrid joined devices using Windows Autopilot",
+      "type": "critical",
+      "priority": "high", 
+      "effectiveDate": "2025-06-30",
+      "content": "Microsoft released an updated Intune Connector for Active Directory using a Managed Service Account instead of local SYSTEM account. The old connector will be removed at the end of June 2025.",
+      "impact": "Old connector will stop accepting enrollments after June 30, 2025",
+      "actionRequired": "Download and install the new connector, configure MSA, update ODJConnectorEnrollmentWizard.exe.config",
+      "link": "https://aka.ms/Intune-connector-blog"
+    }
+  ]
+}
