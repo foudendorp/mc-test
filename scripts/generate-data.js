@@ -121,7 +121,7 @@ async function fetchIntuneUpdates() {
                     }
                     
                     const update = {
-                        id: Date.now() + Math.random(), // Simple unique ID
+                        id: generateContentId(title, subtitle, content), // Deterministic ID based on content
                         title: title,
                         subtitle: subtitle || undefined,
                         content: content || 'No additional details available.',
@@ -180,7 +180,7 @@ async function fetchIntuneUpdates() {
             
             if (content) {
                 notices.push({
-                    id: Date.now() + Math.random(),
+                    id: generateContentId(header.textContent.trim(), '', content), // Deterministic ID based on content
                     title: header.textContent.trim(),
                     content: content.trim(),
                     date: new Date().toISOString().split('T')[0],
@@ -405,7 +405,7 @@ async function createFallbackData() {
                 category: "device-management",
                 updates: [
                     {
-                        id: 1,
+                        id: generateContentId("Microsoft Copilot in Intune", "Explore Intune data with natural language", "You can now use Microsoft Copilot in Intune to explore your Intune data using natural language, take action on the results, manage policies and settings, understand your security posture, and troubleshoot device issues."),
                         title: "Microsoft Copilot in Intune",
                         subtitle: "Explore Intune data with natural language",
                         content: "You can now use Microsoft Copilot in Intune to explore your Intune data using natural language, take action on the results, manage policies and settings, understand your security posture, and troubleshoot device issues.",
@@ -426,7 +426,7 @@ async function createFallbackData() {
     
     // Create fallback notices
     const fallbackNotice = {
-        id: 1,
+        id: generateContentId("Data Generation Notice", "", "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn."),
         title: "Data Generation Notice",
         content: "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn.",
         date: new Date().toISOString().split('T')[0],
@@ -500,6 +500,14 @@ async function createFallbackData() {
 // Utility functions for change detection and monthly grouping
 function generateFileHash(content) {
     return crypto.createHash('sha256').update(JSON.stringify(content)).digest('hex');
+}
+
+function generateContentId(title, subtitle = '', content = '') {
+    // Create a deterministic ID based on content
+    const combinedText = `${title}${subtitle}${content}`.toLowerCase().replace(/\s+/g, '');
+    const hash = crypto.createHash('md5').update(combinedText).digest('hex');
+    // Return first 8 characters as a shorter, readable ID
+    return parseInt(hash.substring(0, 8), 16);
 }
 
 function fileExists(filePath) {
