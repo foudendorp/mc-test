@@ -79,50 +79,125 @@ class IntuneUpdatesTracker {
 
     async fetchIntuneUpdates() {
         try {
+            console.log('Starting to fetch Intune updates...');
+            
             // Load the index file to get available data files
+            console.log('Fetching index.json...');
             const indexResponse = await fetch('./data/index.json');
+            
+            if (!indexResponse.ok) {
+                console.log('Index file not found, using fallback data');
+                return this.getFallbackData();
+            }
+            
             const indexData = await indexResponse.json();
+            console.log('Index data loaded:', indexData);
             
             // Load all update files
             const updates = [];
+            console.log(`Loading ${indexData.dataFiles.length} data files...`);
+            
             for (const fileInfo of indexData.dataFiles) {
-                const fileResponse = await fetch(`./data/${fileInfo.filename}`);
-                const fileData = await fileResponse.json();
-                
-                // Process each topic and its updates
-                fileData.topics.forEach(topic => {
-                    topic.updates.forEach(update => {
-                        updates.push({
-                            ...update,
-                            category: topic.category,
-                            topic: topic.topic,
-                            date: fileData.date,
-                            week: fileData.week,
-                            serviceRelease: fileData.serviceRelease
+                try {
+                    console.log(`Fetching ${fileInfo.filename}...`);
+                    const fileResponse = await fetch(`./data/${fileInfo.filename}`);
+                    
+                    if (!fileResponse.ok) {
+                        console.warn(`Failed to load ${fileInfo.filename}`);
+                        continue;
+                    }
+                    
+                    const fileData = await fileResponse.json();
+                    console.log(`Loaded ${fileInfo.filename} with ${fileData.topics?.length || 0} topics`);
+                    
+                    // Process each topic and its updates
+                    if (fileData.topics) {
+                        fileData.topics.forEach(topic => {
+                            if (topic.updates) {
+                                topic.updates.forEach(update => {
+                                    updates.push({
+                                        ...update,
+                                        category: topic.category,
+                                        topic: topic.topic,
+                                        date: fileData.date,
+                                        week: fileData.week,
+                                        serviceRelease: fileData.serviceRelease
+                                    });
+                                });
+                            }
                         });
-                    });
-                });
+                    }
+                } catch (fileError) {
+                    console.error(`Error loading ${fileInfo.filename}:`, fileError);
+                }
             }
             
             // Load notices
-            const noticesResponse = await fetch('./data/notices.json');
-            const noticesData = await noticesResponse.json();
+            let notices = [];
+            try {
+                console.log('Fetching notices.json...');
+                const noticesResponse = await fetch('./data/notices.json');
+                if (noticesResponse.ok) {
+                    const noticesData = await noticesResponse.json();
+                    notices = noticesData.notices || [];
+                    console.log(`Loaded ${notices.length} notices`);
+                } else {
+                    console.warn('Notices file not found');
+                }
+            } catch (noticesError) {
+                console.error('Error loading notices:', noticesError);
+            }
+            
+            console.log(`Total updates loaded: ${updates.length}`);
             
             return {
                 updates: updates.sort((a, b) => new Date(b.date) - new Date(a.date)),
-                notices: noticesData.notices,
+                notices: notices,
                 indexData: indexData
             };
             
         } catch (error) {
             console.error('Error loading JSON data:', error);
-            // Fallback to empty data
-            return {
-                updates: [],
-                notices: [],
-                indexData: { dataFiles: [], totalUpdates: 0 }
-            };
+            console.log('Using fallback data due to error');
+            return this.getFallbackData();
         }
+    }
+
+    getFallbackData() {
+        console.log('Using fallback data');
+        return {
+            updates: [
+                {
+                    id: 1,
+                    title: "Microsoft Copilot in Intune",
+                    subtitle: "Explore Intune data with natural language",
+                    content: "You can now use Microsoft Copilot in Intune to explore your Intune data using natural language, take action on the results, manage policies and settings, understand your security posture, and troubleshoot device issues.",
+                    features: [
+                        "Explore your Intune data using natural language queries",
+                        "Conversational chat experience for device troubleshooting",
+                        "Policy and setting management assistance"
+                    ],
+                    link: "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new",
+                    category: "device-management",
+                    topic: "Device management",
+                    date: "2025-07-14",
+                    week: "Week of July 14, 2025"
+                }
+            ],
+            notices: [
+                {
+                    id: 1,
+                    title: "Data Loading Notice",
+                    content: "The system is loading data from JSON files. If this message persists, there may be an issue with data generation.",
+                    date: "2025-07-15",
+                    type: "info"
+                }
+            ],
+            indexData: {
+                dataFiles: [],
+                totalUpdates: 1
+            }
+        };
     }
 
     filterUpdates() {
@@ -350,6 +425,13 @@ class IntuneUpdatesTracker {
         
         if (totalNoticesElement) {
             totalNoticesElement.textContent = this.notices.length;
+        }
+
+        // Update the "This Week" stat to show "Total Weeks" instead
+        const thisWeekElement = document.getElementById('thisWeek');
+        if (thisWeekElement) {
+            const uniqueWeeks = new Set(this.updates.map(update => update.week));
+            thisWeekElement.textContent = uniqueWeeks.size;
         }
     }
 
