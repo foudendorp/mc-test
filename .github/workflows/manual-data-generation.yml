@@ -1,0 +1,72 @@
+name: Manual Data Generation Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_regenerate:
+        description: 'Force regenerate all data files'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  generate_data:
+    runs-on: ubuntu-latest
+    name: Generate JSON Data Files
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate JSON data files
+        run: |
+          echo "🚀 Starting manual data generation..."
+          echo "Force regenerate: ${{ github.event.inputs.force_regenerate }}"
+          
+          # Try main data generation
+          if npm run generate-data; then
+            echo "✅ Data generation successful"
+          else
+            echo "❌ Data generation failed, using fallback"
+            npm run generate-fallback
+          fi
+
+      - name: Show generated files
+        run: |
+          echo "📁 Generated data structure:"
+          find data/ -type f -exec ls -la {} \;
+          echo ""
+          echo "📊 File contents summary:"
+          find data/ -name "*.json" -exec echo "=== {} ===" \; -exec head -10 {} \;
+
+      - name: Commit and push generated files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Data Generator"
+          
+          git add data/
+          
+          if git diff --staged --quiet; then
+            echo "📝 No changes to commit"
+          else
+            echo "💾 Committing generated data files..."
+            git commit -m "🤖 Manual data generation: $(date +'%Y-%m-%d %H:%M UTC')"
+            git push
+            echo "✅ Data files committed and pushed successfully"
+          fi
+
+      - name: Summary
+        run: |
+          echo "🎉 Manual data generation completed!"
+          echo "Check your repository for updated JSON files in the data/ directory."
