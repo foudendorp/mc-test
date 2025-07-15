@@ -293,6 +293,7 @@ class IntuneUpdatesTracker {
                             <tr>
                                 <th>Date</th>
                                 <th>Month</th>
+                                <th>Service</th>
                                 <th>Category</th>
                                 <th>Title</th>
                                 <th>Topic</th>
@@ -325,6 +326,9 @@ class IntuneUpdatesTracker {
             <tr class="update-row" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
                 <td data-label="Date">${formattedDate}</td>
                 <td data-label="Month">${monthName}</td>
+                <td data-label="Service">
+                    <span class="service-badge service-${(update.service || 'unknown').toLowerCase()}">${update.service || 'Unknown'}</span>
+                </td>
                 <td data-label="Category">
                     <span class="category-badge category-${update.category}">${categoryName}</span>
                 </td>
@@ -694,6 +698,10 @@ class IntuneUpdatesTracker {
                             </div>
                             <div class="meta-item">
                                 <strong>Week:</strong> ${update.week}
+                            </div>
+                            <div class="meta-item">
+                                <strong>Service:</strong> 
+                                <span class="service-badge service-${(update.service || 'unknown').toLowerCase()}">${update.service || 'Unknown'}</span>
                             </div>
                             <div class="meta-item">
                                 <strong>Category:</strong> 

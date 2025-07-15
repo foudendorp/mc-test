@@ -3,10 +3,29 @@ import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
 import { JSDOM } from 'jsdom';
 import crypto from 'crypto';
 
-const MICROSOFT_LEARN_URL = 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new';
+// Microsoft Learn URLs for different services
+const SERVICES = {
+    intune: {
+        name: 'Intune',
+        url: 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new',
+        tag: 'Intune'
+    },
+    entra: {
+        name: 'Entra ID',
+        url: 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new',
+        tag: 'Entra'
+    }
+};
+
 const DATA_DIR = './data';
 const UPDATES_DIR = './data/updates';
 const NOTICES_DIR = './data/notices';
+
+// Service-specific directories
+const INTUNE_UPDATES_DIR = './data/updates/intune';
+const INTUNE_NOTICES_DIR = './data/notices/intune';
+const ENTRA_UPDATES_DIR = './data/updates/entra';
+const ENTRA_NOTICES_DIR = './data/notices/entra';
 
 // Ensure data directories exist
 if (!existsSync(DATA_DIR)) {
@@ -18,12 +37,24 @@ if (!existsSync(UPDATES_DIR)) {
 if (!existsSync(NOTICES_DIR)) {
     mkdirSync(NOTICES_DIR, { recursive: true });
 }
+if (!existsSync(INTUNE_UPDATES_DIR)) {
+    mkdirSync(INTUNE_UPDATES_DIR, { recursive: true });
+}
+if (!existsSync(INTUNE_NOTICES_DIR)) {
+    mkdirSync(INTUNE_NOTICES_DIR, { recursive: true });
+}
+if (!existsSync(ENTRA_UPDATES_DIR)) {
+    mkdirSync(ENTRA_UPDATES_DIR, { recursive: true });
+}
+if (!existsSync(ENTRA_NOTICES_DIR)) {
+    mkdirSync(ENTRA_NOTICES_DIR, { recursive: true });
+}
 
-// Parse Microsoft Learn page content
-async function fetchIntuneUpdates() {
+// Parse Microsoft Learn page content for a specific service
+async function fetchServiceUpdates(service) {
     try {
-        console.log('Fetching updates from Microsoft Learn...');
-        const response = await fetch(MICROSOFT_LEARN_URL);
+        console.log(`Fetching ${service.name} updates from Microsoft Learn...`);
+        const response = await fetch(service.url);
         const html = await response.text();
         
         // Use JSDOM to parse HTML (lighter alternative to cheerio for this use case)
@@ -38,11 +69,11 @@ async function fetchIntuneUpdates() {
         const weekHeaders = Array.from(document.querySelectorAll('h2'))
             .filter(h2 => h2.textContent.includes('Week of'));
         
-        console.log(`Found ${weekHeaders.length} week sections`);
+        console.log(`Found ${weekHeaders.length} week sections for ${service.name}`);
         
         weekHeaders.forEach((weekHeader, index) => {
             const weekText = weekHeader.textContent.trim();
-            console.log(`Processing: ${weekText}`);
+            console.log(`Processing ${service.name}: ${weekText}`);
             
             // Extract date from week header
             const dateMatch = weekText.match(/Week of (.+?)(?:\s*\(|$)/);
@@ -55,6 +86,7 @@ async function fetchIntuneUpdates() {
             const weekData = {
                 week: weekText,
                 date: date,
+                service: service.tag, // Add service tag
                 serviceRelease: serviceRelease,
                 topics: []
             };
@@ -126,7 +158,8 @@ async function fetchIntuneUpdates() {
                         subtitle: subtitle || undefined,
                         content: content || 'No additional details available.',
                         features: features.length > 0 ? features : undefined,
-                        link: link || MICROSOFT_LEARN_URL
+                        service: service.tag, // Add service tag to individual updates
+                        link: link || service.url
                     };
                     
                     currentTopic.updates.push(update);
@@ -185,6 +218,7 @@ async function fetchIntuneUpdates() {
                     title: header.textContent.trim(),
                     content: content.trim(),
                     date: new Date().toISOString().split('T')[0],
+                    service: service.tag, // Add service tag to notices
                     type: 'warning',
                     category: 'plan-for-change',
                     status: 'active',
@@ -201,6 +235,25 @@ async function fetchIntuneUpdates() {
         console.error('Error fetching updates:', error);
         return { weeklyUpdates: new Map(), notices: [] };
     }
+}
+
+// Fetch updates from all services and return them separated by service
+async function fetchAllServiceUpdates() {
+    const serviceData = {};
+    
+    // Fetch from each service
+    for (const [serviceKey, service] of Object.entries(SERVICES)) {
+        try {
+            const { weeklyUpdates, notices } = await fetchServiceUpdates(service);
+            serviceData[serviceKey] = { weeklyUpdates, notices, service };
+            
+        } catch (error) {
+            console.error(`Error fetching ${service.name} updates:`, error);
+            serviceData[serviceKey] = { weeklyUpdates: new Map(), notices: [], service };
+        }
+    }
+    
+    return serviceData;
 }
 
 function mapTopicToCategory(topicText) {
@@ -223,146 +276,164 @@ function mapTopicToCategory(topicText) {
     return 'device-management'; // Default category
 }
 
-// Generate JSON files
+// Generate JSON files separated by service
 async function generateDataFiles() {
     console.log('Starting data generation...');
     
-    // Ensure data directories exist
-    if (!existsSync(DATA_DIR)) {
-        console.log('Creating data directory...');
-        mkdirSync(DATA_DIR, { recursive: true });
-    }
-    if (!existsSync(UPDATES_DIR)) {
-        console.log('Creating updates directory...');
-        mkdirSync(UPDATES_DIR, { recursive: true });
-    }
-    if (!existsSync(NOTICES_DIR)) {
-        console.log('Creating notices directory...');
-        mkdirSync(NOTICES_DIR, { recursive: true });
-    }
+    // Ensure all service directories exist
+    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR].forEach(dir => {
+        if (!existsSync(dir)) {
+            console.log(`Creating directory: ${dir}`);
+            mkdirSync(dir, { recursive: true });
+        }
+    });
     
     try {
-        const { weeklyUpdates, notices } = await fetchIntuneUpdates();
+        const serviceData = await fetchAllServiceUpdates();
         
-        console.log(`Processed ${weeklyUpdates.size} weeks of updates`);
-        console.log(`Found ${notices.length} notices`);
-        
-        // Generate individual week files (only if changed)
-        const dataFiles = [];
+        // Track overall stats
         let totalUpdates = 0;
-        let filesUpdated = 0;
+        let totalNotices = 0;
+        const allDataFiles = [];
         
-        for (const [date, weekData] of weeklyUpdates) {
-            const filename = `${date}.json`;
-            const filePath = `${UPDATES_DIR}/${filename}`;
-            const updateCount = weekData.topics.reduce((sum, topic) => sum + topic.updates.length, 0);
+        // Process each service separately
+        for (const [serviceKey, { weeklyUpdates, notices, service }] of Object.entries(serviceData)) {
+            console.log(`\n=== Processing ${service.name} ===`);
+            console.log(`Found ${weeklyUpdates.size} weeks of updates`);
+            console.log(`Found ${notices.length} notices`);
             
-            if (updateCount > 0) {
-                // Check if content has changed before writing
-                if (hasContentChanged(filePath, weekData)) {
-                    writeFileSync(filePath, JSON.stringify(weekData, null, 2));
-                    filesUpdated++;
-                    console.log(`✅ Updated updates/${filename} with ${updateCount} updates`);
-                } else {
-                    console.log(`⏭️  Skipped updates/${filename} (no changes)`);
-                }
+            // Generate service-specific update files
+            const serviceDataFiles = [];
+            let serviceUpdates = 0;
+            let filesUpdated = 0;
+            
+            // Determine service directory
+            const serviceUpdatesDir = serviceKey === 'intune' ? INTUNE_UPDATES_DIR : ENTRA_UPDATES_DIR;
+            const serviceNoticesDir = serviceKey === 'intune' ? INTUNE_NOTICES_DIR : ENTRA_NOTICES_DIR;
+            
+            for (const [date, weekData] of weeklyUpdates) {
+                const filename = `${date}.json`;
+                const filePath = `${serviceUpdatesDir}/${filename}`;
+                const updateCount = weekData.topics.reduce((sum, topic) => sum + topic.updates.length, 0);
                 
-                dataFiles.push({
-                    filename: filename,
-                    path: `updates/${filename}`,
-                    week: weekData.week,
-                    date: weekData.date,
-                    serviceRelease: weekData.serviceRelease,
-                    updates: updateCount
+                if (updateCount > 0) {
+                    // Check if content has changed before writing
+                    if (hasContentChanged(filePath, weekData)) {
+                        writeFileSync(filePath, JSON.stringify(weekData, null, 2));
+                        filesUpdated++;
+                        console.log(`✅ Updated ${serviceKey}/updates/${filename} with ${updateCount} updates`);
+                    } else {
+                        console.log(`⏭️  Skipped ${serviceKey}/updates/${filename} (no changes)`);
+                    }
+                    
+                    serviceDataFiles.push({
+                        filename: filename,
+                        path: `updates/${serviceKey}/${filename}`,
+                        week: weekData.week,
+                        date: weekData.date,
+                        service: service.tag,
+                        serviceRelease: weekData.serviceRelease,
+                        updates: updateCount
+                    });
+                    
+                    serviceUpdates += updateCount;
+                }
+            }
+            
+            console.log(`📁 ${service.name} - Files processed: ${serviceDataFiles.length}, Files updated: ${filesUpdated}`);
+            
+            // Generate service-specific notice files
+            const serviceNoticeFiles = [];
+            let noticesUpdated = 0;
+            
+            if (notices.length > 0) {
+                notices.forEach((notice) => {
+                    // Create a unique filename based on notice title and date
+                    const sanitizedTitle = notice.title
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]/g, '-')
+                        .replace(/-+/g, '-')
+                        .replace(/^-|-$/g, '')
+                        .substring(0, 50);
+                    
+                    const filename = `${notice.date}-${sanitizedTitle}.json`;
+                    const filePath = `${serviceNoticesDir}/${filename}`;
+                    
+                    if (hasContentChanged(filePath, notice)) {
+                        // Add timestamp only when writing
+                        const noticeWithTimestamp = {
+                            ...notice,
+                            lastUpdated: new Date().toISOString()
+                        };
+                        
+                        writeFileSync(filePath, JSON.stringify(noticeWithTimestamp, null, 2));
+                        noticesUpdated++;
+                        console.log(`✅ Updated ${serviceKey}/notices/${filename}`);
+                    } else {
+                        console.log(`⏭️  Skipped ${serviceKey}/notices/${filename} (no changes)`);
+                    }
+                    
+                    serviceNoticeFiles.push({
+                        filename: filename,
+                        path: `notices/${serviceKey}/${filename}`,
+                        title: notice.title,
+                        date: notice.date,
+                        service: service.tag,
+                        type: notice.type,
+                        category: notice.category
+                    });
                 });
                 
-                totalUpdates += updateCount;
+                console.log(`📁 ${service.name} - Notices processed: ${notices.length}, Files updated: ${noticesUpdated}`);
             }
+            
+            // Create service-specific notices index
+            const serviceNoticesIndexPath = `${serviceNoticesDir}/index.json`;
+            const serviceNoticesIndexDataWithoutTimestamp = {
+                service: service.tag,
+                serviceName: service.name,
+                totalNotices: notices.length,
+                totalFiles: serviceNoticeFiles.length,
+                noticeFiles: serviceNoticeFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
+            };
+            
+            if (hasContentChanged(serviceNoticesIndexPath, serviceNoticesIndexDataWithoutTimestamp)) {
+                const serviceNoticesIndexData = {
+                    lastUpdated: new Date().toISOString(),
+                    ...serviceNoticesIndexDataWithoutTimestamp
+                };
+                
+                writeFileSync(serviceNoticesIndexPath, JSON.stringify(serviceNoticesIndexData, null, 2));
+                console.log(`✅ Updated ${serviceKey}/notices/index.json with ${serviceNoticeFiles.length} notice files`);
+            } else {
+                console.log(`⏭️  Skipped ${serviceKey}/notices/index.json (no changes)`);
+            }
+            
+            // Add to overall tracking
+            totalUpdates += serviceUpdates;
+            totalNotices += notices.length;
+            allDataFiles.push(...serviceDataFiles);
         }
         
-        console.log(`📁 Files processed: ${dataFiles.length}, Files updated: ${filesUpdated}`);
-        
-        // If no data was scraped, create fallback data
-        if (dataFiles.length === 0) {
-            console.log('No data scraped, creating fallback data...');
+        // If no data was scraped from any service, create fallback data
+        if (allDataFiles.length === 0) {
+            console.log('No data scraped from any service, creating fallback data...');
             await createFallbackData();
             return;
         }
         
-        // Generate individual notice files (only if changed)
-        const noticeFiles = [];
-        let noticesUpdated = 0;
+        // Group all data files by month for the main index
+        const monthlyGroups = groupDataFilesByMonth(allDataFiles);
         
-        if (notices.length > 0) {
-            notices.forEach((notice, index) => {
-                // Create a unique filename based on notice title and date
-                const sanitizedTitle = notice.title
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]/g, '-')
-                    .replace(/-+/g, '-')
-                    .replace(/^-|-$/g, '')
-                    .substring(0, 50); // Limit length
-                
-                const filename = `${notice.date}-${sanitizedTitle}.json`;
-                const filePath = `${NOTICES_DIR}/${filename}`;
-                
-                if (hasContentChanged(filePath, notice)) {
-                    // Add timestamp only when writing
-                    const noticeWithTimestamp = {
-                        ...notice,
-                        lastUpdated: new Date().toISOString()
-                    };
-                    
-                    writeFileSync(filePath, JSON.stringify(noticeWithTimestamp, null, 2));
-                    noticesUpdated++;
-                    console.log(`✅ Updated notices/${filename}`);
-                } else {
-                    console.log(`⏭️  Skipped notices/${filename} (no changes)`);
-                }
-                
-                noticeFiles.push({
-                    filename: filename,
-                    path: `notices/${filename}`,
-                    title: notice.title,
-                    date: notice.date,
-                    type: notice.type,
-                    category: notice.category
-                });
-            });
-            
-            console.log(`📁 Notices processed: ${notices.length}, Files updated: ${noticesUpdated}`);
-        }
-        
-        // Create notices index file
-        const noticesIndexPath = `${NOTICES_DIR}/index.json`;
-        const noticesIndexDataWithoutTimestamp = {
-            totalNotices: notices.length,
-            totalFiles: noticeFiles.length,
-            noticeFiles: noticeFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
-        };
-        
-        if (hasContentChanged(noticesIndexPath, noticesIndexDataWithoutTimestamp)) {
-            const noticesIndexData = {
-                lastUpdated: new Date().toISOString(),
-                ...noticesIndexDataWithoutTimestamp
-            };
-            
-            writeFileSync(noticesIndexPath, JSON.stringify(noticesIndexData, null, 2));
-            console.log(`✅ Updated notices/index.json with ${noticeFiles.length} notice files`);
-        } else {
-            console.log('⏭️  Skipped notices/index.json (no changes)');
-        }
-        
-        // Group data files by month
-        const monthlyGroups = groupDataFilesByMonth(dataFiles);
-        
-        // Create index data without timestamp first for comparison
+        // Create main index data without timestamp first for comparison
         const indexDataWithoutTimestamp = {
             totalUpdates: totalUpdates,
-            totalFiles: dataFiles.length,
+            totalFiles: allDataFiles.length,
             totalMonths: monthlyGroups.length,
+            totalNotices: totalNotices,
+            services: Object.keys(serviceData).map(key => serviceData[key].service.tag),
             monthlyGroups: monthlyGroups,
-            dataFiles: dataFiles.sort((a, b) => new Date(b.date) - new Date(a.date)) // Keep individual files for backward compatibility
+            dataFiles: allDataFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
         };
         
         const indexFilePath = `${DATA_DIR}/index.json`;
@@ -376,15 +447,16 @@ async function generateDataFiles() {
         // Check if content has changed (excluding timestamp) for logging purposes
         if (hasContentChanged(indexFilePath, indexDataWithoutTimestamp)) {
             writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
-            console.log(`✅ Updated index.json with ${dataFiles.length} data files grouped into ${monthlyGroups.length} months`);
+            console.log(`✅ Updated index.json with ${allDataFiles.length} data files from ${Object.keys(serviceData).length} services grouped into ${monthlyGroups.length} months`);
         } else {
             // Still write the file to update the timestamp, but log it differently
             writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
             console.log(`🕒 Updated index.json timestamp (no content changes)`);
         }
         
-        console.log('Data generation completed successfully!');
-        console.log(`Total: ${totalUpdates} updates across ${dataFiles.length} weeks`);
+        console.log('\n=== Data generation completed successfully! ===');
+        console.log(`Total: ${totalUpdates} updates across ${allDataFiles.length} weeks from ${Object.keys(serviceData).length} services`);
+        console.log(`Total: ${totalNotices} notices from all services`);
         
     } catch (error) {
         console.error('Error during data generation:', error);
@@ -394,20 +466,21 @@ async function generateDataFiles() {
 }
 
 async function createFallbackData() {
-    console.log('Creating fallback data...');
+    console.log('Creating fallback data with service separation...');
     
-    // Ensure directories exist
-    if (!existsSync(UPDATES_DIR)) {
-        mkdirSync(UPDATES_DIR, { recursive: true });
-    }
-    if (!existsSync(NOTICES_DIR)) {
-        mkdirSync(NOTICES_DIR, { recursive: true });
-    }
+    // Ensure all service directories exist
+    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR].forEach(dir => {
+        if (!existsSync(dir)) {
+            console.log(`Creating directory: ${dir}`);
+            mkdirSync(dir, { recursive: true });
+        }
+    });
     
-    // Create fallback update data
-    const fallbackData = {
+    // Create fallback Intune update data
+    const fallbackIntuneData = {
         week: "Week of July 14, 2025",
         date: "2025-07-14",
+        service: "Intune",
         serviceRelease: null,
         topics: [
             {
@@ -424,6 +497,7 @@ async function createFallbackData() {
                             "Conversational chat experience for device troubleshooting",
                             "Policy and setting management assistance"
                         ],
+                        service: "Intune",
                         link: "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
                     }
                 ]
@@ -431,85 +505,140 @@ async function createFallbackData() {
         ]
     };
     
-    writeFileSync(`${UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackData, null, 2));
-    console.log('Generated fallback updates/2025-07-14.json');
+    writeFileSync(`${INTUNE_UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackIntuneData, null, 2));
+    console.log('Generated fallback updates/intune/2025-07-14.json');
     
-    // Create fallback notices
+    // Create fallback Entra update data
+    const fallbackEntraData = {
+        week: "Week of July 14, 2025",
+        date: "2025-07-14",
+        service: "Entra",
+        serviceRelease: null,
+        topics: [
+            {
+                topic: "Identity management",
+                category: "identity-management",
+                updates: [
+                    {
+                        id: generateContentId("Microsoft Entra ID Updates", "Latest identity management features", "Microsoft Entra ID continues to evolve with new features for identity and access management, providing better security and user experience."),
+                        title: "Microsoft Entra ID Updates",
+                        subtitle: "Latest identity management features",
+                        content: "Microsoft Entra ID continues to evolve with new features for identity and access management, providing better security and user experience.",
+                        features: [
+                            "Enhanced conditional access policies",
+                            "Improved multi-factor authentication",
+                            "Better integration with Microsoft 365"
+                        ],
+                        service: "Entra",
+                        link: "https://learn.microsoft.com/en-us/entra/fundamentals/whats-new"
+                    }
+                ]
+            }
+        ]
+    };
+    
+    writeFileSync(`${ENTRA_UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackEntraData, null, 2));
+    console.log('Generated fallback updates/entra/2025-07-14.json');
+    
+    // Create fallback system notice
     const fallbackNoticeBase = {
         id: generateContentId("Data Generation Notice", "", "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn."),
         title: "Data Generation Notice",
         content: "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn.",
         date: new Date().toISOString().split('T')[0],
+        service: "System",
         type: "info",
         category: "system",
         status: "active",
         source: "system"
     };
     
-    // Add timestamp when writing
     const fallbackNotice = {
         ...fallbackNoticeBase,
         lastUpdated: new Date().toISOString()
     };
     
     const noticeFilename = `${fallbackNotice.date}-data-generation-notice.json`;
-    writeFileSync(`${NOTICES_DIR}/${noticeFilename}`, JSON.stringify(fallbackNotice, null, 2));
-    console.log(`Generated fallback notices/${noticeFilename}`);
     
-    // Create fallback notices index
-    const noticesIndexData = {
-        lastUpdated: new Date().toISOString(),
-        totalNotices: 1,
-        totalFiles: 1,
-        noticeFiles: [
-            {
-                filename: noticeFilename,
-                path: `notices/${noticeFilename}`,
-                title: fallbackNotice.title,
-                date: fallbackNotice.date,
-                type: fallbackNotice.type,
-                category: fallbackNotice.category
-            }
-        ]
+    // Create notices in both service directories for visibility
+    [INTUNE_NOTICES_DIR, ENTRA_NOTICES_DIR].forEach(dir => {
+        writeFileSync(`${dir}/${noticeFilename}`, JSON.stringify(fallbackNotice, null, 2));
+    });
+    console.log(`Generated fallback notices in both service directories`);
+    
+    // Create service-specific notices indexes
+    const noticeFileEntry = {
+        filename: noticeFilename,
+        path: `notices/system/${noticeFilename}`,
+        title: fallbackNotice.title,
+        date: fallbackNotice.date,
+        service: "System",
+        type: fallbackNotice.type,
+        category: fallbackNotice.category
     };
     
-    writeFileSync(`${NOTICES_DIR}/index.json`, JSON.stringify(noticesIndexData, null, 2));
-    console.log('Generated fallback notices/index.json');
+    // Intune notices index
+    const intuneNoticesIndexData = {
+        lastUpdated: new Date().toISOString(),
+        service: "Intune",
+        serviceName: "Microsoft Intune",
+        totalNotices: 1,
+        totalFiles: 1,
+        noticeFiles: [noticeFileEntry]
+    };
+    writeFileSync(`${INTUNE_NOTICES_DIR}/index.json`, JSON.stringify(intuneNoticesIndexData, null, 2));
     
-    // Create fallback index
-    const monthlyGroups = groupDataFilesByMonth([
+    // Entra notices index
+    const entraNoticesIndexData = {
+        lastUpdated: new Date().toISOString(),
+        service: "Entra",
+        serviceName: "Microsoft Entra ID",
+        totalNotices: 1,
+        totalFiles: 1,
+        noticeFiles: [noticeFileEntry]
+    };
+    writeFileSync(`${ENTRA_NOTICES_DIR}/index.json`, JSON.stringify(entraNoticesIndexData, null, 2));
+    console.log('Generated fallback notices indexes for both services');
+    
+    // Create fallback main index
+    const allDataFiles = [
         {
             filename: "2025-07-14.json",
-            path: "updates/2025-07-14.json",
+            path: "updates/intune/2025-07-14.json",
             week: "Week of July 14, 2025",
             date: "2025-07-14",
+            service: "Intune",
+            serviceRelease: null,
+            updates: 1
+        },
+        {
+            filename: "2025-07-14.json",
+            path: "updates/entra/2025-07-14.json",
+            week: "Week of July 14, 2025",
+            date: "2025-07-14",
+            service: "Entra",
             serviceRelease: null,
             updates: 1
         }
-    ]);
+    ];
+    
+    const monthlyGroups = groupDataFilesByMonth(allDataFiles);
     
     const indexData = {
         lastGenerated: new Date().toISOString(),
-        totalUpdates: 1,
-        totalFiles: 1,
+        totalUpdates: 2,
+        totalFiles: 2,
         totalMonths: monthlyGroups.length,
+        totalNotices: 2,
+        services: ["Intune", "Entra"],
         monthlyGroups: monthlyGroups,
-        dataFiles: [
-            {
-                filename: "2025-07-14.json",
-                path: "updates/2025-07-14.json",
-                week: "Week of July 14, 2025",
-                date: "2025-07-14",
-                serviceRelease: null,
-                updates: 1
-            }
-        ]
+        dataFiles: allDataFiles
     };
     
     writeFileSync(`${DATA_DIR}/index.json`, JSON.stringify(indexData, null, 2));
-    console.log('Generated fallback index.json');
+    console.log('Generated fallback index.json with service separation');
     
-    console.log('Fallback data creation completed');
+    console.log('Fallback data creation completed with service-separated structure');
 }
 
 // Utility functions for change detection and monthly grouping
