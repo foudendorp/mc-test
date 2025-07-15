@@ -367,18 +367,20 @@ async function generateDataFiles() {
         
         const indexFilePath = `${DATA_DIR}/index.json`;
         
-        // Check if content has changed (excluding timestamp)
+        // Always update index.json with current timestamp to reflect deployment time
+        const indexData = {
+            lastGenerated: new Date().toISOString(),
+            ...indexDataWithoutTimestamp
+        };
+        
+        // Check if content has changed (excluding timestamp) for logging purposes
         if (hasContentChanged(indexFilePath, indexDataWithoutTimestamp)) {
-            // Add timestamp only when writing
-            const indexData = {
-                lastGenerated: new Date().toISOString(),
-                ...indexDataWithoutTimestamp
-            };
-            
             writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
             console.log(`✅ Updated index.json with ${dataFiles.length} data files grouped into ${monthlyGroups.length} months`);
         } else {
-            console.log('⏭️  Skipped index.json (no changes)');
+            // Still write the file to update the timestamp, but log it differently
+            writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
+            console.log(`🕒 Updated index.json timestamp (no content changes)`);
         }
         
         console.log('Data generation completed successfully!');
