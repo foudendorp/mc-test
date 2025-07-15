@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync } from 'fs';
 import { JSDOM } from 'jsdom';
 import crypto from 'crypto';
 
@@ -50,6 +50,68 @@ if (!existsSync(ENTRA_NOTICES_DIR)) {
     mkdirSync(ENTRA_NOTICES_DIR, { recursive: true });
 }
 
+// Helper function to check if an element is a month header
+function isNextMonthHeader(element) {
+    if (!element || element.tagName !== 'H2') return false;
+    const text = element.textContent.trim();
+    return /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
+}
+
+// Helper function to parse update elements
+function parseUpdateElement(currentElement, service) {
+    const updateTitle = currentElement.textContent.trim();
+    let content = '';
+    let features = [];
+    let link = '';
+    
+    // Get content from following elements
+    let nextEl = currentElement.nextElementSibling;
+    while (nextEl && nextEl.tagName !== 'H4' && nextEl.tagName !== 'H3' && nextEl.tagName !== 'H2') {
+        if (nextEl.tagName === 'P') {
+            const text = nextEl.textContent.trim();
+            if (text) {
+                content += (content ? ' ' : '') + text;
+            }
+        } else if (nextEl.tagName === 'UL') {
+            const listItems = Array.from(nextEl.querySelectorAll('li'));
+            features.push(...listItems.map(li => li.textContent.trim()));
+        }
+        
+        // Look for links
+        const links = nextEl.querySelectorAll('a[href*="learn.microsoft.com"]');
+        if (links.length > 0) {
+            link = links[0].href;
+        }
+        
+        nextEl = nextEl.nextElementSibling;
+    }
+    
+    // Extract subtitle from title (often after a colon or dash)
+    let title = updateTitle;
+    let subtitle = '';
+    
+    const colonIndex = title.indexOf(':');
+    const dashIndex = title.indexOf(' - ');
+    
+    if (colonIndex > 0) {
+        subtitle = title.substring(colonIndex + 1).trim();
+        title = title.substring(0, colonIndex).trim();
+    } else if (dashIndex > 0) {
+        subtitle = title.substring(dashIndex + 3).trim();
+        title = title.substring(0, dashIndex).trim();
+    }
+    
+    return {
+        id: generateContentId(title, subtitle, content), // Deterministic ID based on content
+        title: title,
+        subtitle: subtitle || undefined,
+        content: content || 'No additional details available.',
+        features: features.length > 0 ? features : undefined,
+        service: service.tag, // Add service tag to individual updates
+        link: link || service.url
+    };
+}
+
 // Parse Microsoft Learn page content for a specific service
 async function fetchServiceUpdates(service) {
     try {
@@ -65,120 +127,138 @@ async function fetchServiceUpdates(service) {
         const notices = [];
         const weeklyUpdates = new Map();
         
-        // Find all week sections (h2 headers with "Week of" in the text)
-        const weekHeaders = Array.from(document.querySelectorAll('h2'))
-            .filter(h2 => h2.textContent.includes('Week of'));
-        
-        console.log(`Found ${weekHeaders.length} week sections for ${service.name}`);
-        
-        weekHeaders.forEach((weekHeader, index) => {
-            const weekText = weekHeader.textContent.trim();
-            console.log(`Processing ${service.name}: ${weekText}`);
+        // Handle different structures for different services
+        if (service.tag === 'Entra') {
+            // For Entra ID, look for month-based headers (e.g., "July 2025", "June 2025")
+            const monthHeaders = Array.from(document.querySelectorAll('h2'))
+                .filter(h2 => {
+                    const text = h2.textContent.trim();
+                    return /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
+                });
             
-            // Extract date from week header
-            const dateMatch = weekText.match(/Week of (.+?)(?:\s*\(|$)/);
-            const date = dateMatch ? new Date(dateMatch[1]).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+            console.log(`Found ${monthHeaders.length} month sections for ${service.name}`);
             
-            // Check for service release info
-            const serviceReleaseMatch = weekText.match(/\(([^)]+)\)/);
-            const serviceRelease = serviceReleaseMatch ? serviceReleaseMatch[1] : null;
-            
-            const weekData = {
-                week: weekText,
-                date: date,
-                service: service.tag, // Add service tag
-                serviceRelease: serviceRelease,
-                topics: []
-            };
-            
-            // Find content between this week header and the next one
-            let currentElement = weekHeader.nextElementSibling;
-            let currentTopic = null;
-            
-            while (currentElement && !currentElement.textContent.includes('Week of')) {
-                if (currentElement.tagName === 'H3') {
-                    // New topic section
-                    if (currentTopic) {
-                        weekData.topics.push(currentTopic);
-                    }
-                    
-                    const topicText = currentElement.textContent.trim();
-                    currentTopic = {
-                        topic: topicText,
-                        category: mapTopicToCategory(topicText),
-                        updates: []
-                    };
-                } else if (currentElement.tagName === 'H4' && currentTopic) {
-                    // Individual update
-                    const updateTitle = currentElement.textContent.trim();
-                    let content = '';
-                    let features = [];
-                    let link = '';
-                    
-                    // Get content from following elements
-                    let nextEl = currentElement.nextElementSibling;
-                    while (nextEl && nextEl.tagName !== 'H4' && nextEl.tagName !== 'H3' && nextEl.tagName !== 'H2') {
-                        if (nextEl.tagName === 'P') {
-                            const text = nextEl.textContent.trim();
-                            if (text) {
-                                content += (content ? ' ' : '') + text;
-                            }
-                        } else if (nextEl.tagName === 'UL') {
-                            const listItems = Array.from(nextEl.querySelectorAll('li'));
-                            features.push(...listItems.map(li => li.textContent.trim()));
+            monthHeaders.forEach((monthHeader, index) => {
+                const monthText = monthHeader.textContent.trim();
+                console.log(`Processing ${service.name}: ${monthText}`);
+                
+                // Extract date from month header (use first day of month)
+                const monthDate = new Date(monthText + ' 01').toISOString().split('T')[0];
+                
+                const monthData = {
+                    month: monthText,
+                    date: monthDate,
+                    service: service.tag,
+                    serviceRelease: null,
+                    topics: []
+                };
+                
+                // Find content between this month header and the next one
+                let currentElement = monthHeader.nextElementSibling;
+                let currentTopic = null;
+                
+                while (currentElement && !isNextMonthHeader(currentElement)) {
+                    if (currentElement.tagName === 'H3') {
+                        // New topic section
+                        if (currentTopic) {
+                            monthData.topics.push(currentTopic);
                         }
                         
-                        // Look for links
-                        const links = nextEl.querySelectorAll('a[href*="learn.microsoft.com"]');
-                        if (links.length > 0) {
-                            link = links[0].href;
+                        const topicText = currentElement.textContent.trim();
+                        currentTopic = {
+                            topic: topicText,
+                            category: mapTopicToCategory(topicText),
+                            updates: []
+                        };
+                    } else if (currentElement.tagName === 'H4' && currentTopic) {
+                        // Individual update
+                        const update = parseUpdateElement(currentElement, service);
+                        if (update) {
+                            currentTopic.updates.push(update);
                         }
-                        
-                        nextEl = nextEl.nextElementSibling;
                     }
                     
-                    // Extract subtitle from title (often after a colon or dash)
-                    let title = updateTitle;
-                    let subtitle = '';
-                    
-                    const colonIndex = title.indexOf(':');
-                    const dashIndex = title.indexOf(' - ');
-                    
-                    if (colonIndex > 0) {
-                        subtitle = title.substring(colonIndex + 1).trim();
-                        title = title.substring(0, colonIndex).trim();
-                    } else if (dashIndex > 0) {
-                        subtitle = title.substring(dashIndex + 3).trim();
-                        title = title.substring(0, dashIndex).trim();
-                    }
-                    
-                    const update = {
-                        id: generateContentId(title, subtitle, content), // Deterministic ID based on content
-                        title: title,
-                        subtitle: subtitle || undefined,
-                        content: content || 'No additional details available.',
-                        features: features.length > 0 ? features : undefined,
-                        service: service.tag, // Add service tag to individual updates
-                        link: link || service.url
-                    };
-                    
-                    currentTopic.updates.push(update);
+                    currentElement = currentElement.nextElementSibling;
                 }
                 
-                currentElement = currentElement.nextElementSibling;
-            }
+                // Add the last topic
+                if (currentTopic) {
+                    monthData.topics.push(currentTopic);
+                }
+                
+                // Only add months that have topics with updates
+                const hasUpdates = monthData.topics.some(topic => topic.updates.length > 0);
+                if (hasUpdates) {
+                    weeklyUpdates.set(monthDate, monthData);
+                }
+            });
+        } else {
+            // For Intune and other services, use week-based structure
+            const weekHeaders = Array.from(document.querySelectorAll('h2'))
+                .filter(h2 => h2.textContent.includes('Week of'));
             
-            // Add the last topic
-            if (currentTopic) {
-                weekData.topics.push(currentTopic);
-            }
+            console.log(`Found ${weekHeaders.length} week sections for ${service.name}`);
             
-            // Only add weeks that have topics with updates
-            const hasUpdates = weekData.topics.some(topic => topic.updates.length > 0);
-            if (hasUpdates) {
-                weeklyUpdates.set(date, weekData);
-            }
-        });
+            weekHeaders.forEach((weekHeader, index) => {
+                const weekText = weekHeader.textContent.trim();
+                console.log(`Processing ${service.name}: ${weekText}`);
+                
+                // Extract date from week header
+                const dateMatch = weekText.match(/Week of (.+?)(?:\s*\(|$)/);
+                const date = dateMatch ? new Date(dateMatch[1]).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+                
+                // Check for service release info
+                const serviceReleaseMatch = weekText.match(/\(([^)]+)\)/);
+                const serviceRelease = serviceReleaseMatch ? serviceReleaseMatch[1] : null;
+                
+                const weekData = {
+                    week: weekText,
+                    date: date,
+                    service: service.tag, // Add service tag
+                    serviceRelease: serviceRelease,
+                    topics: []
+                };
+                
+                // Find content between this week header and the next one
+                let currentElement = weekHeader.nextElementSibling;
+                let currentTopic = null;
+                
+                while (currentElement && !currentElement.textContent.includes('Week of')) {
+                    if (currentElement.tagName === 'H3') {
+                        // New topic section
+                        if (currentTopic) {
+                            weekData.topics.push(currentTopic);
+                        }
+                        
+                        const topicText = currentElement.textContent.trim();
+                        currentTopic = {
+                            topic: topicText,
+                            category: mapTopicToCategory(topicText),
+                            updates: []
+                        };
+                    } else if (currentElement.tagName === 'H4' && currentTopic) {
+                        // Individual update
+                        const update = parseUpdateElement(currentElement, service);
+                        if (update) {
+                            currentTopic.updates.push(update);
+                        }
+                    }
+                    
+                    currentElement = currentElement.nextElementSibling;
+                }
+                
+                // Add the last topic
+                if (currentTopic) {
+                    weekData.topics.push(currentTopic);
+                }
+                
+                // Only add weeks that have topics with updates
+                const hasUpdates = weekData.topics.some(topic => topic.updates.length > 0);
+                if (hasUpdates) {
+                    weeklyUpdates.set(date, weekData);
+                }
+            });
+        }
         
         // Look for important notices (typically at the top of the page)
         const noticeHeaders = Array.from(document.querySelectorAll('h3, h4'))
@@ -341,7 +421,7 @@ async function generateDataFiles() {
                     serviceDataFiles.push({
                         filename: filename,
                         path: `updates/${serviceKey}/${filename}`,
-                        week: weekData.week,
+                        week: weekData.week || weekData.month || `Week of ${weekData.date}`,
                         date: weekData.date,
                         service: service.tag,
                         serviceRelease: weekData.serviceRelease,
@@ -353,6 +433,61 @@ async function generateDataFiles() {
             }
             
             console.log(`📁 ${service.name} - Files processed: ${serviceDataFiles.length}, Files updated: ${filesUpdated}`);
+            
+            // Scan for existing files that weren't generated by scraping
+            try {
+                if (existsSync(serviceUpdatesDir)) {
+                    const existingFiles = readdirSync(serviceUpdatesDir);
+                    const jsonFiles = existingFiles.filter(file => file.endsWith('.json'));
+                    
+                    for (const filename of jsonFiles) {
+                        const filePath = `${serviceUpdatesDir}/${filename}`;
+                        
+                        // Check if this file was already processed during scraping
+                        const alreadyProcessed = serviceDataFiles.some(df => df.filename === filename);
+                        
+                        if (!alreadyProcessed) {
+                            try {
+                                const existingData = JSON.parse(readFileSync(filePath, 'utf8'));
+                                const updateCount = existingData.topics ? 
+                                    existingData.topics.reduce((sum, topic) => sum + (topic.updates ? topic.updates.length : 0), 0) : 0;
+                                
+                                if (updateCount > 0) {
+                                    // Handle different structures for different services
+                                    let displayText;
+                                    if (existingData.month) {
+                                        // Month-based structure (Entra)
+                                        displayText = existingData.month;
+                                    } else if (existingData.week) {
+                                        // Week-based structure (Intune)
+                                        displayText = existingData.week;
+                                    } else {
+                                        // Fallback
+                                        displayText = `Week of ${existingData.date}`;
+                                    }
+                                    
+                                    serviceDataFiles.push({
+                                        filename: filename,
+                                        path: `updates/${serviceKey}/${filename}`,
+                                        week: displayText,
+                                        date: existingData.date,
+                                        service: existingData.service || service.tag,
+                                        serviceRelease: existingData.serviceRelease || null,
+                                        updates: updateCount
+                                    });
+                                    
+                                    serviceUpdates += updateCount;
+                                    console.log(`📄 Found existing ${serviceKey} updates/${filename} with ${updateCount} updates`);
+                                }
+                            } catch (parseError) {
+                                console.warn(`⚠️  Error parsing existing file ${filename}:`, parseError.message);
+                            }
+                        }
+                    }
+                }
+            } catch (scanError) {
+                console.warn(`⚠️  Error scanning existing files for ${service.name}:`, scanError.message);
+            }
             
             // Generate service-specific notice files
             const serviceNoticeFiles = [];
