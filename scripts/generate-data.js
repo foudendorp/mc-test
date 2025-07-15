@@ -967,22 +967,24 @@ function parseTableUpdates(table, monthData) {
             const serviceCategory = extractTextContent(serviceCategoryCell);
             const productCapability = productCapabilityCell ? extractTextContent(productCapabilityCell) : null;
             
-            // Convert to frontend-compatible format
+            // Convert to frontend-compatible format with correct mapping
             const update = {
                 id: generateContentId(title, type, title),
-                title: title,
+                title: title, // Topic (Title) from Microsoft Learn
                 subtitle: type ? `Type: ${type}` : undefined,
-                content: title + (productCapability ? ` (${productCapability})` : ''),
+                content: title + (productCapability ? ` - ${productCapability}` : ''),
                 service: 'Entra',
                 link: extractLinks(descriptionCell)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
             };
             
-            // Find or create topic based on service category
-            let topic = monthData.topics.find(t => t.topic === serviceCategory);
+            // Use Product Capability as the topic (for "Topic" column)
+            // Use Service Category for category mapping (for "Category" column)
+            const topicName = productCapability || 'General';
+            let topic = monthData.topics.find(t => t.topic === topicName);
             if (!topic) {
                 topic = {
-                    topic: serviceCategory,
-                    category: mapServiceCategoryToCategory(serviceCategory),
+                    topic: topicName, // Product Capability -> Topic column
+                    category: mapServiceCategoryToCategory(serviceCategory), // Service Category -> Category column
                     updates: []
                 };
                 monthData.topics.push(topic);
@@ -1034,13 +1036,14 @@ function parseSectionUpdates(section, monthData) {
         const update = parseEntraUpdateFromHeader(header, monthData.date);
         
         if (update) {
-            // Find or create topic
-            const topicName = update.serviceCategory || 'General Updates';
+            // Use Product Capability as the topic (for "Topic" column)
+            // Use Service Category for category mapping (for "Category" column)
+            const topicName = update.productCapability || 'General';
             let topic = monthData.topics.find(t => t.topic === topicName);
             if (!topic) {
                 topic = {
-                    topic: topicName,
-                    category: mapServiceCategoryToCategory(topicName),
+                    topic: topicName, // Product Capability -> Topic column
+                    category: mapServiceCategoryToCategory(update.serviceCategory), // Service Category -> Category column
                     updates: []
                 };
                 monthData.topics.push(topic);
@@ -1056,13 +1059,14 @@ function parseDirectSection(header, monthData) {
     const update = parseEntraUpdateFromHeader(header, monthData.date);
     
     if (update) {
-        // Find or create topic based on service category
-        const topicName = update.serviceCategory || 'General Updates';
+        // Use Product Capability as the topic (for "Topic" column)
+        // Use Service Category for category mapping (for "Category" column)
+        const topicName = update.productCapability || 'General';
         let topic = monthData.topics.find(t => t.topic === topicName);
         if (!topic) {
             topic = {
-                topic: topicName,
-                category: mapServiceCategoryToCategory(topicName),
+                topic: topicName, // Product Capability -> Topic column
+                category: mapServiceCategoryToCategory(update.serviceCategory), // Service Category -> Category column
                 updates: []
             };
             monthData.topics.push(topic);
@@ -1124,14 +1128,15 @@ function parseEntraUpdateFromHeader(header, date) {
         description = descriptionParts.join(' ');
     }
     
-    // Convert to frontend-compatible format
+    // Convert to frontend-compatible format with correct field mapping
     const update = {
         id: generateContentId(title, type, description),
-        title: title,
+        title: title, // Topic (Title) from Microsoft Learn
         subtitle: type ? `Type: ${type}` : undefined,
-        content: description + (productCapability ? ` (${productCapability})` : ''),
+        content: description + (productCapability ? ` - ${productCapability}` : ''),
         service: 'Entra',
-        serviceCategory: serviceCategory, // Keep this for topic assignment
+        serviceCategory: serviceCategory, // Keep for topic assignment logic
+        productCapability: productCapability, // Keep for topic assignment logic  
         link: extractLinks(header.parentElement)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
     };
     
@@ -1238,9 +1243,10 @@ function mapServiceCategoryToCategory(serviceCategory) {
     
     const lowerCategory = serviceCategory.toLowerCase();
     
+    // Direct mappings for Microsoft Learn Service Categories
     const categoryMap = {
         'conditional access': 'conditional-access',
-        'authentication': 'authentication',
+        'authentication': 'authentication', 
         'identity protection': 'identity-protection',
         'privileged identity management': 'privileged-identity',
         'applications': 'application-management',
@@ -1250,7 +1256,11 @@ function mapServiceCategoryToCategory(serviceCategory) {
         'hybrid identity': 'hybrid-identity',
         'monitoring & health': 'monitoring',
         'general': 'identity-management',
-        'general updates': 'identity-management'
+        'licensing': 'licensing',
+        'directory services': 'directory-services',
+        'reporting': 'monitoring',
+        'audit logs': 'monitoring',
+        'security': 'identity-protection'
     };
     
     // Check for exact matches first
@@ -1258,17 +1268,19 @@ function mapServiceCategoryToCategory(serviceCategory) {
         return categoryMap[lowerCategory];
     }
     
-    // Check for partial matches
+    // Check for partial matches for common Microsoft Learn categories
     if (lowerCategory.includes('conditional access')) return 'conditional-access';
-    if (lowerCategory.includes('authentication') || lowerCategory.includes('mfa')) return 'authentication';
-    if (lowerCategory.includes('identity protection')) return 'identity-protection';
+    if (lowerCategory.includes('authentication') || lowerCategory.includes('mfa') || lowerCategory.includes('multi-factor')) return 'authentication';
+    if (lowerCategory.includes('identity protection') || lowerCategory.includes('security')) return 'identity-protection';
     if (lowerCategory.includes('privileged identity') || lowerCategory.includes('pim')) return 'privileged-identity';
     if (lowerCategory.includes('application') || lowerCategory.includes('app')) return 'application-management';
     if (lowerCategory.includes('device') || lowerCategory.includes('mobile')) return 'device-management';
-    if (lowerCategory.includes('governance') || lowerCategory.includes('entitlement')) return 'identity-governance';
+    if (lowerCategory.includes('governance') || lowerCategory.includes('entitlement') || lowerCategory.includes('lifecycle')) return 'identity-governance';
     if (lowerCategory.includes('b2b') || lowerCategory.includes('guest') || lowerCategory.includes('external')) return 'external-identities';
     if (lowerCategory.includes('connect') || lowerCategory.includes('hybrid')) return 'hybrid-identity';
-    if (lowerCategory.includes('monitoring') || lowerCategory.includes('audit') || lowerCategory.includes('log')) return 'monitoring';
+    if (lowerCategory.includes('monitoring') || lowerCategory.includes('audit') || lowerCategory.includes('log') || lowerCategory.includes('report')) return 'monitoring';
+    if (lowerCategory.includes('license') || lowerCategory.includes('billing')) return 'licensing';
+    if (lowerCategory.includes('directory') || lowerCategory.includes('domain')) return 'directory-services';
     
     return 'identity-management'; // Default category for Entra
 }
