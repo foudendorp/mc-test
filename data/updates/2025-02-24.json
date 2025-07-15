@@ -8,7 +8,7 @@
       "category": "app-management",
       "updates": [
         {
-          "id": 1752589344382.0398,
+          "id": 1752589962304.6543,
           "title": "VPP token name more easily available in Apps workload",
           "content": "The VPP token name column, available in the Apps workload, allows you to quickly determine the token and app association. This column is now available in the All apps list (Apps > All apps) and the app selection pane for App configuration policies (Apps > App configuration policies). For more information about VPP apps, see Manage volume-purchased apps and books with Microsoft Intune. Applies to:",
           "features": [
@@ -24,7 +24,7 @@
       "category": "device-configuration",
       "updates": [
         {
-          "id": 1752589344387.0327,
+          "id": 1752589962308.4622,
           "title": "New Windows AI settings available in the Windows settings catalog",
           "content": "The Settings Catalog lists all the settings you can configure in a device policy, and all in one place. There are new settings in the Settings Catalog for Windows. To see these settings, in the Microsoft Intune admin center, go to Devices > Manage devices > Configuration > Create > New policy > Windows 10 and later > Settings catalog for profile type. The new settings are: Applies to:",
           "features": [
@@ -38,13 +38,13 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752589344388.451,
+          "id": 1752589962309.3638,
           "title": "Low privileged account for Intune Connector for Active Directory for Hybrid join Windows Autopilot flows",
           "content": "We've updated the Intune Connector for Active Directory to use a low privileged account to increase the security of your environment. The old connector will continue to work until deprecation in late May 2025. For more information, see Deploy Microsoft Entra hybrid joined devices by using Intune and Windows Autopilot.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752589344391.4417,
+          "id": 1752589962311.7966,
           "title": "Managed Home Screen QR Code Authentication in public preview",
           "content": "Managed Home Screen for Android devices natively supports QR Code Authentication in Microsoft Entra ID. Authentication involves both a QR code and PIN. This capability eliminates the need for users to enter and re-enter long UPNs and alphanumeric passwords. For more information, see Sign in to Microsoft Teams or Managed Home Screen (MHS) with QR code. Applies to:",
           "features": [
@@ -53,7 +53,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752589344392.1448,
+          "id": 1752589962312.7935,
           "title": "Additional device details for Managed Home Screen",
           "content": "Android OS version, Security patch, and Last device reboot time details are now available from the Device Information page of the Managed Home Screen app. For related information, see Configure the Microsoft Managed Home Screen app for Android Enterprise. Applies to:",
           "features": [
@@ -62,7 +62,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752589344394.1614,
+          "id": 1752589962314.0847,
           "title": "Display ringtone selector for Managed Home Screen",
           "content": "In Intune, you can choose to expose a setting in the Managed Home Screen app to allow users to select a ringtone. For more information, see Configure the Microsoft Managed Home Screen app for Android Enterprise. Applies to:",
           "features": [
@@ -77,7 +77,7 @@
       "category": "device-security",
       "updates": [
         {
-          "id": 1752589344400.988,
+          "id": 1752589962320.6267,
           "title": "Manage the DeviceControlEnabled configuration for Microsoft Defender Device Control on Windows devices",
           "content": "You can now use Intune to manage the configuration of the Microsoft Defender CSP for DeviceControlEnabled for Device Control. DeviceControlEnabled is used to enable or disable support for the Microsoft Defender Device Control feature on Windows devices. You can use the following two Microsoft Intune options to configure DeviceControlEnabled. With both options, the setting appears as Device Control Enabled, and is found in the Defender category: Both the Device Control template and Settings Catalog support the following options for Device Control Enabled: Applies to:",
           "features": [
@@ -90,7 +90,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752589344404.2817,
+          "id": 1752589962324.0127,
           "title": "Manage the DefaultEnforcement configuration for Microsoft Defender Device Control on Windows devices",
           "content": "You can now use Intune to manage the configuration of the Microsoft Defender CSP for DefaultEnforcement for Device Control. DefaultEnforcement manages the configuration of Device Control on devices that don't receive Device Control policies or for devices that receive and evaluate a policy for Device Control when no rules in the policy are matched. You can use the following two Microsoft Intune options to configure DefaultEnforcement. With both options, the setting appears as Default Enforcement, and is found in the Defender category: Both the Device Control template and Settings Catalog support the following options for Default Enforcement: Applies to:",
           "features": [
@@ -109,7 +109,7 @@
       "category": "intune-apps",
       "updates": [
         {
-          "id": 1752589344406.662,
+          "id": 1752589962326.326,
           "title": "Newly available protected app for Intune",
           "content": "The following protected app is now available for Microsoft Intune: For more information about protected apps, see Microsoft Intune protected apps.",
           "features": [
@@ -124,13 +124,13 @@
       "category": "device-configuration",
       "updates": [
         {
-          "id": 1752589344407.499,
+          "id": 1752589962327.6072,
           "title": "New settings available in the Apple settings catalog",
           "content": "The Settings Catalog lists all the settings you can configure in a device policy, and all in one place. For more information about configuring Settings Catalog profiles in Intune, see Create a policy using settings catalog. There are new settings For Apple devices in the Settings Catalog. To see these settings, in the Microsoft Intune admin center, go to Devices > Manage devices > Configuration > Create > New policy > iOS/iPadOS or macOS for platform > Settings catalog for profile type.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752589344411.2769,
+          "id": 1752589962331.3623,
           "title": "iOS/iPadOS",
           "content": "Managed Settings: Networking > Domains: Restrictions:",
           "features": [
@@ -145,7 +145,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752589344415.1755,
+          "id": 1752589962334.1978,
           "title": "macOS",
           "content": "Networking > Domains: Restrictions: System Configuration > File Provider:",
           "features": [
