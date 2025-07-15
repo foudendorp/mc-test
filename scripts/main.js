@@ -254,62 +254,9 @@ class IntuneUpdatesTracker {
             timeFilter
         });
 
-        // Let's examine a sample update to see its structure
-        if (this.updates.length > 0) {
-            console.log('📄 Sample update structure:', {
-                firstUpdate: this.updates[0],
-                hasTitle: !!this.updates[0]?.title,
-                hasContent: !!this.updates[0]?.content,
-                hasTopic: !!this.updates[0]?.topic,
-                hasCategory: !!this.updates[0]?.category,
-                hasDate: !!this.updates[0]?.date
-            });
-        }
-
-        this.filteredUpdates = this.updates.filter((update, index) => {
-            // Ensure required fields exist
-            if (!update || !update.title || !update.content || !update.topic) {
-                console.warn(`❌ Skipping incomplete update at index ${index}:`, update);
-                return false;
-            }
-            
-            // Debug first few updates
-            if (index < 3) {
-                console.log(`🔍 Checking update ${index}:`, {
-                    title: update.title,
-                    category: update.category,
-                    date: update.date,
-                    topic: update.topic
-                });
-            }
-            
-            // Search filter
-            const matchesSearch = !searchTerm || 
-                update.title.toLowerCase().includes(searchTerm) ||
-                (update.subtitle && update.subtitle.toLowerCase().includes(searchTerm)) ||
-                update.content.toLowerCase().includes(searchTerm) ||
-                update.topic.toLowerCase().includes(searchTerm) ||
-                (update.features && update.features.some(feature => 
-                    feature.toLowerCase().includes(searchTerm)));
-
-            // Category filter
-            const matchesCategory = !categoryFilter || categoryFilter === 'all' || update.category === categoryFilter;
-
-            // Time filter
-            const matchesTime = this.checkTimeFilter(update.date, timeFilter);
-
-            // Debug first few results
-            if (index < 3) {
-                console.log(`✅ Update ${index} filter results:`, {
-                    matchesSearch,
-                    matchesCategory,
-                    matchesTime,
-                    finalResult: matchesSearch && matchesCategory && matchesTime
-                });
-            }
-
-            return matchesSearch && matchesCategory && matchesTime;
-        });
+        // TEMPORARY: Just show all updates without filtering to test display
+        console.log('🧪 TEMPORARY: Bypassing all filters for testing');
+        this.filteredUpdates = this.updates;
 
         console.log('✅ Filtering complete:', {
             filteredCount: this.filteredUpdates.length,
