@@ -119,6 +119,15 @@ body {
     letter-spacing: 1px;
 }
 
+.stat-time {
+    display: block;
+    font-size: 1rem;
+    color: #ffd700;
+    opacity: 0.9;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
 .cta-button {
     background: linear-gradient(45deg, #ff6b6b, #ee5a24);
     color: white;

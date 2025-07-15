@@ -14,7 +14,6 @@ class IntuneUpdatesTracker {
         this.updatesContainer = document.getElementById('updatesContainer');
         this.noticesContainer = document.getElementById('noticesContainer');
         this.loadMoreBtn = document.getElementById('loadMoreBtn');
-        this.refreshBtn = document.getElementById('refreshBtn');
         
         this.bindEvents();
         this.init();
@@ -35,10 +34,6 @@ class IntuneUpdatesTracker {
         
         if (this.loadMoreBtn) {
             this.loadMoreBtn.addEventListener('click', () => this.loadMoreUpdates());
-        }
-        
-        if (this.refreshBtn) {
-            this.refreshBtn.addEventListener('click', () => this.refreshUpdates());
         }
 
         // Close modal when clicking outside
@@ -68,7 +63,7 @@ class IntuneUpdatesTracker {
             this.filterUpdates();
             this.displayNotices();
             this.displayDataFiles();
-            this.updateLastRefreshTime();
+            this.updateDeploymentTime();
         } catch (error) {
             console.error('Error initializing tracker:', error);
             this.showError('Failed to load updates. Please try again later.');
@@ -388,38 +383,6 @@ class IntuneUpdatesTracker {
         this.displayUpdates();
     }
 
-    async refreshUpdates() {
-        this.setLoading(true);
-        try {
-            const data = await this.fetchIntuneUpdates();
-            this.updates = data.updates;
-            this.notices = data.notices;
-            this.indexData = data.indexData;
-            
-            this.updateStats();
-            this.filterUpdates();
-            this.displayNotices();
-            this.displayDataFiles();
-            this.updateLastRefreshTime();
-            
-            // Show success message
-            const successMsg = document.createElement('div');
-            successMsg.className = 'toast success';
-            successMsg.innerHTML = '<i class="fas fa-check"></i> Updates refreshed successfully!';
-            document.body.appendChild(successMsg);
-            
-            setTimeout(() => {
-                successMsg.remove();
-            }, 3000);
-            
-        } catch (error) {
-            console.error('Error refreshing updates:', error);
-            this.showError('Failed to refresh updates. Please try again.');
-        } finally {
-            this.setLoading(false);
-        }
-    }
-
     updateStats() {
         const totalUpdatesElement = document.getElementById('totalUpdates');
         const totalWeeksElement = document.getElementById('totalWeeks');
@@ -446,11 +409,26 @@ class IntuneUpdatesTracker {
         }
     }
 
-    updateLastRefreshTime() {
-        const lastRefreshElement = document.getElementById('lastRefresh');
-        if (lastRefreshElement) {
-            const now = new Date();
-            lastRefreshElement.textContent = now.toLocaleString();
+    updateDeploymentTime() {
+        const deploymentDateElement = document.getElementById('deploymentDate');
+        const deploymentTimeElement = document.getElementById('deploymentTime');
+        
+        if (deploymentDateElement && deploymentTimeElement) {
+            // Use the lastGenerated time from the index data if available
+            const deploymentDate = this.indexData?.lastGenerated ? 
+                new Date(this.indexData.lastGenerated) : new Date();
+            
+            deploymentDateElement.textContent = deploymentDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            deploymentTimeElement.textContent = deploymentDate.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZoneName: 'short'
+            });
         }
     }
 
@@ -484,13 +462,6 @@ class IntuneUpdatesTracker {
         contentElements.forEach(el => {
             el.style.display = isLoading ? 'none' : 'block';
         });
-
-        if (this.refreshBtn) {
-            this.refreshBtn.disabled = isLoading;
-            this.refreshBtn.innerHTML = isLoading ? 
-                '<i class="fas fa-spinner fa-spin"></i> Refreshing...' : 
-                '<i class="fas fa-sync-alt"></i> Refresh';
-        }
     }
 
     showError(message) {
