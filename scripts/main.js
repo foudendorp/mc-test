@@ -124,7 +124,7 @@ class IntuneUpdatesTracker {
                                         category: topic.category,
                                         topic: topic.topic,
                                         date: fileData.date,
-                                        week: fileData.week,
+                                        week: fileData.week || fileData.month, // Handle both week and month structures
                                         serviceRelease: fileData.serviceRelease
                                     });
                                 });
