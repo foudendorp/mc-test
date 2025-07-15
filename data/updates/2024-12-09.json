@@ -8,7 +8,7 @@
       "category": "device-management",
       "updates": [
         {
-          "id": 1752579560007.073,
+          "id": 1752580453288.9082,
           "title": "Intune now supports Ubuntu 24.04 LTS for Linux management.",
           "content": "We're now supporting device management for Ubuntu 24.04 LTS. You can enroll and manage Linux devices running Ubuntu 24.04, and assign standard compliance policies, custom configuration scripts, and compliance scripts. For more information, see the following in Intune documentation: Applies to:",
           "features": [

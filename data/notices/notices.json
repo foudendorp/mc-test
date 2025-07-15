@@ -1,71 +1,71 @@
 {
-  "lastUpdated": "2025-07-15T11:39:20.068Z",
+  "lastUpdated": "2025-07-15T11:54:13.355Z",
   "notices": [
     {
-      "id": 1752579560061.957,
+      "id": 1752580453348.1956,
       "title": "Plan for Change: Intune is moving to support iOS/iPadOS 17 and later",
       "content": "Later in calendar year 2025, we expect iOS 26 and iPadOS 26 to be released by Apple. Microsoft Intune, including the Intune Company Portal and Intune app protection policies (APP, also known as MAM), requires iOS 17/iPadOS 17 and higher shortly after the iOS/iPadOS 26 release.",
       "date": "2025-07-15",
       "type": "warning"
     },
     {
-      "id": 1752579560061.8096,
+      "id": 1752580453348.7007,
       "title": "Plan for change: Intune is moving to support macOS 14 and higher later this year",
       "content": "Later in calendar year 2025, we expect macOS Tahoe 26 to be released by Apple. Microsoft Intune, the Company Portal app, and the Intune mobile device management agent support macOS 14 and later. Since the Company Portal app for iOS and macOS are a unified app, this change will occur shortly after the release of macOS 26. This doesn't affect existing enrolled devices.",
       "date": "2025-07-15",
       "type": "warning"
     },
     {
-      "id": 1752579560061.7585,
+      "id": 1752580453348.1963,
       "title": "Plan for Change: Google Play strong integrity definition update for Android 13 or above",
       "content": "Google recently updated the definition of \"Strong Integrity\" for devices running Android 13 or above, requiring hardware-backed security signals and recent security updates. For more information refer to the Android Developers Blog: Making the Play Integrity API faster, more resilient, and more private. Microsoft Intune will enforce this change by September 30, 2025. Until then we've adjusted app protection policy and compliance policy behavior to align with Google’s recommended backward compatibility guidance to minimize disruption as detailed in Improved verdicts in Android 13 and later devices | Google Play | Android Developers.",
       "date": "2025-07-15",
       "type": "warning"
     },
     {
-      "id": 1752579560061.62,
+      "id": 1752580453348.4116,
       "title": "Plan for Change: New Intune connector for deploying Microsoft Entra hybrid joined devices using Windows Autopilot",
       "content": "As part of Microsoft’s Secure Future Initiative, we recently released an update to the Intune Connector for Active Directory to use a Managed Service Account instead of a local SYSTEM account for deploying Microsoft Entra hybrid joined devices with Windows Autopilot. The new connector aims to enhance security by reducing unnecessary privileges and permissions associated with the local SYSTEM account.",
       "date": "2025-07-15",
       "type": "warning"
     },
     {
-      "id": 1752579560061.7107,
+      "id": 1752580453348.1292,
       "title": "Plan for Change: New settings for Apple AI features; Genmojis, Writing tools, Screen capture",
       "content": "Today, the Apple AI features for Genmojis, Writing tools, and screen capture are blocked when the app protection policy (APP) \"Send Org data to other apps\" setting is configured to a value other than \"All apps\". For more details on the current configuration, app requirements, and the list of current Apple AI controls review the blog: Microsoft Intune support for Apple Intelligence In an upcoming release, Intune app protection policies have new standalone settings for blocking screen capture, Genmojis, and Writing tools. These standalone settings are supported by apps that have updated to version 19.7.12 or later for Xcode 15 and 20.4.0 or later for Xcode 16 of the Intune App SDK and App Wrapping Tool.",
       "date": "2025-07-15",
       "type": "warning"
     },
     {
-      "id": 1752579560061.9453,
+      "id": 1752580453348.5376,
       "title": "Plan for change: User alerts on iOS for when screen capture actions are blocked",
       "content": "In an upcoming version (20.3.0) of the Intune App SDK and Intune App Wrapping Tool for iOS, support is added to alert users when a screen capture action (including recording and mirroring) is detected in a managed app. The alert is only visible to users if you have configured an app protection policy (APP) to block screen capture.",
       "date": "2025-07-15",
       "type": "warning"
     },
     {
-      "id": 1752579560061.7502,
+      "id": 1752580453348.3914,
       "title": "Plan for Change: Blocking screen capture in the latest Intune App SDK for iOS and Intune App Wrapping Tool for iOS",
       "content": "We recently released updated versions of the Intune App SDK and the Intune App Wrapping Tool. Included in these releases (v19.7.5+ for Xcode 15 and v20.2.0+ for Xcode 16) is the support for blocking screen capture, Genmojis, and writing tools in response to the new AI features in iOS/iPadOS 18.2.",
       "date": "2025-07-15",
       "type": "warning"
     },
     {
-      "id": 1752579560062.3901,
+      "id": 1752580453349.5398,
       "title": "Plan for Change: Implement strong mapping for SCEP and PKCS certificates",
       "content": "With the May 10, 2022, Windows update (KB5014754), changes were made to the Active Directory Kerberos Key Distribution (KDC) behavior in Windows Server 2008 and later versions to mitigate elevation of privilege vulnerabilities associated with certificate spoofing. Windows enforces these changes on February 11, 2025. To prepare for this change, Intune has released the ability to include the security identifier to strongly map SCEP and PKCS certificates. For more information, review the blog: Support tip: Implementing strong mapping in Microsoft Intune certificates.",
       "date": "2025-07-15",
       "type": "warning"
     },
     {
-      "id": 1752579560062.3928,
+      "id": 1752580453349.8467,
       "title": "Plan for Change: Web based device enrollment will become default method for iOS/iPadOS device enrollment",
       "content": "Today, when creating iOS/iPadOS enrollment profiles, \"Device enrollment with Company Portal\" is shown as the default method. In an upcoming service release, the default method will change to \"Web based device enrollment\" during profile creation. Additionally for new tenants, if no enrollment profile is created, the user will enroll using web-based device enrollment.",
       "date": "2025-07-15",
       "type": "warning"
     },
     {
-      "id": 1752579560062.06,
+      "id": 1752580453349.9734,
       "title": "Plan for Change: Intune ending support for Android device administrator on devices with GMS access in December 2024",
       "content": "Google has deprecated Android device administrator management, continues to remove management capabilities, and no longer provides fixes or improvements. Due to these changes, Intune will be ending support for Android device administrator management on devices with access to Google Mobile Services (GMS) beginning December 31, 2024. Until that time, we support device administrator management on devices running Android 14 and earlier. For more details, read the blog: Microsoft Intune ending support for Android device administrator on devices with GMS access.",
       "date": "2025-07-15",
