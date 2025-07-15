@@ -44,14 +44,23 @@ jobs:
           if [ -d "data" ]; then
             echo "Data directory found. Contents:"
             ls -la data/
+            echo "Checking subdirectories..."
+            if [ -d "data/updates" ]; then
+              echo "Updates directory contents:"
+              ls -la data/updates/
+            fi
+            if [ -d "data/notices" ]; then
+              echo "Notices directory contents:"
+              ls -la data/notices/
+            fi
             echo "File sizes:"
-            du -h data/*
+            find data/ -type f -exec du -h {} \;
           else
             echo "Data directory not found! Creating fallback data..."
-            mkdir -p data
+            mkdir -p data/updates data/notices
             npm run generate-fallback
             echo "Fallback data created:"
-            ls -la data/
+            find data/ -type f -exec ls -la {} \;
           fi
 
       - name: Commit updated data files

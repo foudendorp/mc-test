@@ -99,16 +99,17 @@ class IntuneUpdatesTracker {
             
             for (const fileInfo of indexData.dataFiles) {
                 try {
-                    console.log(`Fetching ${fileInfo.filename}...`);
-                    const fileResponse = await fetch(`./data/${fileInfo.filename}`);
+                    const filePath = fileInfo.path || `updates/${fileInfo.filename}`;
+                    console.log(`Fetching ${filePath}...`);
+                    const fileResponse = await fetch(`./data/${filePath}`);
                     
                     if (!fileResponse.ok) {
-                        console.warn(`Failed to load ${fileInfo.filename}`);
+                        console.warn(`Failed to load ${filePath}`);
                         continue;
                     }
                     
                     const fileData = await fileResponse.json();
-                    console.log(`Loaded ${fileInfo.filename} with ${fileData.topics?.length || 0} topics`);
+                    console.log(`Loaded ${filePath} with ${fileData.topics?.length || 0} topics`);
                     
                     // Process each topic and its updates
                     if (fileData.topics) {
@@ -135,8 +136,8 @@ class IntuneUpdatesTracker {
             // Load notices
             let notices = [];
             try {
-                console.log('Fetching notices.json...');
-                const noticesResponse = await fetch('./data/notices.json');
+                console.log('Fetching notices/notices.json...');
+                const noticesResponse = await fetch('./data/notices/notices.json');
                 if (noticesResponse.ok) {
                     const noticesData = await noticesResponse.json();
                     notices = noticesData.notices || [];
@@ -350,10 +351,10 @@ class IntuneUpdatesTracker {
                 <p><strong>Date:</strong> ${this.formatDate(file.date)}</p>
                 ${file.serviceRelease ? `<p><strong>Service Release:</strong> ${file.serviceRelease}</p>` : ''}
                 <div class="file-actions">
-                    <a href="./data/${file.filename}" target="_blank" class="view-json-btn">
+                    <a href="./data/${file.path || `updates/${file.filename}`}" target="_blank" class="view-json-btn">
                         <i class="fas fa-code"></i> View JSON
                     </a>
-                    <button onclick="window.tracker.downloadFile('${file.filename}')" class="download-btn">
+                    <button onclick="window.tracker.downloadFile('${file.path || `updates/${file.filename}`}')" class="download-btn">
                         <i class="fas fa-download"></i> Download
                     </button>
                 </div>
@@ -366,7 +367,7 @@ class IntuneUpdatesTracker {
     downloadFile(filename) {
         const link = document.createElement('a');
         link.href = `./data/${filename}`;
-        link.download = filename;
+        link.download = filename.split('/').pop(); // Get just the filename without path
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

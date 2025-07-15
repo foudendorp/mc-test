@@ -4,10 +4,18 @@ import { JSDOM } from 'jsdom';
 
 const MICROSOFT_LEARN_URL = 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new';
 const DATA_DIR = './data';
+const UPDATES_DIR = './data/updates';
+const NOTICES_DIR = './data/notices';
 
-// Ensure data directory exists
+// Ensure data directories exist
 if (!existsSync(DATA_DIR)) {
     mkdirSync(DATA_DIR, { recursive: true });
+}
+if (!existsSync(UPDATES_DIR)) {
+    mkdirSync(UPDATES_DIR, { recursive: true });
+}
+if (!existsSync(NOTICES_DIR)) {
+    mkdirSync(NOTICES_DIR, { recursive: true });
 }
 
 // Parse Microsoft Learn page content
@@ -198,10 +206,18 @@ function mapTopicToCategory(topicText) {
 async function generateDataFiles() {
     console.log('Starting data generation...');
     
-    // Ensure data directory exists
+    // Ensure data directories exist
     if (!existsSync(DATA_DIR)) {
         console.log('Creating data directory...');
         mkdirSync(DATA_DIR, { recursive: true });
+    }
+    if (!existsSync(UPDATES_DIR)) {
+        console.log('Creating updates directory...');
+        mkdirSync(UPDATES_DIR, { recursive: true });
+    }
+    if (!existsSync(NOTICES_DIR)) {
+        console.log('Creating notices directory...');
+        mkdirSync(NOTICES_DIR, { recursive: true });
     }
     
     try {
@@ -219,10 +235,11 @@ async function generateDataFiles() {
             const updateCount = weekData.topics.reduce((sum, topic) => sum + topic.updates.length, 0);
             
             if (updateCount > 0) {
-                writeFileSync(`${DATA_DIR}/${filename}`, JSON.stringify(weekData, null, 2));
+                writeFileSync(`${UPDATES_DIR}/${filename}`, JSON.stringify(weekData, null, 2));
                 
                 dataFiles.push({
                     filename: filename,
+                    path: `updates/${filename}`,
                     week: weekData.week,
                     date: weekData.date,
                     serviceRelease: weekData.serviceRelease,
@@ -230,7 +247,7 @@ async function generateDataFiles() {
                 });
                 
                 totalUpdates += updateCount;
-                console.log(`Generated ${filename} with ${updateCount} updates`);
+                console.log(`Generated updates/${filename} with ${updateCount} updates`);
             }
         }
         
@@ -247,16 +264,16 @@ async function generateDataFiles() {
                 lastUpdated: new Date().toISOString(),
                 notices: notices
             };
-            writeFileSync(`${DATA_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
-            console.log(`Generated notices.json with ${notices.length} notices`);
+            writeFileSync(`${NOTICES_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
+            console.log(`Generated notices/notices.json with ${notices.length} notices`);
         } else {
             // Create minimal notices file
             const noticesData = {
                 lastUpdated: new Date().toISOString(),
                 notices: []
             };
-            writeFileSync(`${DATA_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
-            console.log('Generated empty notices.json');
+            writeFileSync(`${NOTICES_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
+            console.log('Generated empty notices/notices.json');
         }
         
         // Generate index file
@@ -282,6 +299,14 @@ async function generateDataFiles() {
 
 async function createFallbackData() {
     console.log('Creating fallback data...');
+    
+    // Ensure directories exist
+    if (!existsSync(UPDATES_DIR)) {
+        mkdirSync(UPDATES_DIR, { recursive: true });
+    }
+    if (!existsSync(NOTICES_DIR)) {
+        mkdirSync(NOTICES_DIR, { recursive: true });
+    }
     
     // Create fallback update data
     const fallbackData = {
@@ -310,8 +335,8 @@ async function createFallbackData() {
         ]
     };
     
-    writeFileSync(`${DATA_DIR}/2025-07-14.json`, JSON.stringify(fallbackData, null, 2));
-    console.log('Generated fallback 2025-07-14.json');
+    writeFileSync(`${UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackData, null, 2));
+    console.log('Generated fallback updates/2025-07-14.json');
     
     // Create fallback notices
     const noticesData = {
@@ -327,8 +352,8 @@ async function createFallbackData() {
         ]
     };
     
-    writeFileSync(`${DATA_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
-    console.log('Generated fallback notices.json');
+    writeFileSync(`${NOTICES_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
+    console.log('Generated fallback notices/notices.json');
     
     // Create fallback index
     const indexData = {
@@ -338,6 +363,7 @@ async function createFallbackData() {
         dataFiles: [
             {
                 filename: "2025-07-14.json",
+                path: "updates/2025-07-14.json",
                 week: "Week of July 14, 2025",
                 date: "2025-07-14",
                 serviceRelease: null,
