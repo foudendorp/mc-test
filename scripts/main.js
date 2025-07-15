@@ -271,7 +271,7 @@ class IntuneUpdatesTracker {
                     feature.toLowerCase().includes(searchTerm)));
 
             // Category filter
-            const matchesCategory = !categoryFilter || update.category === categoryFilter;
+            const matchesCategory = !categoryFilter || categoryFilter === 'all' || update.category === categoryFilter;
 
             // Time filter
             const matchesTime = this.checkTimeFilter(update.date, timeFilter);
@@ -289,7 +289,7 @@ class IntuneUpdatesTracker {
     }
 
     checkTimeFilter(dateString, filter) {
-        if (!filter) return true;
+        if (!filter || filter === 'all') return true;
 
         const updateDate = new Date(dateString);
         const now = new Date();
