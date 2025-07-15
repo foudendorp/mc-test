@@ -80,36 +80,55 @@ class IntuneUpdatesTracker {
     async fetchIntuneUpdates() {
         try {
             console.log('Starting to fetch Intune updates...');
+            console.log('Current URL:', window.location.href);
             
             // Load the index file to get available data files
             console.log('Fetching index.json...');
-            const indexResponse = await fetch('./data/index.json');
+            const indexUrl = './data/index.json';
+            console.log('Index URL:', indexUrl);
+            const indexResponse = await fetch(indexUrl);
+            
+            console.log('Index response status:', indexResponse.status);
+            console.log('Index response ok:', indexResponse.ok);
             
             if (!indexResponse.ok) {
-                console.log('Index file not found, using fallback data');
+                console.error('Index file not found or failed to load. Status:', indexResponse.status, 'URL:', indexUrl);
                 return this.getFallbackData();
             }
             
             const indexData = await indexResponse.json();
-            console.log('Index data loaded:', indexData);
+            console.log('Index data loaded successfully:', indexData);
+            console.log('Number of data files in index:', indexData.dataFiles?.length || 0);
             
             // Load all update files
             const updates = [];
-            console.log(`Loading ${indexData.dataFiles.length} data files...`);
+            console.log(`Loading ${indexData.dataFiles?.length || 0} data files...`);
+            
+            if (!indexData.dataFiles || indexData.dataFiles.length === 0) {
+                console.error('No data files found in index.json');
+                return this.getFallbackData();
+            }
             
             for (const fileInfo of indexData.dataFiles) {
                 try {
                     const filePath = fileInfo.path || `updates/${fileInfo.filename}`;
-                    console.log(`Fetching ${filePath}...`);
-                    const fileResponse = await fetch(`./data/${filePath}`);
+                    const fullUrl = `./data/${filePath}`;
+                    console.log(`Fetching file: ${fullUrl}`);
+                    const fileResponse = await fetch(fullUrl);
+                    
+                    console.log(`Response for ${filePath}: status=${fileResponse.status}, ok=${fileResponse.ok}`);
                     
                     if (!fileResponse.ok) {
-                        console.warn(`Failed to load ${filePath}`);
+                        console.warn(`Failed to load ${filePath}, status: ${fileResponse.status}`);
                         continue;
                     }
                     
                     const fileData = await fileResponse.json();
-                    console.log(`Loaded ${filePath} with ${fileData.topics?.length || 0} topics`);
+                    console.log(`Successfully loaded ${filePath}:`, {
+                        topics: fileData.topics?.length || 0,
+                        date: fileData.date,
+                        week: fileData.week
+                    });
                     
                     // Process each topic and its updates
                     if (fileData.topics) {
@@ -129,7 +148,8 @@ class IntuneUpdatesTracker {
                         });
                     }
                 } catch (fileError) {
-                    console.error(`Error loading ${fileInfo.filename}:`, fileError);
+                    console.error(`Error loading file ${fileInfo.filename}:`, fileError);
+                    console.error('File info:', fileInfo);
                 }
             }
             
@@ -149,7 +169,8 @@ class IntuneUpdatesTracker {
                 console.error('Error loading notices:', noticesError);
             }
             
-            console.log(`Total updates loaded: ${updates.length}`);
+            console.log(`FINAL RESULT: Total updates loaded: ${updates.length}`);
+            console.log('Sample update:', updates[0]);
             
             return {
                 updates: updates.sort((a, b) => new Date(b.date) - new Date(a.date)),
@@ -159,13 +180,31 @@ class IntuneUpdatesTracker {
             
         } catch (error) {
             console.error('Error loading JSON data:', error);
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack
+            });
             console.log('Using fallback data due to error');
             return this.getFallbackData();
         }
     }
 
     getFallbackData() {
-        console.log('Using fallback data');
+        console.log('🚨 USING FALLBACK DATA - JSON files not accessible');
+        
+        // Show a warning to the user
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'alert alert-warning';
+        warningDiv.innerHTML = `
+            <strong>⚠️ Data Loading Issue:</strong> Unable to load JSON data files. 
+            Displaying sample data. Please check the browser console for details.
+        `;
+        
+        const container = document.querySelector('.container');
+        if (container) {
+            container.insertBefore(warningDiv, container.firstChild);
+        }
+        
         return {
             updates: [
                 {
