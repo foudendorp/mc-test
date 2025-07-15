@@ -899,12 +899,14 @@ function parseTableUpdates(table, monthData) {
             const productCapabilityCell = cells.length > 3 ? cells[3] : null;
             
             const update = {
+                id: generateContentId(extractTextContent(descriptionCell), extractTextContent(typeCell), extractTextContent(descriptionCell)),
                 title: extractTextContent(descriptionCell),
                 description: extractTextContent(descriptionCell),
                 type: extractTextContent(typeCell),
                 serviceCategory: extractTextContent(serviceCategoryCell),
                 productCapability: productCapabilityCell ? extractTextContent(productCapabilityCell) : null,
                 date: monthData.date,
+                service: 'Entra',
                 links: extractLinks(descriptionCell)
             };
             
@@ -932,11 +934,14 @@ function parseListUpdates(list, monthData) {
         const text = extractTextContent(item);
         if (text.trim()) {
             const update = {
+                id: generateContentId(text, 'Update', text),
                 title: text,
                 description: text,
                 type: 'Update',
                 serviceCategory: 'General',
+                productCapability: null,
                 date: monthData.date,
+                service: 'Entra',
                 links: extractLinks(item)
             };
             
@@ -961,7 +966,7 @@ function parseSectionUpdates(section, monthData) {
     const headers = section.querySelectorAll('h3, h4');
     
     headers.forEach(header => {
-        const update = parseUpdateFromHeader(header, monthData.date);
+        const update = parseEntraUpdateFromHeader(header, monthData.date);
         
         if (update) {
             // Find or create topic
@@ -980,12 +985,12 @@ function parseSectionUpdates(section, monthData) {
     });
 }
 
-// Parse direct H3 sections
+// Parse direct H3 sections (this is where the real Entra data is)
 function parseDirectSection(header, monthData) {
-    const update = parseUpdateFromHeader(header, monthData.date);
+    const update = parseEntraUpdateFromHeader(header, monthData.date);
     
     if (update) {
-        // Find or create topic
+        // Find or create topic based on service category
         let topic = monthData.topics.find(t => t.topic === update.serviceCategory || t.topic === 'General Updates');
         if (!topic) {
             topic = {
@@ -1000,7 +1005,61 @@ function parseDirectSection(header, monthData) {
     }
 }
 
-// Parse update from header element and following content
+// Parse update from header element specifically for Entra format
+function parseEntraUpdateFromHeader(header, date) {
+    const title = extractTextContent(header);
+    
+    // Look for the structured content after the header
+    let description = title;
+    let type = 'Update';
+    let serviceCategory = 'General';
+    let productCapability = null;
+    let currentElement = header.nextElementSibling;
+    const descriptionParts = [];
+    
+    // Look for the Type/Service category/Product capability line
+    while (currentElement && !['H1', 'H2', 'H3', 'H4'].includes(currentElement.tagName)) {
+        const text = extractTextContent(currentElement);
+        
+        // Check if this element contains the structured metadata
+        if (text.includes('Type:') && text.includes('Service category:')) {
+            // Parse the structured line like: "Type: New featureService category: Conditional AccessProduct capability: Identity Security & Protection"
+            const typeMatch = text.match(/Type:\s*([^A-Z]*?)(?=Service category:|Product capability:|$)/);
+            const serviceCategoryMatch = text.match(/Service category:\s*([^A-Z]*?)(?=Product capability:|Type:|$)/);
+            const productCapabilityMatch = text.match(/Product capability:\s*([^A-Z]*?)(?=Type:|Service category:|$)/);
+            
+            if (typeMatch) type = typeMatch[1].trim();
+            if (serviceCategoryMatch) serviceCategory = serviceCategoryMatch[1].trim();
+            if (productCapabilityMatch) productCapability = productCapabilityMatch[1].trim();
+        } else if (currentElement.tagName === 'P' && text.trim() && !text.includes('Type:')) {
+            // Regular description paragraph
+            descriptionParts.push(text);
+        }
+        
+        currentElement = currentElement.nextElementSibling;
+        
+        // Limit description content
+        if (descriptionParts.length >= 3) break;
+    }
+    
+    if (descriptionParts.length > 0) {
+        description = descriptionParts.join(' ');
+    }
+    
+    return {
+        id: generateContentId(title, type, description),
+        title: title,
+        description: description,
+        type: type,
+        serviceCategory: serviceCategory,
+        productCapability: productCapability,
+        date: date,
+        service: 'Entra',
+        links: extractLinks(header.parentElement)
+    };
+}
+
+// Parse update from header element and following content (legacy format)
 function parseUpdateFromHeader(header, date) {
     const title = extractTextContent(header);
     
