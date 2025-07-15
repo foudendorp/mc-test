@@ -130,7 +130,59 @@ async function fetchServiceUpdates(service) {
         // Handle different structures for different services
         if (service.tag === 'Entra') {
             // For Entra ID, use enhanced parsing for the comprehensive structure
-            return await parseEntraUpdates(document, service);
+            const weeklyUpdates = await parseEntraUpdates(document, service);
+            
+            // Still need to parse notices for Entra
+            const notices = [];
+            const noticeHeaders = Array.from(document.querySelectorAll('h3, h4'))
+                .filter(h => h.textContent.toLowerCase().includes('plan for change') || 
+                            h.textContent.toLowerCase().includes('notice') ||
+                            h.textContent.toLowerCase().includes('important'));
+            
+            noticeHeaders.forEach(header => {
+                let content = '';
+                let nextEl = header.nextElementSibling;
+                
+                while (nextEl && !['H2', 'H3', 'H4'].includes(nextEl.tagName)) {
+                    if (nextEl.tagName === 'P') {
+                        // Preserve HTML markup by converting to markdown-like syntax
+                        let htmlContent = nextEl.innerHTML.trim();
+                        
+                        // Convert HTML to markdown-like syntax
+                        htmlContent = htmlContent
+                            .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**') // <strong> to **bold**
+                            .replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**') // <b> to **bold**
+                            .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*') // <em> to *italic*
+                            .replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*') // <i> to *italic*
+                            .replace(/<code[^>]*>(.*?)<\/code>/gi, '`$1`') // <code> to `code`
+                            .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)') // <a> to [text](url)
+                            .replace(/<br\s*\/?>/gi, '\n') // <br> to newline
+                            .replace(/<[^>]+>/g, ''); // Remove any remaining HTML tags
+                        
+                        content += (content ? '\n' : '') + htmlContent;
+                    }
+                    nextEl = nextEl.nextElementSibling;
+                }
+                
+                if (content) {
+                    // Create notice without timestamp for consistent content
+                    const noticeData = {
+                        id: generateContentId(header.textContent.trim(), '', content), // Deterministic ID based on content
+                        title: header.textContent.trim(),
+                        content: content.trim(),
+                        date: new Date().toISOString().split('T')[0],
+                        service: service.tag, // Add service tag to notices
+                        type: 'warning',
+                        category: 'plan-for-change',
+                        status: 'active',
+                        source: 'microsoft-learn'
+                    };
+                    
+                    notices.push(noticeData);
+                }
+            });
+            
+            return { weeklyUpdates, notices };
         } else {
             // For Intune and other services, use week-based structure
             const weekHeaders = Array.from(document.querySelectorAll('h2'))
@@ -836,6 +888,13 @@ async function parseEntraUpdates(document, service) {
     
     console.log(`Found ${monthHeaders.length} month sections for ${service.name}`);
     
+    // Debug: Let's also check what H2 elements we do find
+    const allH2s = Array.from(document.querySelectorAll('h2'));
+    console.log(`Total H2 elements: ${allH2s.length}`);
+    allH2s.slice(0, 5).forEach(h2 => {
+        console.log(`H2 text: "${h2.textContent.trim()}"`);
+    });
+    
     for (const monthHeader of monthHeaders) {
         const monthText = monthHeader.textContent.trim();
         console.log(`Processing ${service.name}: ${monthText}`);
@@ -853,6 +912,7 @@ async function parseEntraUpdates(document, service) {
         
         // Find content between this month header and the next one
         let currentElement = monthHeader.nextElementSibling;
+        let foundUpdates = 0;
         
         while (currentElement && !isNextMonthHeader(currentElement)) {
             // Look for update entries in various formats
@@ -868,13 +928,17 @@ async function parseEntraUpdates(document, service) {
             } else if (currentElement.tagName === 'H3') {
                 // Direct H3 sections
                 parseDirectSection(currentElement, monthData);
+                foundUpdates++;
             }
             
             currentElement = currentElement.nextElementSibling;
         }
         
+        console.log(`Found ${foundUpdates} H3 elements in ${monthText}`);
+        
         // Only add months that have topics with updates
         const hasUpdates = monthData.topics.some(topic => topic.updates && topic.updates.length > 0);
+        console.log(`Month ${monthText} has updates: ${hasUpdates}, topics: ${monthData.topics.length}`);
         if (hasUpdates) {
             weeklyUpdates.set(monthDate, monthData);
         }
@@ -1008,6 +1072,7 @@ function parseDirectSection(header, monthData) {
 // Parse update from header element specifically for Entra format
 function parseEntraUpdateFromHeader(header, date) {
     const title = extractTextContent(header);
+    console.log(`Parsing Entra update: "${title}"`);
     
     // Look for the structured content after the header
     let description = title;
@@ -1023,14 +1088,24 @@ function parseEntraUpdateFromHeader(header, date) {
         
         // Check if this element contains the structured metadata
         if (text.includes('Type:') && text.includes('Service category:')) {
+            console.log(`Found structured metadata: "${text}"`);
             // Parse the structured line like: "Type: New featureService category: Conditional AccessProduct capability: Identity Security & Protection"
             const typeMatch = text.match(/Type:\s*([^A-Z]*?)(?=Service category:|Product capability:|$)/);
             const serviceCategoryMatch = text.match(/Service category:\s*([^A-Z]*?)(?=Product capability:|Type:|$)/);
             const productCapabilityMatch = text.match(/Product capability:\s*([^A-Z]*?)(?=Type:|Service category:|$)/);
             
-            if (typeMatch) type = typeMatch[1].trim();
-            if (serviceCategoryMatch) serviceCategory = serviceCategoryMatch[1].trim();
-            if (productCapabilityMatch) productCapability = productCapabilityMatch[1].trim();
+            if (typeMatch) {
+                type = typeMatch[1].trim();
+                console.log(`Extracted type: "${type}"`);
+            }
+            if (serviceCategoryMatch) {
+                serviceCategory = serviceCategoryMatch[1].trim();
+                console.log(`Extracted serviceCategory: "${serviceCategory}"`);
+            }
+            if (productCapabilityMatch) {
+                productCapability = productCapabilityMatch[1].trim();
+                console.log(`Extracted productCapability: "${productCapability}"`);
+            }
         } else if (currentElement.tagName === 'P' && text.trim() && !text.includes('Type:')) {
             // Regular description paragraph
             descriptionParts.push(text);
@@ -1046,7 +1121,7 @@ function parseEntraUpdateFromHeader(header, date) {
         description = descriptionParts.join(' ');
     }
     
-    return {
+    const update = {
         id: generateContentId(title, type, description),
         title: title,
         description: description,
@@ -1057,6 +1132,9 @@ function parseEntraUpdateFromHeader(header, date) {
         service: 'Entra',
         links: extractLinks(header.parentElement)
     };
+    
+    console.log(`Created update:`, JSON.stringify(update, null, 2));
+    return update;
 }
 
 // Parse update from header element and following content (legacy format)
