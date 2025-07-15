@@ -15,6 +15,7 @@
           "content": "The authentication methods migration guide in the Microsoft Entra Admin Center lets you automatically migrate method management from the legacy MFA and SSPR policies to the converged authentication methods policy. In 2023, it was announced that the ability to manage authentication methods in the legacy MFA and SSPR policies would be retired in September 2025. Until now, organizations had to manually migrate methods themselves by using the migration toggle in the converged policy. Now, you can migrate in just a few selections by using the migration guide. The guide evaluates what your organization currently has enabled in both legacy policies, and generates a recommended converged policy configuration for you to review and edit as needed. From there, confirm the configuration, and we set it up for you and mark your migration as complete. For more information, see: How to migrate MFA and SSPR policy settings to the Authentication methods policy for Microsoft Entra ID.",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         },
         {
@@ -24,6 +25,7 @@
           "content": "Admins are now able to multi-select and edit users at once through the Microsoft Entra Admin Center. With this new capability, admins can bulk edit user properties, add users to groups, edit account status, and more. This UX enhancement will significantly improve efficiency for user management tasks in the Microsoft Entra admin center. For more information, see: Add or update a user's profile information and settings in the Microsoft Entra admin center.",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         },
         {
@@ -33,6 +35,7 @@
           "content": "We're thrilled to announce public preview of QR code authentication in Microsoft Entra ID, providing an efficient and simple authentication method for frontline workers. You see a new authentication method ‘QR code’ in Microsoft Entra ID Authentication method Policies. You can enable and add QR code for your frontline workers via Microsoft Entra ID, My Staff, or MS Graph APIs. All users in your tenant see a new link ‘Sign in with QR code’ on navigating to https://login.microsoftonline.com > ‘Sign-in options’ > ‘Sign in to an organization’ page. This new link is visible only on mobile devices (Android/iOS/iPadOS). Users can use this auth method only if you add and provide a QR code to them. QR code auth is also available in BlueFletch and Jamf. MHS QR code auth support is generally available by early March. The feature has a ‘preview’ tag until it's generally available. For more information, see: Authentication methods in Microsoft Entra ID - QR code authentication method (Preview).",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         },
         {
@@ -42,6 +45,7 @@
           "content": "By setting up federation with a custom-configured identity provider that supports the SAML 2.0 or WS-Fed protocol, you enable your users to sign up and sign in to your applications using their existing accounts from the federated external provider. This feature also includes domain-based federation, so a user who enters an email address on the sign-in page that matches a predefined domain in any of the external identity providers will be redirected to authenticate with that identity provider. For more information, see: Custom SAML/WS-Fed identity providers.",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         },
         {
@@ -51,6 +55,7 @@
           "content": "Support for external auth methods as a supported method begins rolling out at the beginning of March 2025. When this is live in a tenant where system preferred is enabled and users are in scope of an external auth methods policy, those users will be prompted for their external authentication method if their most secure registered method is Microsoft Authenticator notification. External Authentication Method will appear as third in the list of most secure methods. If the user has a Temporary Access Pass (TAP) or Passkey (FIDO2) device registered, they'll be prompted for those. In addition, users in the scope of an external auth methods policy will have the ability to delete all registered second factor methods from their account, even if the method being deleted is specified as the default sign in method or is system preferred. For more information, see: System-preferred multifactor authentication - Authentication methods policy.",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         },
         {
@@ -60,6 +65,7 @@
           "content": "Now new, lesser privileged permissions can be used for managing specific read and write actions in Lifecycle workflows scenarios. The following granular permissions were introduced in Microsoft Graph: For more information, see: Microsoft Graph permissions reference.",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         }
       ]

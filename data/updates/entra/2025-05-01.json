@@ -15,6 +15,7 @@
           "content": "Set up a SAML or WS-Fed identity provider to enable users to sign up and sign in to, your applications using their own account with the identity provider. Users will be redirected to the identity provider, and then redirected back to Microsoft Entra after successful sign in. For more information, see: SAML/WS-Fed identity providers.",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         },
         {
@@ -24,6 +25,7 @@
           "content": "Use Pre/Post Attribute Collection Custom Extensions to customize your self-service sign-up flow. This includes blocking sign-up, or prefilling, validating, and modifying attribute values. For more information, see: Create a custom authentication extension for attribute collection start and submit events.",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         },
         {
@@ -33,6 +35,7 @@
           "content": "Microsoft Entra Connect creates and uses a Microsoft Entra Connector account to authenticate and sync identities from Active Directory to Microsoft Entra ID. The account uses a locally stored password to authenticate with Microsoft Entra ID. To enhance the security of the Microsoft Entra Connect sync process with the application, we've rolled out support for \"Application based Authentication\" (ABA), which uses a Microsoft Entra ID application identity and Oauth 2.0 client credential flow to authenticate with Microsoft Entra ID. To enable this, Microsoft Entra Connect creates a single tenant 3rd party application in the customer's Microsoft Entra ID tenant, registers a certificate as the credential for the application, and authorizes the application to perform on-premises directory synchronization. The Microsoft Entra Connect Sync .msi installation file for this change is exclusively available on Microsoft Entra Admin Center within the Microsoft Entra Connect pane. Check our version history page for more details of the change.",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         },
         {
@@ -42,6 +45,7 @@
           "content": "The policy impact view for individual Conditional Access policies enables admins to understand how each policy has affected recent sign-ins. The feature provides a clear, built-in graph in the Microsoft Entra admin center, making it easy to visualize and assess the impact without needing additional tools and resources, such as Log Analytics. For more information, see: Policy impact.",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         },
         {
@@ -51,6 +55,7 @@
           "content": "Deployment logs feature provide visibility into the status and progress of configuration changes made in Global Secure Access. Deployment logs publish updates to admins and monitor the process for any errors. Unlike other logging features, deployment logs focus specifically on tracking configuration updates. These logs help administrators track and troubleshoot deployment updates, such as forwarding profile redistributions and remote network updates, across the global network. For more information, see: How to use the Global Secure Access deployment logs (preview).",
           "service": "Entra",
           "serviceCategory": "General",
+          "productCapability": null,
           "link": "whats-new-archive"
         }
       ]
