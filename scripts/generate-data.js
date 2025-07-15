@@ -158,7 +158,21 @@ async function fetchIntuneUpdates() {
             
             while (nextEl && !['H2', 'H3', 'H4'].includes(nextEl.tagName)) {
                 if (nextEl.tagName === 'P') {
-                    content += (content ? ' ' : '') + nextEl.textContent.trim();
+                    // Preserve HTML markup by converting to markdown-like syntax
+                    let htmlContent = nextEl.innerHTML.trim();
+                    
+                    // Convert HTML to markdown-like syntax
+                    htmlContent = htmlContent
+                        .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**') // <strong> to **bold**
+                        .replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**') // <b> to **bold**
+                        .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*') // <em> to *italic*
+                        .replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*') // <i> to *italic*
+                        .replace(/<code[^>]*>(.*?)<\/code>/gi, '`$1`') // <code> to `code`
+                        .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)') // <a> to [text](url)
+                        .replace(/<br\s*\/?>/gi, '\n') // <br> to newline
+                        .replace(/<[^>]+>/g, ''); // Remove any remaining HTML tags
+                    
+                    content += (content ? '\n' : '') + htmlContent;
                 }
                 nextEl = nextEl.nextElementSibling;
             }
@@ -167,9 +181,13 @@ async function fetchIntuneUpdates() {
                 notices.push({
                     id: Date.now() + Math.random(),
                     title: header.textContent.trim(),
-                    content: content,
+                    content: content.trim(),
                     date: new Date().toISOString().split('T')[0],
-                    type: 'warning'
+                    lastUpdated: new Date().toISOString(),
+                    type: 'warning',
+                    category: 'plan-for-change',
+                    status: 'active',
+                    source: 'microsoft-learn'
                 });
             }
         });

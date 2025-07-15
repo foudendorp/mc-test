@@ -328,20 +328,156 @@ class IntuneUpdatesTracker {
     }
 
     displayNotices() {
-        if (!this.noticesContainer || !this.notices.length) return;
-
-        const noticesHtml = this.notices.map(notice => `
-            <div class="notice-item ${notice.type}">
-                <div class="notice-header">
-                    <h4>${notice.title}</h4>
-                    <span class="notice-date">${this.formatDate(notice.date)}</span>
+        if (!this.noticesContainer || !this.notices.length) {
+            this.noticesContainer.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>No important notices</h3>
+                    <p>No important notices are currently available.</p>
                 </div>
-                <div class="notice-content">${this.renderNoticeContent(notice.content)}</div>
-                ${notice.link ? `<a href="${notice.link}" target="_blank">Learn more <i class="fas fa-external-link-alt"></i></a>` : ''}
+            `;
+            return;
+        }
+
+        const noticesHtml = `
+            <div class="notices-table-container">
+                <table class="notices-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${this.notices.map(notice => this.createNoticeRow(notice)).join('')}
+                    </tbody>
+                </table>
             </div>
-        `).join('');
+        `;
 
         this.noticesContainer.innerHTML = noticesHtml;
+    }
+
+    createNoticeRow(notice) {
+        const formattedDate = this.formatDate(notice.date);
+        const statusClass = notice.status || 'active';
+        const typeClass = notice.type || 'info';
+        
+        return `
+            <tr class="notice-row" onclick="window.tracker.showNoticeModal('${notice.id}')" style="cursor: pointer;">
+                <td data-label="Date">${formattedDate}</td>
+                <td data-label="Type">
+                    <span class="notice-type-badge notice-type-${typeClass}">
+                        <i class="fas ${this.getNoticeIcon(typeClass)}"></i>
+                        ${this.formatNoticeType(typeClass)}
+                    </span>
+                </td>
+                <td data-label="Title">${this.truncateText(notice.title, 60)}</td>
+                <td data-label="Status">
+                    <span class="notice-status-badge status-${statusClass}">${this.formatStatus(statusClass)}</span>
+                </td>
+                <td data-label="Action">
+                    <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showNoticeModal('${notice.id}')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+
+    getNoticeIcon(type) {
+        switch (type) {
+            case 'warning': return 'fa-exclamation-triangle';
+            case 'error': return 'fa-times-circle';
+            case 'info': return 'fa-info-circle';
+            case 'success': return 'fa-check-circle';
+            default: return 'fa-info-circle';
+        }
+    }
+
+    formatNoticeType(type) {
+        return type.charAt(0).toUpperCase() + type.slice(1);
+    }
+
+    formatStatus(status) {
+        return status.split('-').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+    }
+
+    showNoticeModal(noticeId) {
+        const notice = this.notices.find(n => n.id == noticeId);
+        if (!notice) return;
+
+        const formattedDate = this.formatDate(notice.date);
+        const typeClass = notice.type || 'info';
+        
+        const modalHtml = `
+            <div class="modal-overlay" onclick="window.tracker.closeModal()">
+                <div class="modal-content" onclick="event.stopPropagation()">
+                    <div class="modal-header">
+                        <h2>
+                            <i class="fas ${this.getNoticeIcon(typeClass)}"></i>
+                            ${notice.title}
+                        </h2>
+                        <button class="modal-close" onclick="window.tracker.closeModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="notice-meta-info">
+                            <div class="meta-item">
+                                <strong>Date:</strong> ${formattedDate}
+                            </div>
+                            <div class="meta-item">
+                                <strong>Type:</strong> 
+                                <span class="notice-type-badge notice-type-${typeClass}">
+                                    <i class="fas ${this.getNoticeIcon(typeClass)}"></i>
+                                    ${this.formatNoticeType(typeClass)}
+                                </span>
+                            </div>
+                            ${notice.status ? `
+                                <div class="meta-item">
+                                    <strong>Status:</strong> 
+                                    <span class="notice-status-badge status-${notice.status}">${this.formatStatus(notice.status)}</span>
+                                </div>
+                            ` : ''}
+                            ${notice.category ? `
+                                <div class="meta-item">
+                                    <strong>Category:</strong> ${this.formatStatus(notice.category)}
+                                </div>
+                            ` : ''}
+                            ${notice.lastUpdated ? `
+                                <div class="meta-item">
+                                    <strong>Last Updated:</strong> ${this.formatDate(notice.lastUpdated.split('T')[0])}
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="notice-content-full">
+                            <h3>Notice Details</h3>
+                            <div class="notice-content">${this.renderNoticeContent(notice.content)}</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        ${notice.link ? `
+                            <a href="${notice.link}" target="_blank" class="learn-more-btn primary">
+                                <i class="fas fa-external-link-alt"></i>
+                                Learn More
+                            </a>
+                        ` : ''}
+                        <button onclick="window.tracker.closeModal()" class="close-btn">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
     }
 
     renderNoticeContent(content) {
