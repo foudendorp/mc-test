@@ -1,9 +1,9 @@
 {
-  "id": 1752591677370.6792,
+  "id": 2914192146,
   "title": "Plan for Change: Intune is moving to support iOS/iPadOS 17 and later",
   "content": "Later in calendar year 2025, we expect iOS 26 and iPadOS 26 to be released by Apple. Microsoft Intune, including the Intune Company Portal and Intune app protection policies (APP, also known as MAM), requires [iOS 17/iPadOS 17 and higher](supported-devices-browsers) shortly after the iOS/iPadOS 26 release.",
   "date": "2025-07-15",
-  "lastUpdated": "2025-07-15T15:01:17.370Z",
+  "lastUpdated": "2025-07-15T15:08:07.799Z",
   "type": "warning",
   "category": "plan-for-change",
   "status": "active",

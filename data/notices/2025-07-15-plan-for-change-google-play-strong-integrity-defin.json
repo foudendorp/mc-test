@@ -1,9 +1,9 @@
 {
-  "id": 1752591677371.9075,
+  "id": 3122405982,
   "title": "Plan for Change: Google Play strong integrity definition update for Android 13 or above",
   "content": "Google recently updated the definition of \"Strong Integrity\" for devices running Android 13 or above, requiring hardware-backed security signals and recent security updates. For more information refer to the [Android Developers Blog: Making the Play Integrity API faster, more resilient, and more private](https://android-developers.googleblog.com/2024/12/making-play-integrity-api-faster-resilient-private.html). Microsoft Intune will enforce this change by **September 30, 2025**. Until then we've adjusted app protection policy and compliance policy behavior to align with Google’s recommended backward compatibility guidance to minimize disruption as detailed in [Improved verdicts in Android 13 and later devices | Google Play | Android Developers](https://developer.android.com/google/play/integrity/improvements#how_can_i_use_the_old_meets-strong-integrity_label_definition_across_all_android_sdk_versions).",
   "date": "2025-07-15",
-  "lastUpdated": "2025-07-15T15:01:17.371Z",
+  "lastUpdated": "2025-07-15T15:08:07.800Z",
   "type": "warning",
   "category": "plan-for-change",
   "status": "active",

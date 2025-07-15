@@ -1,9 +1,9 @@
 {
-  "id": 1752591677371.939,
+  "id": 2986211067,
   "title": "Plan for Change: New Intune connector for deploying Microsoft Entra hybrid joined devices using Windows Autopilot",
   "content": "As part of Microsoft’s Secure Future Initiative, we recently released an update to the Intune Connector for Active Directory to use a Managed Service Account instead of a local SYSTEM account for deploying Microsoft Entra hybrid joined devices with Windows Autopilot. The new connector aims to enhance security by reducing unnecessary privileges and permissions associated with the local SYSTEM account.",
   "date": "2025-07-15",
-  "lastUpdated": "2025-07-15T15:01:17.371Z",
+  "lastUpdated": "2025-07-15T15:08:07.800Z",
   "type": "warning",
   "category": "plan-for-change",
   "status": "active",
