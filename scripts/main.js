@@ -64,7 +64,6 @@ class IntuneUpdatesTracker {
             this.updateStats();
             this.filterUpdates();
             this.displayNotices();
-            this.displayDataFiles();
             this.updateDeploymentTime();
         } catch (error) {
             console.error('Error initializing tracker:', error);
@@ -280,7 +279,7 @@ class IntuneUpdatesTracker {
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Week</th>
+                                <th>Month</th>
                                 <th>Category</th>
                                 <th>Title</th>
                                 <th>Topic</th>
@@ -307,11 +306,12 @@ class IntuneUpdatesTracker {
         const formattedDate = this.formatDate(update.date);
         const categoryName = this.formatCategoryName(update.category);
         const featuresCount = update.features ? update.features.length : 0;
+        const monthName = this.extractMonthFromWeek(update.week || update.date);
         
         return `
             <tr class="update-row" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
                 <td data-label="Date">${formattedDate}</td>
-                <td data-label="Week">${this.truncateText(update.week, 30)}</td>
+                <td data-label="Month">${monthName}</td>
                 <td data-label="Category">
                     <span class="category-badge category-${update.category}">${categoryName}</span>
                 </td>
@@ -490,75 +490,25 @@ class IntuneUpdatesTracker {
             .replace(/`(.*?)`/g, '<code>$1</code>'); // `code` to <code>
     }
 
-    displayDataFiles() {
-        const dataFilesContainer = document.getElementById('dataFilesContainer');
-        if (!dataFilesContainer || !this.indexData) return;
-
-        let filesHtml = '';
+    extractMonthFromWeek(weekOrDate) {
+        if (!weekOrDate) return 'Unknown';
         
-        // Display monthly groups if available
-        if (this.indexData.monthlyGroups && this.indexData.monthlyGroups.length > 0) {
-            filesHtml = this.indexData.monthlyGroups.map(monthGroup => `
-                <div class="month-group">
-                    <div class="month-header">
-                        <h3>${monthGroup.month}</h3>
-                        <span class="month-meta">${monthGroup.totalUpdates} updates across ${monthGroup.weeks.length} weeks</span>
-                        ${monthGroup.serviceReleases.length > 0 ? `
-                            <div class="service-releases">
-                                ${monthGroup.serviceReleases.map(release => `
-                                    <span class="service-release-badge">${release}</span>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                    <div class="weeks-in-month">
-                        ${monthGroup.weeks.map(file => `
-                            <div class="data-file-item week-item">
-                                <div class="file-header">
-                                    <h4>${file.filename}</h4>
-                                    <span class="file-meta">${file.updates} updates</span>
-                                </div>
-                                <p><strong>Week:</strong> ${file.week}</p>
-                                <p><strong>Date:</strong> ${this.formatDate(file.date)}</p>
-                                ${file.serviceRelease ? `<p><strong>Service Release:</strong> ${file.serviceRelease}</p>` : ''}
-                                <div class="file-actions">
-                                    <a href="./data/${file.path || `updates/${file.filename}`}" target="_blank" class="view-json-btn">
-                                        <i class="fas fa-code"></i> View JSON
-                                    </a>
-                                    <button onclick="window.tracker.downloadFile('${file.path || `updates/${file.filename}`}')" class="download-btn">
-                                        <i class="fas fa-download"></i> Download
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-        } 
-        // Fall back to individual files if no monthly groups
-        else if (this.indexData.dataFiles) {
-            filesHtml = this.indexData.dataFiles.map(file => `
-                <div class="data-file-item">
-                    <div class="file-header">
-                        <h4>${file.filename}</h4>
-                        <span class="file-meta">${file.updates} updates</span>
-                    </div>
-                    <p><strong>Week:</strong> ${file.week}</p>
-                    <p><strong>Date:</strong> ${this.formatDate(file.date)}</p>
-                    ${file.serviceRelease ? `<p><strong>Service Release:</strong> ${file.serviceRelease}</p>` : ''}
-                    <div class="file-actions">
-                        <a href="./data/${file.path || `updates/${file.filename}`}" target="_blank" class="view-json-btn">
-                            <i class="fas fa-code"></i> View JSON
-                        </a>
-                        <button onclick="window.tracker.downloadFile('${file.path || `updates/${file.filename}`}')" class="download-btn">
-                            <i class="fas fa-download"></i> Download
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+        // Try to extract date from week string like "Week of July 14, 2025"
+        const weekMatch = weekOrDate.match(/Week of (.+?)(?:\s*\(|$)/);
+        if (weekMatch) {
+            const date = new Date(weekMatch[1]);
+            if (!isNaN(date.getTime())) {
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+            }
         }
-
-        dataFilesContainer.innerHTML = filesHtml;
+        
+        // Fallback: try to parse as direct date
+        const date = new Date(weekOrDate);
+        if (!isNaN(date.getTime())) {
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+        }
+        
+        return 'Unknown';
     }
 
     downloadFile(filename) {
