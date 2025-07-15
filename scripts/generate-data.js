@@ -198,58 +198,158 @@ function mapTopicToCategory(topicText) {
 async function generateDataFiles() {
     console.log('Starting data generation...');
     
-    const { weeklyUpdates, notices } = await fetchIntuneUpdates();
+    // Ensure data directory exists
+    if (!existsSync(DATA_DIR)) {
+        console.log('Creating data directory...');
+        mkdirSync(DATA_DIR, { recursive: true });
+    }
     
-    console.log(`Processed ${weeklyUpdates.size} weeks of updates`);
-    console.log(`Found ${notices.length} notices`);
-    
-    // Generate individual week files
-    const dataFiles = [];
-    let totalUpdates = 0;
-    
-    for (const [date, weekData] of weeklyUpdates) {
-        const filename = `${date}.json`;
-        const updateCount = weekData.topics.reduce((sum, topic) => sum + topic.updates.length, 0);
+    try {
+        const { weeklyUpdates, notices } = await fetchIntuneUpdates();
         
-        if (updateCount > 0) {
-            writeFileSync(`${DATA_DIR}/${filename}`, JSON.stringify(weekData, null, 2));
+        console.log(`Processed ${weeklyUpdates.size} weeks of updates`);
+        console.log(`Found ${notices.length} notices`);
+        
+        // Generate individual week files
+        const dataFiles = [];
+        let totalUpdates = 0;
+        
+        for (const [date, weekData] of weeklyUpdates) {
+            const filename = `${date}.json`;
+            const updateCount = weekData.topics.reduce((sum, topic) => sum + topic.updates.length, 0);
             
-            dataFiles.push({
-                filename: filename,
-                week: weekData.week,
-                date: weekData.date,
-                serviceRelease: weekData.serviceRelease,
-                updates: updateCount
-            });
-            
-            totalUpdates += updateCount;
-            console.log(`Generated ${filename} with ${updateCount} updates`);
+            if (updateCount > 0) {
+                writeFileSync(`${DATA_DIR}/${filename}`, JSON.stringify(weekData, null, 2));
+                
+                dataFiles.push({
+                    filename: filename,
+                    week: weekData.week,
+                    date: weekData.date,
+                    serviceRelease: weekData.serviceRelease,
+                    updates: updateCount
+                });
+                
+                totalUpdates += updateCount;
+                console.log(`Generated ${filename} with ${updateCount} updates`);
+            }
         }
-    }
-    
-    // Generate notices file
-    if (notices.length > 0) {
-        const noticesData = {
-            lastUpdated: new Date().toISOString(),
-            notices: notices
+        
+        // If no data was scraped, create fallback data
+        if (dataFiles.length === 0) {
+            console.log('No data scraped, creating fallback data...');
+            await createFallbackData();
+            return;
+        }
+        
+        // Generate notices file
+        if (notices.length > 0) {
+            const noticesData = {
+                lastUpdated: new Date().toISOString(),
+                notices: notices
+            };
+            writeFileSync(`${DATA_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
+            console.log(`Generated notices.json with ${notices.length} notices`);
+        } else {
+            // Create minimal notices file
+            const noticesData = {
+                lastUpdated: new Date().toISOString(),
+                notices: []
+            };
+            writeFileSync(`${DATA_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
+            console.log('Generated empty notices.json');
+        }
+        
+        // Generate index file
+        const indexData = {
+            lastGenerated: new Date().toISOString(),
+            totalUpdates: totalUpdates,
+            totalFiles: dataFiles.length,
+            dataFiles: dataFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
         };
-        writeFileSync(`${DATA_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
-        console.log(`Generated notices.json with ${notices.length} notices`);
+        
+        writeFileSync(`${DATA_DIR}/index.json`, JSON.stringify(indexData, null, 2));
+        console.log(`Generated index.json with ${dataFiles.length} data files`);
+        
+        console.log('Data generation completed successfully!');
+        console.log(`Total: ${totalUpdates} updates across ${dataFiles.length} weeks`);
+        
+    } catch (error) {
+        console.error('Error during data generation:', error);
+        console.log('Creating fallback data due to error...');
+        await createFallbackData();
     }
+}
+
+async function createFallbackData() {
+    console.log('Creating fallback data...');
     
-    // Generate index file
+    // Create fallback update data
+    const fallbackData = {
+        week: "Week of July 14, 2025",
+        date: "2025-07-14",
+        serviceRelease: null,
+        topics: [
+            {
+                topic: "Device management",
+                category: "device-management",
+                updates: [
+                    {
+                        id: 1,
+                        title: "Microsoft Copilot in Intune",
+                        subtitle: "Explore Intune data with natural language",
+                        content: "You can now use Microsoft Copilot in Intune to explore your Intune data using natural language, take action on the results, manage policies and settings, understand your security posture, and troubleshoot device issues.",
+                        features: [
+                            "Explore your Intune data using natural language queries",
+                            "Conversational chat experience for device troubleshooting",
+                            "Policy and setting management assistance"
+                        ],
+                        link: "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+                    }
+                ]
+            }
+        ]
+    };
+    
+    writeFileSync(`${DATA_DIR}/2025-07-14.json`, JSON.stringify(fallbackData, null, 2));
+    console.log('Generated fallback 2025-07-14.json');
+    
+    // Create fallback notices
+    const noticesData = {
+        lastUpdated: new Date().toISOString(),
+        notices: [
+            {
+                id: 1,
+                title: "Data Generation Notice",
+                content: "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn.",
+                date: new Date().toISOString().split('T')[0],
+                type: "info"
+            }
+        ]
+    };
+    
+    writeFileSync(`${DATA_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
+    console.log('Generated fallback notices.json');
+    
+    // Create fallback index
     const indexData = {
         lastGenerated: new Date().toISOString(),
-        totalUpdates: totalUpdates,
-        totalFiles: dataFiles.length,
-        dataFiles: dataFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
+        totalUpdates: 1,
+        totalFiles: 1,
+        dataFiles: [
+            {
+                filename: "2025-07-14.json",
+                week: "Week of July 14, 2025",
+                date: "2025-07-14",
+                serviceRelease: null,
+                updates: 1
+            }
+        ]
     };
     
     writeFileSync(`${DATA_DIR}/index.json`, JSON.stringify(indexData, null, 2));
-    console.log(`Generated index.json with ${dataFiles.length} data files`);
+    console.log('Generated fallback index.json');
     
-    console.log('Data generation completed successfully!');
-    console.log(`Total: ${totalUpdates} updates across ${dataFiles.length} weeks`);
+    console.log('Fallback data creation completed');
 }
 
 // Run the generation

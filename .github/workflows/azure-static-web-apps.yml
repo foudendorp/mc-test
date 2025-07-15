@@ -37,6 +37,23 @@ jobs:
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
 
+      - name: Verify data files were created
+        run: |
+          echo "Checking if data directory exists..."
+          ls -la
+          if [ -d "data" ]; then
+            echo "Data directory found. Contents:"
+            ls -la data/
+            echo "File sizes:"
+            du -h data/*
+          else
+            echo "Data directory not found! Creating fallback data..."
+            mkdir -p data
+            npm run generate-fallback
+            echo "Fallback data created:"
+            ls -la data/
+          fi
+
       - name: Commit updated data files
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
