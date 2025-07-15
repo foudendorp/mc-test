@@ -1,0 +1,140 @@
+{
+  "week": "Week of June 23, 2025 (Service release 2506)",
+  "date": "2025-06-23",
+  "service": "Intune",
+  "serviceRelease": "Service release 2506",
+  "topics": [
+    {
+      "topic": "App management",
+      "category": "app-management",
+      "updates": [
+        {
+          "id": 875828236,
+          "title": "Microsoft Intune support for Apple AI features",
+          "content": "<p>Intune app protection policies have new standalone settings for Apple AI features (Genmojis, Writing tools, and screen capture). Note that these standalone settings are supported by apps that have updated to version 19.7.12 or later for Xcode 15, and 20.4.0 or later for Xcode 16 of the Intune App SDK and App Wrapping Tool. Previously, these Apple AI features were blocked when the app protection policy <strong>Send Org data to other apps</strong> setting is configured to a value other than <strong>All apps</strong>.</p><p>For more information about Intune's related app protection policies, see <a href=\"../apps/app-protection-policy-settings-ios\">iOS app protection policy settings</a>.</p>",
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        },
+        {
+          "id": 3893463976,
+          "title": "Add Enterprise App Catalog apps to ESP blocking apps list",
+          "content": "<p>Windows Autopilot now supports Enterprise App Catalog apps. Microsoft Intune Enterprise App Management enables IT admins to easily manage applications from the Enterprise App Catalog. Using Windows Autopilot, you can select apps from the Enterprise App Catalog as blocking apps in the Enrollment Status Page (ESP) and the Device Preparation Page (DPP) profiles. This allows you to ensure those apps are delivered before the user can access the desktop.</p><p>For related information, see <a href=\"../enrollment/windows-enrollment-status\">Set up the Enrollment Status Page</a>, <a href=\"/en-us/autopilot/device-preparation/overview\">Overview of Windows Autopilot device preparation</a>, and <a href=\"../apps/apps-add-enterprise-app\">Add an Enterprise App Catalog app to Microsoft Intune</a>.</p><p>Applies to:</p><ul><li>Windows</li></ul>",
+          "features": [
+            "Windows"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        },
+        {
+          "id": 4080901009,
+          "title": "Managed Home Screen orientation changes with Android 16",
+          "content": "<p>Starting with Android 16, Android stops enforcing screen orientation on devices with 600dp and larger display settings. This change impacts the Managed Home Screen (MHS) on devices with larger form factors, like tablets.</p><p>On these Android 16 devices, orientation is determined by the device's orientation setting, not the MHS settings you configure.</p><p>To learn more about Android 16 changes, go to <a href=\"https://developer.android.com/about/versions/16/behavior-changes-16\">Behavior changes: Apps targeting Android 16 or higher</a> (opens Android website).</p><p>Applies to:</p><ul><li>Android Enterprise</li></ul>",
+          "features": [
+            "Android Enterprise"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device configuration",
+      "category": "device-configuration",
+      "updates": [
+        {
+          "id": 4125908029,
+          "title": "New settings available in the Apple settings catalog",
+          "content": "<p>The <a href=\"../configuration/settings-catalog\">Settings Catalog</a> lists all the settings you can configure in a device policy, and all in one place. For more information about configuring settings catalog profiles in Intune, go to <a href=\"../configuration/settings-catalog\">Create a policy using settings catalog</a>.</p><p>There are new settings in the settings catalog. To see these settings, in the <a href=\"https://go.microsoft.com/fwlink/?linkid=2109431\">Microsoft Intune admin center</a>, go to <strong>Devices</strong> &gt; <strong>Manage devices</strong> &gt; <strong>Configuration</strong> &gt; <strong>Create</strong> &gt; <strong>New policy</strong> &gt; <strong>iOS/iPadOS</strong> or <strong>macOS</strong> for platform &gt; <strong>Settings catalog</strong> for profile type.</p><p><strong>Managed Settings</strong>:</p><ul><li>Idle Reboot Allowed</li></ul><p><strong>Authentication &gt; Extensible Single Sign On (SSO)</strong>:</p><ul><li>Allow Device Identifiers In Attestation</li></ul><p><strong>Microsoft Edge</strong>:</p><ul><li>The Microsoft Edge category has been updated with hundreds of new settings. Learn more about available macOS Edge settings at <a href=\"/en-us/deployedge/microsoft-edge-policies\">Microsoft Edge - Policies</a>.</li></ul><p>Apple deprecated the Identification payload in macOS 15.4.</p>",
+          "features": [
+            "Idle Reboot Allowed",
+            "Allow Device Identifiers In Attestation",
+            "The Microsoft Edge category has been updated with hundreds of new settings. Learn more about available macOS Edge settings at Microsoft Edge - Policies."
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        },
+        {
+          "id": 3858304536,
+          "title": "New Block Bluetooth setting in the Android Enterprise settings catalog",
+          "content": "<p>The <a href=\"../configuration/settings-catalog\">Settings Catalog</a> lists all the settings you can configure in a device policy, and all in one place. For more information about configuring Settings Catalog profiles in Intune, see <a href=\"../configuration/settings-catalog\">Create a policy using settings catalog</a>.</p><p>There's a new <strong>Block Bluetooth</strong> setting (<strong>Devices</strong> &gt; <strong>Manage devices</strong> &gt; <strong>Configuration</strong> &gt; <strong>Create</strong> &gt; <strong>New policy</strong> &gt; <strong>Android Enterprise</strong> for platform &gt; <strong>Settings catalog</strong> for profile type). When set to <strong>True</strong>, Bluetooth is disabled on the device.</p><p>There's also a <strong>Block Bluetooth Configuration</strong> setting that prevents end users from changing the Bluetooth setting on the device.</p><p>These settings are different and have different results. Some examples include:</p><ul><li><p><strong>Scenario</strong>: An end user turned on the Bluetooth setting on their device. The admin creates an Intune policy that sets the <strong>Block Bluetooth</strong> setting to <strong>True</strong>.</p><p>In this situation, Bluetooth is blocked on the device, even though the end user turned it on.</p></li><li><p><strong>Scenario</strong>: An end user turned on the Bluetooth setting on their device. The admin creates an Intune policy that sets the <strong>Block Bluetooth Configuration</strong> setting to <strong>True</strong>.</p><p>In this situation, Bluetooth is turned on since the end user previously turned it on. The end user can't turn off Bluetooth. If the end user previously turned Bluetooth off, and then the <strong>Block Bluetooth Configuration</strong> policy applies, then Bluetooth is turned off and the end user can't turn it back on.</p></li></ul><p>For a list of existing settings you can configure in the settings catalog, see <a href=\"../configuration/settings-catalog-android\">Android Enterprise device settings list in the Intune settings catalog</a>.</p><p>Applies to:</p><ul><li>Android Enterprise corporate-owned devices with a work profile (COPE)</li><li>Android Enterprise corporate owned fully managed (COBO)</li><li>Android Enterprise corporate owned dedicated devices (COSU)</li></ul>",
+          "features": [
+            "Scenario: An end user turned on the Bluetooth setting on their device. The admin creates an Intune policy that sets the Block Bluetooth setting to True.\nIn this situation, Bluetooth is blocked on the device, even though the end user turned it on.",
+            "Scenario: An end user turned on the Bluetooth setting on their device. The admin creates an Intune policy that sets the Block Bluetooth Configuration setting to True.\nIn this situation, Bluetooth is turned on since the end user previously turned it on. The end user can't turn off Bluetooth. If the end user previously turned Bluetooth off, and then the Block Bluetooth Configuration policy applies, then Bluetooth is turned off and the end user can't turn it back on.",
+            "Android Enterprise corporate-owned devices with a work profile (COPE)",
+            "Android Enterprise corporate owned fully managed (COBO)",
+            "Android Enterprise corporate owned dedicated devices (COSU)"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device management",
+      "category": "device-management",
+      "updates": [
+        {
+          "id": 1110932735,
+          "title": "New reporting system for improved performance and data consistency",
+          "content": "<p>Microsoft Intune is rolling out the new Policy Reporting Service (PRS) V3. The new system brings faster report generation, improved reliability, and better data consistency.</p><p>In the first phase, some high-traffic compliance and device configuration reports are transitioning to the new system.</p><p>Users will notice quicker updates in the Intune admin center and fewer issues with stale data. No action is required from users, as your reports transition automatically.</p><p>To learn more about the Intune reports you can use, see <a href=\"reports\">Intune reports</a>.</p>",
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device security",
+      "category": "device-security",
+      "updates": [
+        {
+          "id": 2340353460,
+          "title": "New attributes and S/MIME baseline requirements for SCEP certificate profiles",
+          "content": "<p>Intune supports two new attributes for subject name settings in SCEP and PKCS device configuration profiles. They include:</p><ul><li>G={{GivenName}}</li><li>SN={{SurName}}</li></ul><p>Beginning July 16th, you are required to use these attributes in the subject name format if you're using a third party public certificate authority (CA) integrated with the Intune SCEP API for issuing S\\MIME (encryption or signing) certificates anchored up to a public root CA. After that date, a public CA will not issue or sign S\\MIME certificates that omit these attributes.</p><p>For more information, see <a href=\"../protect/certificates-profile-scep#smime-certificate-requirements-for-third-party-public-ca\">S/MIME certificate requirements for third party public CA</a>.</p>",
+          "features": [
+            "G={{GivenName}}",
+            "SN={{SurName}}"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Intune apps",
+      "category": "intune-apps",
+      "updates": [
+        {
+          "id": 93123041,
+          "title": "Newly available protected apps for Intune",
+          "content": "<p>The following protected apps are now available for Microsoft Intune:</p><ul><li>Datasite for Intune by Datasite (iOS)</li><li>Mijn InPlanning by Intus Workforce Solutions (iOS)</li><li>Nitro PDF Pro by Nitro Software, Inc. (iOS)</li><li>SMART TeamWorks by SMART Technologies ULC (iOS)</li></ul><p>For more information about protected apps, see <a href=\"../apps/apps-supported-intune-apps\">Microsoft Intune protected apps</a>.</p>",
+          "features": [
+            "Datasite for Intune by Datasite (iOS)",
+            "Mijn InPlanning by Intus Workforce Solutions (iOS)",
+            "Nitro PDF Pro by Nitro Software, Inc. (iOS)",
+            "SMART TeamWorks by SMART Technologies ULC (iOS)"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Monitor and troubleshoot",
+      "category": "monitor-troubleshoot",
+      "updates": [
+        {
+          "id": 3175891601,
+          "title": "New status column in Windows hardware attestation report",
+          "content": "<p>We added a new column, <strong>Attest Status</strong>, to the Windows hardware attestation report to improve visibility into attestation errors. This column shows error messages received during the attestation process, helping you identify issues from both the service and client sides.  Error types shown in this column include:</p><ul><li>WinINet errors</li><li>HTTP bad request errors</li><li>Other attestation-related failures</li></ul><p>For more information about the report, see <a href=\"reports#windows-hardware-attestation-report-organizational\">Windows hardware attestation report</a>.</p>",
+          "features": [
+            "WinINet errors",
+            "HTTP bad request errors",
+            "Other attestation-related failures"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    }
+  ]
+}

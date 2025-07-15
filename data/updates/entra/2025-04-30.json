@@ -1,0 +1,98 @@
+{
+  "month": "April 2025",
+  "date": "2025-04-30",
+  "service": "Entra",
+  "serviceRelease": null,
+  "topics": [
+    {
+      "topic": "Identity Security & Protection",
+      "category": "conditional-access",
+      "updates": [
+        {
+          "id": 4153954536,
+          "title": "Public Preview - Conditional Access Optimization Agent in Microsoft Entra",
+          "subtitle": "Type: New feature",
+          "content": "<p><a href=\"https://techcommunity.microsoft.com/blog/microsoft-entra-blog/new-innovations-in-microsoft-entra-to-strengthen-ai-security-and-identity-protec/3827393\">Conditional Access Optimization Agent in Microsoft Entra</a> monitors for new users or apps not covered by existing policies, identifies necessary updates to close security gaps, and recommends quick fixes for identity teams to apply with a single selection. For more information, see: <a href=\"../identity/conditional-access/agent-optimization\">Microsoft Entra Conditional Access optimization agent</a>.</p> <span class=\"product-capability\">- Identity Security & Protection</span>",
+          "service": "Entra",
+          "serviceCategory": "Conditional Access",
+          "productCapability": "Identity Security & Protection",
+          "link": "whats-new-archive"
+        },
+        {
+          "id": 1728506024,
+          "title": "General Availability - Use managed identities as credentials in Microsoft Entra apps",
+          "subtitle": "Type: New feature",
+          "content": "<p>You can now use managed identities as federated credentials for Microsoft Entra apps, enabling secure, secret-less authentication in both single- and multi-tenant scenarios. This eliminates the need to store and manage client secrets or certificates when using Microsoft Entra app to access Azure resources across tenants. This capability aligns with Microsoft’s <a href=\"https://www.microsoft.com/trust-center/security/secure-future-initiative\">Secure Future Initiative</a> pillar of protecting identities and secrets across systems. Learn how to configure this capability in the <a href=\"../workload-id/workload-identity-federation-config-app-trust-managed-identity\">official documentation</a>.</p> <span class=\"product-capability\">- Identity Security & Protection</span>",
+          "service": "Entra",
+          "serviceCategory": "Managed identities for Azure resources",
+          "productCapability": "Identity Security & Protection",
+          "link": "whats-new-archive"
+        }
+      ]
+    },
+    {
+      "topic": "Entitlement Management",
+      "category": "identity-governance",
+      "updates": [
+        {
+          "id": 2591041104,
+          "title": "Public Preview - Microsoft Entra ID Governance: Suggested access packages in My Access",
+          "subtitle": "Type: New feature",
+          "content": "<p>In December 2024, we introduced a new feature in My Access: a curated list of suggested access packages. Users view the most relevant access packages, based on their peers' access packages and previous assignments, without scrolling through a long list. By May 2025, suggestions will be enabled by default and we'll introduce a new card in the Microsoft Entra Admin Center Entitlement Management control configurations for admins to see My Access settings. We recommend admins turn on the peer-based insights for suggested access packages via this setting. For more information, see: <a href=\"../id-governance/entitlement-management-suggested-access-packages\">Suggested access packages in My Access (Preview)</a>.</p> <span class=\"product-capability\">- Entitlement Management</span>",
+          "service": "Entra",
+          "serviceCategory": "Entitlement Management",
+          "productCapability": "Entitlement Management",
+          "link": "whats-new-archive"
+        }
+      ]
+    },
+    {
+      "topic": "Access Control",
+      "category": "conditional-access",
+      "updates": [
+        {
+          "id": 2436909786,
+          "title": "Public Preview - Conditional Access What If evaluation API",
+          "subtitle": "Type: New feature",
+          "content": "<p>Conditional Access What If evaluation API – Leverage the What If tool using the Microsoft Graph API to programmatically evaluate the applicability of Conditional Access policies in your tenant on user and service principal sign-ins. For more information, see: <a href=\"/en-us/graph/api/conditionalaccessroot-evaluate\">conditionalAccessRoot: evaluate</a>.</p> <span class=\"product-capability\">- Access Control</span>",
+          "service": "Entra",
+          "serviceCategory": "Conditional Access",
+          "productCapability": "Access Control",
+          "link": "whats-new-archive"
+        }
+      ]
+    },
+    {
+      "topic": "Identity Governance",
+      "category": "identity-governance",
+      "updates": [
+        {
+          "id": 3559185787,
+          "title": "Public Preview - Manage refresh tokens for mover and leaver scenarios with Lifecycle Workflows",
+          "subtitle": "Type: New feature",
+          "content": "<p>Now customers can configure a Lifecycle workflows task to automatically revoke access tokens when employees move within, or leave, the organization. For more information, see: <a href=\"../id-governance/lifecycle-workflow-tasks#revoke-all-refresh-tokens-for-user\">Revoke all refresh tokens for user</a>.</p> <span class=\"product-capability\">- Identity Governance</span>",
+          "service": "Entra",
+          "serviceCategory": "Lifecycle Workflows",
+          "productCapability": "Identity Governance",
+          "link": "whats-new-archive"
+        }
+      ]
+    },
+    {
+      "topic": "Microsoft Entra Connect",
+      "category": "hybrid-identity",
+      "updates": [
+        {
+          "id": 2068055797,
+          "title": "Plan for change - Roll out of Application Based Authentication on Microsoft Entra Connect Sync",
+          "subtitle": "Type: Plan for change",
+          "content": "<p><strong>What is changing</strong></p><p>Microsoft Entra Connect creates and uses a <a href=\"../identity/hybrid/connect/reference-connect-accounts-permissions\">Microsoft Entra Connector account</a> to authenticate and sync identities from Active Directory to Microsoft Entra ID. The account uses a locally stored password to authenticate with Microsoft Entra ID. To enhance the security of the Microsoft Entra Connect application sync process, we will, in the coming week roll out support for \"Application based Authentication\" (ABA), which uses a Microsoft Entra ID application based identity and Oauth 2.0 client credential flow to authenticate with Microsoft Entra ID. To enable this, Microsoft Entra Connect will create a single tenant 3rd party application in customer's Microsoft Entra ID tenant, register a certificate as the credential for the application, and authorize the application to perform on-premises directory synchronization</p><p>The Microsoft Entra Connect Sync .msi installation file for this change will be exclusively available in the Microsoft Entra admin center within the <a href=\"https://entra.microsoft.com/#view/Microsoft_AAD_Connect_Provisioning/AADConnectMenuBlade/%7E/GetStarted\">Microsoft Entra Connect pane</a>.</p><p>Check our <a href=\"../identity/hybrid/connect/reference-connect-version-history\">version history page</a> in the next week for more details of the change.</p> <span class=\"product-capability\">- Microsoft Entra Connect</span>",
+          "service": "Entra",
+          "serviceCategory": "Microsoft Entra Connect",
+          "productCapability": "Microsoft Entra Connect",
+          "link": "whats-new-archive"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "week": "Week of March 17, 2025 (Service release 2503)",
+  "date": "2025-03-17",
+  "service": "Intune",
+  "serviceRelease": "Service release 2503",
+  "topics": [
+    {
+      "topic": "Microsoft Intune Suite",
+      "category": "intune-suite",
+      "updates": [
+        {
+          "id": 981700990,
+          "title": "Endpoint Privilege Management support for ARM 64-bit devices",
+          "content": "<p><a href=\"/en-us/mem/intune/protect/epm-overview\">Endpoint Protection Manager</a> (EPM) now supports managing file elevations on devices that run on ARM 64-bit architecture.</p><p>Applies to:</p><ul><li>Windows</li></ul>",
+          "features": [
+            "Windows"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device configuration",
+      "category": "device-configuration",
+      "updates": [
+        {
+          "id": 47262216,
+          "title": "New settings available in the Apple settings catalog",
+          "content": "<p>The <a href=\"../configuration/settings-catalog\">Settings Catalog</a> lists all the settings you can configure in a device policy, and all in one place. For more information about configuring Settings Catalog profiles in Intune, see <a href=\"../configuration/settings-catalog\">Create a policy using settings catalog</a>.</p><p>There are new settings in the Settings Catalog. To see these settings, in the <a href=\"https://go.microsoft.com/fwlink/?linkid=2109431\">Microsoft Intune admin center</a>, go to <strong>Devices</strong> &gt; <strong>Manage devices</strong> &gt; <strong>Configuration</strong> &gt; <strong>Create</strong> &gt; <strong>New policy</strong> &gt; <strong>iOS/iPadOS</strong> or <strong>macOS</strong> for platform &gt; <strong>Settings catalog</strong> for profile type.</p><p><strong>Restrictions</strong>:</p><ul><li>Allow Apple Intelligence Report</li><li>Allow Default Calling App Modification</li><li>Allow Default Messaging App Modification</li><li>Allow Mail Smart Replies</li><li>Allow Notes Transcription</li><li>Allow Safari Summary</li></ul><p><strong>Remote Desktop</strong>:</p><ul><li>Remote Desktop</li></ul><p><strong>Restrictions</strong>:</p><ul><li>Allow Apple Intelligence Report</li><li>Allow Mail Smart Replies</li><li>Allow Notes Transcription</li><li>Allow Safari Summary</li></ul>",
+          "features": [
+            "Allow Apple Intelligence Report",
+            "Allow Default Calling App Modification",
+            "Allow Default Messaging App Modification",
+            "Allow Mail Smart Replies",
+            "Allow Notes Transcription",
+            "Allow Safari Summary",
+            "Remote Desktop",
+            "Allow Apple Intelligence Report",
+            "Allow Mail Smart Replies",
+            "Allow Notes Transcription",
+            "Allow Safari Summary"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device management",
+      "category": "device-management",
+      "updates": [
+        {
+          "id": 2047768915,
+          "title": "New settings for Windows LAPS policy",
+          "content": "<p>Intune policies for <a href=\"../protect/windows-laps-overview\">Windows Local Administrator Password Solution (LAPS)</a> now include several new settings and updates to two previously available settings. Use of <a href=\"/en-us/windows-server/identity/laps/laps-overview\">LAPS</a> which is a Windows built-in solution can help you secure the built-in local administrator account that is present on each Windows device. All the settings that you can manage through Intune LAPS policy are described in the Windows <a href=\"/en-us/windows/client-management/mdm/LAPS-csp\">LAPS CSP</a>.</p><p>The following new settings are available: <em>(Each setting name is a link that opens the CSP documentation for that setting.)</em></p><ul><li><a href=\"/en-us/windows/client-management/mdm/laps-csp#policiesautomaticaccountmanagementenableaccount\">Automatic Account Management Enable Account</a></li><li><a href=\"/en-us/windows/client-management/mdm/laps-csp#policiesautomaticaccountmanagementenabled\">Automatic Account Management Enabled</a></li><li><a href=\"/en-us/windows/client-management/mdm/laps-csp#policiesautomaticaccountmanagementnameorprefix\">Automatic Account Management Name Or Prefix</a></li><li><a href=\"/en-us/windows/client-management/mdm/laps-csp#policiesautomaticaccountmanagementrandomizename\">Automatic Account Management Randomize Name</a></li><li><a href=\"/en-us/windows/client-management/mdm/laps-csp#policiesautomaticaccountmanagementtarget\">Automatic Account Management Target</a></li><li><a href=\"/en-us/windows/client-management/mdm/laps-csp#policiespassphraselength\">Passphrase Length</a></li></ul><p>The following settings have new options available:</p><ul><li><a href=\"/en-us/windows/client-management/mdm/laps-csp#policiespasswordcomplexity\">Password Complexity</a> – The following are new options available for this setting:\n<ul><li>Passphrase (long words)</li><li>Passphrase (short words)</li><li>Passphrase (short words with unique prefixes)</li></ul></li><li><a href=\"/en-us/windows/client-management/mdm/laps-csp#policiespostauthenticationactions\">Post Authentication Actions</a> - The following option is now available for this setting:\n<ul><li>Reset the password, logoff the managed account, and terminate any remaining processes: upon expiration of the grace period, the managed account password is reset, any interactive logon sessions using the managed account are logged off, and any remaining processes are terminated.</li></ul></li></ul><p>By default, each setting in LAPS policies is set to <em>Not configured</em>, which means the addition of these new settings won't change the behavior of your existing policies. To make use of the new settings and options, you can create new profiles or edit your existing profiles.</p><p>Applies to:</p><ul><li>Windows</li></ul>",
+          "features": [
+            "Automatic Account Management Enable Account",
+            "Automatic Account Management Enabled",
+            "Automatic Account Management Name Or Prefix",
+            "Automatic Account Management Randomize Name",
+            "Automatic Account Management Target",
+            "Passphrase Length",
+            "Password Complexity – The following are new options available for this setting:\n\nPassphrase (long words)\nPassphrase (short words)\nPassphrase (short words with unique prefixes)",
+            "Passphrase (long words)",
+            "Passphrase (short words)",
+            "Passphrase (short words with unique prefixes)",
+            "Post Authentication Actions - The following option is now available for this setting:\n\nReset the password, logoff the managed account, and terminate any remaining processes: upon expiration of the grace period, the managed account password is reset, any interactive logon sessions using the managed account are logged off, and any remaining processes are terminated.",
+            "Reset the password, logoff the managed account, and terminate any remaining processes: upon expiration of the grace period, the managed account password is reset, any interactive logon sessions using the managed account are logged off, and any remaining processes are terminated.",
+            "Windows"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        },
+        {
+          "id": 2900178835,
+          "title": "Configure devices to stay on the latest OS version using declarative device management (DDM)",
+          "content": "<p>As part of the <a href=\"../configuration/settings-catalog\">Settings Catalog</a>, you can now configure devices to automatically update to the latest OS version using DDM. To use these new settings in the <a href=\"https://go.microsoft.com/fwlink/?linkid=2109431\">Microsoft Intune admin center</a>, go to <strong>Devices</strong> &gt; <strong>Manage devices</strong> &gt; <strong>Configuration</strong> &gt; <strong>Create</strong> &gt; <strong>New policy</strong> &gt; <strong>iOS/iPadOS</strong> or <strong>macOS</strong>for platform &gt; <strong>Settings catalog</strong> for profile type.</p><p><strong>Declarative device management &gt; Software Update Enforce Latest</strong>.</p><ul><li><strong>Enforce Latest Software Update Version</strong>: If true, devices will upgrade to the latest OS version that is available for that device model. This uses the Software Update Enforcement configuration and will force devices to restart and install the update after the deadline passes.</li><li><strong>Delay In Days</strong>: Specify the number of days that should pass before a deadline is enforced. This delay is based on either the posting date of the new update when released by Apple, or when the policy is configured.</li><li><strong>Install Time</strong>: Specify the local device time for when updates are enforced. This setting uses the 24-hour clock format where midnight is 00:00 and 11:59pm is 23:59. Ensure that you include the leading 0 on single digit hours. For example, 01:00, 02:00, 03:00.</li></ul><p>Learn more about configuring managed updates through DDM at <a href=\"../protect/managed-software-updates-ios-macos\">Managed software updates</a>.</p><p>Applies To:</p><ul><li>iOS/iPadOS</li><li>macOS</li></ul>",
+          "features": [
+            "Enforce Latest Software Update Version: If true, devices will upgrade to the latest OS version that is available for that device model. This uses the Software Update Enforcement configuration and will force devices to restart and install the update after the deadline passes.",
+            "Delay In Days: Specify the number of days that should pass before a deadline is enforced. This delay is based on either the posting date of the new update when released by Apple, or when the policy is configured.",
+            "Install Time: Specify the local device time for when updates are enforced. This setting uses the 24-hour clock format where midnight is 00:00 and 11:59pm is 23:59. Ensure that you include the leading 0 on single digit hours. For example, 01:00, 02:00, 03:00.",
+            "iOS/iPadOS",
+            "macOS"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        },
+        {
+          "id": 1206973242,
+          "title": "Remote Help supports Azure Virtual Desktop muti-session",
+          "content": "<p>Remote Help now provides support for multi-session AVD with several users on a single virtual machine. Earlier, Remote Help was supporting Azure Virtual Desktop (AVD) sessions with one user on one virtual machine (VM).</p><p>For more information, see:</p><ul><li><a href=\"remote-help\">Remote Help</a></li><li><a href=\"remote-help-windows\">Remote Help on windows</a></li><li><a href=\"azure-virtual-desktop-multi-session\">Using Azure Virtual Desktop multi-session with Microsoft Intune</a></li></ul>",
+          "features": [
+            "Remote Help",
+            "Remote Help on windows",
+            "Using Azure Virtual Desktop multi-session with Microsoft Intune"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        },
+        {
+          "id": 3822902158,
+          "title": "Copilot assistant for device query",
+          "content": "<p>You can now use Copilot to generate a KQL query to help you get data from across multiple devices in Intune. This capability is available in the <a href=\"https://go.microsoft.com/fwlink/?linkid=2109431\">Microsoft Intune admin center</a> by selecting <strong>Devices</strong> &gt; <strong>Device query</strong> &gt; <strong>Query with Copilot</strong>. For more information, see <a href=\"../copilot/copilot-intune-overview#-use-copilot-to-create-kql-queries-to-get-device-details\">Query with Copilot in device query</a>.</p>",
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Intune apps",
+      "category": "intune-apps",
+      "updates": [
+        {
+          "id": 93123041,
+          "title": "Newly available protected apps for Intune",
+          "content": "<p>The following protected apps are now available for Microsoft Intune:</p><ul><li>FacilyLife by Apleona GmbH (iOS)</li><li>Intapp 2.0 by Intapp, Inc. (Android)</li><li>DealCloud by Intapp, Inc. (Android)</li><li>Lemur Pro for Intune by Critigen LLC (iOS)</li></ul><p>For more information about protected apps, see <a href=\"../apps/apps-supported-intune-apps\">Microsoft Intune protected apps</a>.</p>",
+          "features": [
+            "FacilyLife by Apleona GmbH (iOS)",
+            "Intapp 2.0 by Intapp, Inc. (Android)",
+            "DealCloud by Intapp, Inc. (Android)",
+            "Lemur Pro for Intune by Critigen LLC (iOS)"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    }
+  ]
+}

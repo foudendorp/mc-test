@@ -1,0 +1,21 @@
+{
+  "week": "Week of March 03, 2025",
+  "date": "2025-03-03",
+  "service": "Intune",
+  "serviceRelease": null,
+  "topics": [
+    {
+      "topic": "Monitor and troubleshoot",
+      "category": "monitor-troubleshoot",
+      "updates": [
+        {
+          "id": 3543207157,
+          "title": "Updates to the Feature updates report",
+          "content": "<p>We are introducing a new <strong>Update Substate</strong> in Service-side data. This substate is displayed in the reports for devices that are invalid in Microsoft Entra and is known as <strong>Not supported</strong>.</p><p>For more information, see <a href=\"../protect/windows-update-reports#use-the-windows-10-feature-updates-organizational-report\">Use Windows Update for Business reports for Windows Updates</a></p>",
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    }
+  ]
+}
