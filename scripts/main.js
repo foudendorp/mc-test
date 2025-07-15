@@ -64,8 +64,10 @@ class IntuneUpdatesTracker {
             this.notices = data.notices;
             this.indexData = data.indexData;
             
+            console.log('🎯 Initialization complete. Updates loaded:', this.updates.length);
+            
             this.updateStats();
-            this.displayUpdates();
+            this.filterUpdates(); // This will populate filteredUpdates and call displayUpdates()
             this.displayNotices();
             this.displayDataFiles();
             this.updateLastRefreshTime();
@@ -245,6 +247,13 @@ class IntuneUpdatesTracker {
         const categoryFilter = this.categoryFilter?.value || '';
         const timeFilter = this.timeFilter?.value || '';
 
+        console.log('🔍 Filtering updates:', {
+            totalUpdates: this.updates.length,
+            searchTerm,
+            categoryFilter,
+            timeFilter
+        });
+
         this.filteredUpdates = this.updates.filter(update => {
             // Search filter
             const matchesSearch = !searchTerm || 
@@ -262,6 +271,11 @@ class IntuneUpdatesTracker {
             const matchesTime = this.checkTimeFilter(update.date, timeFilter);
 
             return matchesSearch && matchesCategory && matchesTime;
+        });
+
+        console.log('✅ Filtering complete:', {
+            filteredCount: this.filteredUpdates.length,
+            sampleUpdate: this.filteredUpdates[0]
         });
 
         this.currentPage = 1;
@@ -289,11 +303,26 @@ class IntuneUpdatesTracker {
     }
 
     displayUpdates() {
-        if (!this.updatesContainer) return;
+        if (!this.updatesContainer) {
+            console.error('❌ Updates container not found');
+            return;
+        }
+
+        console.log('📺 Displaying updates:', {
+            filteredUpdates: this.filteredUpdates.length,
+            currentPage: this.currentPage,
+            updatesPerPage: this.updatesPerPage
+        });
 
         const startIndex = 0;
         const endIndex = this.currentPage * this.updatesPerPage;
         this.displayedUpdates = this.filteredUpdates.slice(startIndex, endIndex);
+
+        console.log('📋 Updates to display:', {
+            startIndex,
+            endIndex,
+            displayedCount: this.displayedUpdates.length
+        });
 
         if (this.displayedUpdates.length === 0) {
             this.updatesContainer.innerHTML = `
