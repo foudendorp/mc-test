@@ -129,69 +129,8 @@ async function fetchServiceUpdates(service) {
         
         // Handle different structures for different services
         if (service.tag === 'Entra') {
-            // For Entra ID, look for month-based headers (e.g., "July 2025", "June 2025")
-            const monthHeaders = Array.from(document.querySelectorAll('h2'))
-                .filter(h2 => {
-                    const text = h2.textContent.trim();
-                    return /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
-                });
-            
-            console.log(`Found ${monthHeaders.length} month sections for ${service.name}`);
-            
-            monthHeaders.forEach((monthHeader, index) => {
-                const monthText = monthHeader.textContent.trim();
-                console.log(`Processing ${service.name}: ${monthText}`);
-                
-                // Extract date from month header (use first day of month)
-                const monthDate = new Date(monthText + ' 01').toISOString().split('T')[0];
-                
-                const monthData = {
-                    month: monthText,
-                    date: monthDate,
-                    service: service.tag,
-                    serviceRelease: null,
-                    topics: []
-                };
-                
-                // Find content between this month header and the next one
-                let currentElement = monthHeader.nextElementSibling;
-                let currentTopic = null;
-                
-                while (currentElement && !isNextMonthHeader(currentElement)) {
-                    if (currentElement.tagName === 'H3') {
-                        // New topic section
-                        if (currentTopic) {
-                            monthData.topics.push(currentTopic);
-                        }
-                        
-                        const topicText = currentElement.textContent.trim();
-                        currentTopic = {
-                            topic: topicText,
-                            category: mapTopicToCategory(topicText),
-                            updates: []
-                        };
-                    } else if (currentElement.tagName === 'H4' && currentTopic) {
-                        // Individual update
-                        const update = parseUpdateElement(currentElement, service);
-                        if (update) {
-                            currentTopic.updates.push(update);
-                        }
-                    }
-                    
-                    currentElement = currentElement.nextElementSibling;
-                }
-                
-                // Add the last topic
-                if (currentTopic) {
-                    monthData.topics.push(currentTopic);
-                }
-                
-                // Only add months that have topics with updates
-                const hasUpdates = monthData.topics.some(topic => topic.updates.length > 0);
-                if (hasUpdates) {
-                    weeklyUpdates.set(monthDate, monthData);
-                }
-            });
+            // For Entra ID, use enhanced parsing for the comprehensive structure
+            return await parseEntraUpdates(document, service);
         } else {
             // For Intune and other services, use week-based structure
             const weekHeaders = Array.from(document.querySelectorAll('h2'))
@@ -882,6 +821,297 @@ function groupDataFilesByMonth(dataFiles) {
     });
     
     return Array.from(monthlyGroups.values()).sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+// Enhanced parsing function specifically for Entra updates
+async function parseEntraUpdates(document, service) {
+    const weeklyUpdates = new Map();
+    
+    // For Entra ID, look for month-based headers (e.g., "July 2025", "June 2025")
+    const monthHeaders = Array.from(document.querySelectorAll('h2'))
+        .filter(h2 => {
+            const text = h2.textContent.trim();
+            return /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
+        });
+    
+    console.log(`Found ${monthHeaders.length} month sections for ${service.name}`);
+    
+    for (const monthHeader of monthHeaders) {
+        const monthText = monthHeader.textContent.trim();
+        console.log(`Processing ${service.name}: ${monthText}`);
+        
+        // Extract date from month header (use first day of month)
+        const monthDate = new Date(monthText + ' 01').toISOString().split('T')[0];
+        
+        const monthData = {
+            month: monthText,
+            date: monthDate,
+            service: service.tag,
+            serviceRelease: null,
+            topics: []
+        };
+        
+        // Find content between this month header and the next one
+        let currentElement = monthHeader.nextElementSibling;
+        
+        while (currentElement && !isNextMonthHeader(currentElement)) {
+            // Look for update entries in various formats
+            if (currentElement.tagName === 'TABLE') {
+                // Handle table-based updates
+                parseTableUpdates(currentElement, monthData);
+            } else if (currentElement.tagName === 'UL' || currentElement.tagName === 'OL') {
+                // Handle list-based updates
+                parseListUpdates(currentElement, monthData);
+            } else if (currentElement.tagName === 'DIV' && currentElement.querySelector('h3, h4')) {
+                // Handle section-based updates
+                parseSectionUpdates(currentElement, monthData);
+            } else if (currentElement.tagName === 'H3') {
+                // Direct H3 sections
+                parseDirectSection(currentElement, monthData);
+            }
+            
+            currentElement = currentElement.nextElementSibling;
+        }
+        
+        // Only add months that have topics with updates
+        const hasUpdates = monthData.topics.some(topic => topic.updates && topic.updates.length > 0);
+        if (hasUpdates) {
+            weeklyUpdates.set(monthDate, monthData);
+        }
+    }
+    
+    return weeklyUpdates;
+}
+
+// Parse table-based updates (common in Microsoft Learn)
+function parseTableUpdates(table, monthData) {
+    const rows = Array.from(table.querySelectorAll('tr'));
+    
+    // Skip header row if present
+    const dataRows = rows.slice(1);
+    
+    dataRows.forEach(row => {
+        const cells = Array.from(row.querySelectorAll('td, th'));
+        if (cells.length >= 3) {
+            const typeCell = cells[0];
+            const serviceCategoryCell = cells[1];
+            const descriptionCell = cells[2];
+            const productCapabilityCell = cells.length > 3 ? cells[3] : null;
+            
+            const update = {
+                title: extractTextContent(descriptionCell),
+                description: extractTextContent(descriptionCell),
+                type: extractTextContent(typeCell),
+                serviceCategory: extractTextContent(serviceCategoryCell),
+                productCapability: productCapabilityCell ? extractTextContent(productCapabilityCell) : null,
+                date: monthData.date,
+                links: extractLinks(descriptionCell)
+            };
+            
+            // Find or create topic based on service category
+            let topic = monthData.topics.find(t => t.topic === update.serviceCategory);
+            if (!topic) {
+                topic = {
+                    topic: update.serviceCategory,
+                    category: mapServiceCategoryToCategory(update.serviceCategory),
+                    updates: []
+                };
+                monthData.topics.push(topic);
+            }
+            
+            topic.updates.push(update);
+        }
+    });
+}
+
+// Parse list-based updates
+function parseListUpdates(list, monthData) {
+    const items = Array.from(list.querySelectorAll('li'));
+    
+    items.forEach(item => {
+        const text = extractTextContent(item);
+        if (text.trim()) {
+            const update = {
+                title: text,
+                description: text,
+                type: 'Update',
+                serviceCategory: 'General',
+                date: monthData.date,
+                links: extractLinks(item)
+            };
+            
+            // Find or create general topic
+            let topic = monthData.topics.find(t => t.topic === 'General Updates');
+            if (!topic) {
+                topic = {
+                    topic: 'General Updates',
+                    category: 'General',
+                    updates: []
+                };
+                monthData.topics.push(topic);
+            }
+            
+            topic.updates.push(update);
+        }
+    });
+}
+
+// Parse section-based updates
+function parseSectionUpdates(section, monthData) {
+    const headers = section.querySelectorAll('h3, h4');
+    
+    headers.forEach(header => {
+        const update = parseUpdateFromHeader(header, monthData.date);
+        
+        if (update) {
+            // Find or create topic
+            let topic = monthData.topics.find(t => t.topic === update.serviceCategory || t.topic === 'General Updates');
+            if (!topic) {
+                topic = {
+                    topic: update.serviceCategory || 'General Updates',
+                    category: mapServiceCategoryToCategory(update.serviceCategory) || 'General',
+                    updates: []
+                };
+                monthData.topics.push(topic);
+            }
+            
+            topic.updates.push(update);
+        }
+    });
+}
+
+// Parse direct H3 sections
+function parseDirectSection(header, monthData) {
+    const update = parseUpdateFromHeader(header, monthData.date);
+    
+    if (update) {
+        // Find or create topic
+        let topic = monthData.topics.find(t => t.topic === update.serviceCategory || t.topic === 'General Updates');
+        if (!topic) {
+            topic = {
+                topic: update.serviceCategory || 'General Updates',
+                category: mapServiceCategoryToCategory(update.serviceCategory) || 'General',
+                updates: []
+            };
+            monthData.topics.push(topic);
+        }
+        
+        topic.updates.push(update);
+    }
+}
+
+// Parse update from header element and following content
+function parseUpdateFromHeader(header, date) {
+    const title = extractTextContent(header);
+    
+    // Look for description in following elements
+    let description = title;
+    let currentElement = header.nextElementSibling;
+    const descriptionParts = [];
+    
+    while (currentElement && !['H1', 'H2', 'H3', 'H4'].includes(currentElement.tagName)) {
+        if (currentElement.tagName === 'P' || currentElement.tagName === 'DIV') {
+            const text = extractTextContent(currentElement);
+            if (text.trim()) {
+                descriptionParts.push(text);
+            }
+        }
+        
+        currentElement = currentElement.nextElementSibling;
+        
+        // Limit to avoid too much content
+        if (descriptionParts.length >= 2) break;
+    }
+    
+    if (descriptionParts.length > 0) {
+        description = descriptionParts.join(' ');
+    }
+    
+    return {
+        title: title,
+        description: description,
+        type: inferTypeFromTitle(title),
+        serviceCategory: inferServiceCategoryFromTitle(title),
+        date: date,
+        links: extractLinks(header.parentElement)
+    };
+}
+
+// Extract clean text content from element
+function extractTextContent(element) {
+    if (!element) return '';
+    return element.textContent.trim().replace(/\s+/g, ' ');
+}
+
+// Extract links from element
+function extractLinks(element) {
+    if (!element) return [];
+    
+    const links = Array.from(element.querySelectorAll('a'));
+    return links.map(link => ({
+        text: link.textContent.trim(),
+        url: link.href
+    })).filter(link => link.url && link.text);
+}
+
+// Infer update type from title
+function inferTypeFromTitle(title) {
+    const lowerTitle = title.toLowerCase();
+    
+    if (lowerTitle.includes('new') || lowerTitle.includes('introducing') || lowerTitle.includes('announced')) {
+        return 'New feature';
+    } else if (lowerTitle.includes('deprecated') || lowerTitle.includes('retirement') || lowerTitle.includes('removed')) {
+        return 'Deprecated';
+    } else if (lowerTitle.includes('preview') || lowerTitle.includes('beta')) {
+        return 'Public preview';
+    } else if (lowerTitle.includes('general availability') || lowerTitle.includes('ga') || lowerTitle.includes('generally available')) {
+        return 'General availability';
+    } else if (lowerTitle.includes('fix') || lowerTitle.includes('resolved') || lowerTitle.includes('issue')) {
+        return 'Fixed';
+    } else if (lowerTitle.includes('change') || lowerTitle.includes('update') || lowerTitle.includes('improvement')) {
+        return 'Changed';
+    }
+    
+    return 'Update';
+}
+
+// Infer service category from title
+function inferServiceCategoryFromTitle(title) {
+    const lowerTitle = title.toLowerCase();
+    
+    if (lowerTitle.includes('conditional access')) return 'Conditional Access';
+    if (lowerTitle.includes('authentication') || lowerTitle.includes('mfa') || lowerTitle.includes('multi-factor')) return 'Authentication';
+    if (lowerTitle.includes('identity protection')) return 'Identity Protection';
+    if (lowerTitle.includes('privileged identity') || lowerTitle.includes('pim')) return 'Privileged Identity Management';
+    if (lowerTitle.includes('application') || lowerTitle.includes('app')) return 'Applications';
+    if (lowerTitle.includes('device') || lowerTitle.includes('mobile')) return 'Devices';
+    if (lowerTitle.includes('governance') || lowerTitle.includes('entitlement')) return 'Identity Governance';
+    if (lowerTitle.includes('b2b') || lowerTitle.includes('guest')) return 'External Identities';
+    if (lowerTitle.includes('connect') || lowerTitle.includes('hybrid')) return 'Hybrid Identity';
+    if (lowerTitle.includes('monitoring') || lowerTitle.includes('audit') || lowerTitle.includes('log')) return 'Monitoring & Health';
+    
+    return 'General';
+}
+
+// Map service category to display category
+function mapServiceCategoryToCategory(serviceCategory) {
+    if (!serviceCategory) return 'General';
+    
+    const categoryMap = {
+        'Conditional Access': 'Security',
+        'Authentication': 'Authentication',
+        'Identity Protection': 'Security',
+        'Privileged Identity Management': 'Security',
+        'Applications': 'Applications',
+        'Devices': 'Devices',
+        'Identity Governance': 'Governance',
+        'External Identities': 'External Identities',
+        'Hybrid Identity': 'Hybrid',
+        'Monitoring & Health': 'Monitoring',
+        'General': 'General'
+    };
+    
+    return categoryMap[serviceCategory] || 'General';
 }
 
 // Run the generation
