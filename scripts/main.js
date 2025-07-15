@@ -255,10 +255,16 @@ class IntuneUpdatesTracker {
         });
 
         this.filteredUpdates = this.updates.filter(update => {
+            // Ensure required fields exist
+            if (!update || !update.title || !update.content || !update.topic) {
+                console.warn('Skipping incomplete update:', update);
+                return false;
+            }
+            
             // Search filter
             const matchesSearch = !searchTerm || 
                 update.title.toLowerCase().includes(searchTerm) ||
-                update.subtitle?.toLowerCase().includes(searchTerm) ||
+                (update.subtitle && update.subtitle.toLowerCase().includes(searchTerm)) ||
                 update.content.toLowerCase().includes(searchTerm) ||
                 update.topic.toLowerCase().includes(searchTerm) ||
                 (update.features && update.features.some(feature => 
