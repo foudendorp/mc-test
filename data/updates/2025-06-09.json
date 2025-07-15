@@ -4,23 +4,17 @@
   "serviceRelease": null,
   "topics": [
     {
-      "category": "app-management",
       "topic": "App management",
+      "category": "app-management",
       "updates": [
         {
-          "id": "2025-06-09-arm64-win32-apps",
+          "id": 1752579409022.1902,
           "title": "ARM64 support for Win32 apps",
-          "subtitle": "Windows ARM64 device support for Win32 applications",
-          "content": "When adding a Win32 app to Intune, you can select an option to check and install the app on Windows devices running ARM64 operating systems. Existing 64-bit Win32 applications will also have ARM64 selected automatically.",
+          "content": "When adding a Win32 app to Intune, you can select an option to check and install the app on Windows devices running ARM64 operating systems. This capability is available from the Microsoft Intune admin center by selecting Apps > All apps > Create. The ARM64 option is available by selecting the Operating system architecture option under the Requirements step. To ensure that you don't have any impact to any Win32 applications that you previously targeted to 64-bit devices, your existing 64-bit Win32 applications will also have ARM64 selected. After the availability of being able to specifically target ARM64 operating system architectures, selecting x64 won't target ARM64 devices. For related information, see Win32 app management in Microsoft Intune. Applies to:",
           "features": [
-            "ARM64 operating system architecture targeting",
-            "Automatic ARM64 selection for existing 64-bit apps",
-            "Dedicated ARM64 device support",
-            "x64 selection no longer targets ARM64 devices"
+            "Windows devices"
           ],
-          "link": "https://learn.microsoft.com/en-us/intune/intune-service/apps/apps-win32-app-management",
-          "platforms": ["Windows"],
-          "isNew": true
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         }
       ]
     }
