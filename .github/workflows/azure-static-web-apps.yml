@@ -18,6 +18,10 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+    permissions:
+      contents: write  # Needed to push changes back to repo
+      actions: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -33,7 +37,12 @@ jobs:
         run: npm install
 
       - name: Generate JSON data files
-        run: npm run generate-data
+        run: |
+          echo "Starting data generation..."
+          npm run generate-data || {
+            echo "Data generation failed, using fallback..."
+            npm run generate-fallback
+          }
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
 
@@ -64,7 +73,6 @@ jobs:
           fi
 
       - name: Commit updated data files
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
