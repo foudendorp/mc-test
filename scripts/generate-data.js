@@ -648,7 +648,7 @@ async function createFallbackData() {
     
     // Create fallback Entra update data
     const fallbackEntraData = {
-        week: "Week of July 14, 2025",
+        month: "July 2025", // Use month instead of week for Entra
         date: "2025-07-14",
         service: "Entra",
         serviceRelease: null,
@@ -752,7 +752,7 @@ async function createFallbackData() {
         {
             filename: "2025-07-14.json",
             path: "updates/entra/2025-07-14.json",
-            week: "Week of July 14, 2025",
+            week: "July 2025", // Use month for Entra display
             date: "2025-07-14",
             service: "Entra",
             serviceRelease: null,
@@ -962,24 +962,27 @@ function parseTableUpdates(table, monthData) {
             const descriptionCell = cells[2];
             const productCapabilityCell = cells.length > 3 ? cells[3] : null;
             
+            const title = extractTextContent(descriptionCell);
+            const type = extractTextContent(typeCell);
+            const serviceCategory = extractTextContent(serviceCategoryCell);
+            const productCapability = productCapabilityCell ? extractTextContent(productCapabilityCell) : null;
+            
+            // Convert to frontend-compatible format
             const update = {
-                id: generateContentId(extractTextContent(descriptionCell), extractTextContent(typeCell), extractTextContent(descriptionCell)),
-                title: extractTextContent(descriptionCell),
-                description: extractTextContent(descriptionCell),
-                type: extractTextContent(typeCell),
-                serviceCategory: extractTextContent(serviceCategoryCell),
-                productCapability: productCapabilityCell ? extractTextContent(productCapabilityCell) : null,
-                date: monthData.date,
+                id: generateContentId(title, type, title),
+                title: title,
+                subtitle: type ? `Type: ${type}` : undefined,
+                content: title + (productCapability ? ` (${productCapability})` : ''),
                 service: 'Entra',
-                links: extractLinks(descriptionCell)
+                link: extractLinks(descriptionCell)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
             };
             
             // Find or create topic based on service category
-            let topic = monthData.topics.find(t => t.topic === update.serviceCategory);
+            let topic = monthData.topics.find(t => t.topic === serviceCategory);
             if (!topic) {
                 topic = {
-                    topic: update.serviceCategory,
-                    category: mapServiceCategoryToCategory(update.serviceCategory),
+                    topic: serviceCategory,
+                    category: mapServiceCategoryToCategory(serviceCategory),
                     updates: []
                 };
                 monthData.topics.push(topic);
@@ -997,16 +1000,14 @@ function parseListUpdates(list, monthData) {
     items.forEach(item => {
         const text = extractTextContent(item);
         if (text.trim()) {
+            // Convert to frontend-compatible format
             const update = {
                 id: generateContentId(text, 'Update', text),
                 title: text,
-                description: text,
-                type: 'Update',
-                serviceCategory: 'General',
-                productCapability: null,
-                date: monthData.date,
+                subtitle: undefined,
+                content: text,
                 service: 'Entra',
-                links: extractLinks(item)
+                link: extractLinks(item)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
             };
             
             // Find or create general topic
@@ -1014,7 +1015,7 @@ function parseListUpdates(list, monthData) {
             if (!topic) {
                 topic = {
                     topic: 'General Updates',
-                    category: 'General',
+                    category: 'identity-management',
                     updates: []
                 };
                 monthData.topics.push(topic);
@@ -1034,11 +1035,12 @@ function parseSectionUpdates(section, monthData) {
         
         if (update) {
             // Find or create topic
-            let topic = monthData.topics.find(t => t.topic === update.serviceCategory || t.topic === 'General Updates');
+            const topicName = update.serviceCategory || 'General Updates';
+            let topic = monthData.topics.find(t => t.topic === topicName);
             if (!topic) {
                 topic = {
-                    topic: update.serviceCategory || 'General Updates',
-                    category: mapServiceCategoryToCategory(update.serviceCategory) || 'General',
+                    topic: topicName,
+                    category: mapServiceCategoryToCategory(topicName),
                     updates: []
                 };
                 monthData.topics.push(topic);
@@ -1055,11 +1057,12 @@ function parseDirectSection(header, monthData) {
     
     if (update) {
         // Find or create topic based on service category
-        let topic = monthData.topics.find(t => t.topic === update.serviceCategory || t.topic === 'General Updates');
+        const topicName = update.serviceCategory || 'General Updates';
+        let topic = monthData.topics.find(t => t.topic === topicName);
         if (!topic) {
             topic = {
-                topic: update.serviceCategory || 'General Updates',
-                category: mapServiceCategoryToCategory(update.serviceCategory) || 'General',
+                topic: topicName,
+                category: mapServiceCategoryToCategory(topicName),
                 updates: []
             };
             monthData.topics.push(topic);
@@ -1121,16 +1124,15 @@ function parseEntraUpdateFromHeader(header, date) {
         description = descriptionParts.join(' ');
     }
     
+    // Convert to frontend-compatible format
     const update = {
         id: generateContentId(title, type, description),
         title: title,
-        description: description,
-        type: type,
-        serviceCategory: serviceCategory,
-        productCapability: productCapability,
-        date: date,
+        subtitle: type ? `Type: ${type}` : undefined,
+        content: description + (productCapability ? ` (${productCapability})` : ''),
         service: 'Entra',
-        links: extractLinks(header.parentElement)
+        serviceCategory: serviceCategory, // Keep this for topic assignment
+        link: extractLinks(header.parentElement)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
     };
     
     console.log(`Created update:`, JSON.stringify(update, null, 2));
@@ -1232,23 +1234,43 @@ function inferServiceCategoryFromTitle(title) {
 
 // Map service category to display category
 function mapServiceCategoryToCategory(serviceCategory) {
-    if (!serviceCategory) return 'General';
+    if (!serviceCategory) return 'identity-management';
+    
+    const lowerCategory = serviceCategory.toLowerCase();
     
     const categoryMap = {
-        'Conditional Access': 'Security',
-        'Authentication': 'Authentication',
-        'Identity Protection': 'Security',
-        'Privileged Identity Management': 'Security',
-        'Applications': 'Applications',
-        'Devices': 'Devices',
-        'Identity Governance': 'Governance',
-        'External Identities': 'External Identities',
-        'Hybrid Identity': 'Hybrid',
-        'Monitoring & Health': 'Monitoring',
-        'General': 'General'
+        'conditional access': 'conditional-access',
+        'authentication': 'authentication',
+        'identity protection': 'identity-protection',
+        'privileged identity management': 'privileged-identity',
+        'applications': 'application-management',
+        'devices': 'device-management',
+        'identity governance': 'identity-governance',
+        'external identities': 'external-identities',
+        'hybrid identity': 'hybrid-identity',
+        'monitoring & health': 'monitoring',
+        'general': 'identity-management',
+        'general updates': 'identity-management'
     };
     
-    return categoryMap[serviceCategory] || 'General';
+    // Check for exact matches first
+    if (categoryMap[lowerCategory]) {
+        return categoryMap[lowerCategory];
+    }
+    
+    // Check for partial matches
+    if (lowerCategory.includes('conditional access')) return 'conditional-access';
+    if (lowerCategory.includes('authentication') || lowerCategory.includes('mfa')) return 'authentication';
+    if (lowerCategory.includes('identity protection')) return 'identity-protection';
+    if (lowerCategory.includes('privileged identity') || lowerCategory.includes('pim')) return 'privileged-identity';
+    if (lowerCategory.includes('application') || lowerCategory.includes('app')) return 'application-management';
+    if (lowerCategory.includes('device') || lowerCategory.includes('mobile')) return 'device-management';
+    if (lowerCategory.includes('governance') || lowerCategory.includes('entitlement')) return 'identity-governance';
+    if (lowerCategory.includes('b2b') || lowerCategory.includes('guest') || lowerCategory.includes('external')) return 'external-identities';
+    if (lowerCategory.includes('connect') || lowerCategory.includes('hybrid')) return 'hybrid-identity';
+    if (lowerCategory.includes('monitoring') || lowerCategory.includes('audit') || lowerCategory.includes('log')) return 'monitoring';
+    
+    return 'identity-management'; // Default category for Entra
 }
 
 // Run the generation
