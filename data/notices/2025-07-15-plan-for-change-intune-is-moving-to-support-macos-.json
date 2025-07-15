@@ -1,0 +1,11 @@
+{
+  "id": 1752591677370.7107,
+  "title": "Plan for change: Intune is moving to support macOS 14 and higher later this year",
+  "content": "Later in calendar year 2025, we expect macOS Tahoe 26 to be released by Apple. Microsoft Intune, the Company Portal app, and the Intune mobile device management agent support macOS 14 and later. Since the Company Portal app for iOS and macOS are a unified app, this change will occur shortly after the release of macOS 26. This doesn't affect existing enrolled devices.",
+  "date": "2025-07-15",
+  "lastUpdated": "2025-07-15T15:01:17.370Z",
+  "type": "warning",
+  "category": "plan-for-change",
+  "status": "active",
+  "source": "microsoft-learn"
+}

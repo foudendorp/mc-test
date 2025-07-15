@@ -1,0 +1,11 @@
+{
+  "id": 1752591677371.7566,
+  "title": "Plan for change: User alerts on iOS for when screen capture actions are blocked",
+  "content": "In an upcoming version (20.3.0) of the Intune App SDK and Intune App Wrapping Tool for iOS, support is added to alert users when a screen capture action (including recording and mirroring) is detected in a managed app. The alert is only visible to users if you have configured an app protection policy (APP) to block screen capture.",
+  "date": "2025-07-15",
+  "lastUpdated": "2025-07-15T15:01:17.371Z",
+  "type": "warning",
+  "category": "plan-for-change",
+  "status": "active",
+  "source": "microsoft-learn"
+}

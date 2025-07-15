@@ -8,7 +8,7 @@
       "category": "app-management",
       "updates": [
         {
-          "id": 1752591153624.725,
+          "id": 1752591677196.0623,
           "title": "Intune support for Apple specialty devices",
           "content": "We've extended app protection policies (APP) to support Microsoft Edge (v136 or later), OneDrive (v16.8.4 or later), and Outlook (v4.2513.0 or later). To enable this setting for these specific apps on visionOS devices, you must set com.microsoft.intune.mam.visionOSAllowiPadCompatApps to Enabled in your app configuration policy. Once you have assigned your app configuration policy, you can create and assign your app protection policy for your VisionOS devices. For more information, see Protect data on VisionOS devices.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
@@ -20,7 +20,7 @@
       "category": "device-management",
       "updates": [
         {
-          "id": 1752591153625.423,
+          "id": 1752591677197.7654,
           "title": "New icon for Microsoft Intune",
           "content": "Microsoft Intune has a new icon. The Intune icon is being updated across platforms and apps associated with Intune, such as the Intune admin center and Intune Company Portal app. The new icon will gradually be implemented over the next few months.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
