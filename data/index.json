@@ -1,0 +1,31 @@
+{
+  "lastGenerated": "2025-07-15T13:25:00Z",
+  "totalUpdates": 10,
+  "totalFiles": 3,
+  "dataFiles": [
+    {
+      "filename": "2025-07-14.json",
+      "path": "updates/2025-07-14.json",
+      "week": "Week of July 14, 2025",
+      "date": "2025-07-14",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-06-23.json",
+      "path": "updates/2025-06-23.json", 
+      "week": "Week of June 23, 2025 (Service release 2506)",
+      "date": "2025-06-23",
+      "serviceRelease": "2506",
+      "updates": 8
+    },
+    {
+      "filename": "2025-06-09.json",
+      "path": "updates/2025-06-09.json",
+      "week": "Week of June 9, 2025", 
+      "date": "2025-06-09",
+      "serviceRelease": null,
+      "updates": 1
+    }
+  ]
+}
