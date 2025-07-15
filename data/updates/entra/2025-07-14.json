@@ -9,33 +9,14 @@
       "category": "identity-management",
       "updates": [
         {
-          "id": 3847293847,
-          "title": "Microsoft Entra ID Conditional Access",
-          "subtitle": "Enhanced location-based policies",
-          "content": "Microsoft Entra ID now includes improved conditional access policies with enhanced location-based controls, providing better security for identity and access management.",
+          "id": 2529843623,
+          "title": "Microsoft Entra ID Updates",
+          "subtitle": "Latest identity management features",
+          "content": "Microsoft Entra ID continues to evolve with new features for identity and access management, providing better security and user experience.",
           "features": [
-            "Enhanced geolocation detection",
-            "Improved risk-based authentication",
-            "Better integration with Zero Trust architecture"
-          ],
-          "service": "Entra",
-          "link": "https://learn.microsoft.com/en-us/entra/fundamentals/whats-new"
-        }
-      ]
-    },
-    {
-      "topic": "Multi-factor authentication",
-      "category": "authentication",
-      "updates": [
-        {
-          "id": 2847593847,
-          "title": "Enhanced MFA Options",
-          "subtitle": "New authentication methods available",
-          "content": "Microsoft Entra ID introduces new multi-factor authentication options including enhanced biometric authentication and improved app-based verification methods.",
-          "features": [
-            "Biometric authentication support",
-            "Enhanced mobile app verification",
-            "Streamlined user experience"
+            "Enhanced conditional access policies",
+            "Improved multi-factor authentication",
+            "Better integration with Microsoft 365"
           ],
           "service": "Entra",
           "link": "https://learn.microsoft.com/en-us/entra/fundamentals/whats-new"
