@@ -9,6 +9,7 @@ class IntuneUpdatesTracker {
         this.currentPage = 1;
         
         this.searchInput = document.getElementById('searchInput');
+        this.serviceFilter = document.getElementById('serviceFilter');
         this.categoryFilter = document.getElementById('categoryFilter');
         this.timeFilter = document.getElementById('timeFilter');
         this.updatesContainer = document.getElementById('updatesContainer');
@@ -22,6 +23,10 @@ class IntuneUpdatesTracker {
     bindEvents() {
         if (this.searchInput) {
             this.searchInput.addEventListener('input', this.debounce(() => this.filterUpdates(), 300));
+        }
+        
+        if (this.serviceFilter) {
+            this.serviceFilter.addEventListener('change', () => this.filterUpdates());
         }
         
         if (this.categoryFilter) {
@@ -61,6 +66,8 @@ class IntuneUpdatesTracker {
             
             console.log('Init: indexData loaded:', this.indexData);
             
+            this.populateServiceFilter();
+            this.populateCategoryFilter();
             this.updateStats();
             this.filterUpdates();
             this.displayNotices();
@@ -231,8 +238,96 @@ class IntuneUpdatesTracker {
         };
     }
 
+    populateServiceFilter() {
+        if (!this.serviceFilter || !this.updates) return;
+
+        // Extract unique services from all updates
+        const services = new Set();
+        
+        this.updates.forEach(update => {
+            if (update.service) {
+                services.add(update.service);
+            }
+        });
+
+        // Convert to array and sort alphabetically
+        const sortedServices = Array.from(services).sort();
+
+        // Create a mapping for better display names
+        const serviceDisplayNames = {
+            'Intune': 'Microsoft Intune',
+            'Entra': 'Microsoft Entra ID'
+        };
+
+        // Clear existing options except "All Services"
+        this.serviceFilter.innerHTML = '<option value="all">All Services</option>';
+
+        // Add service options
+        sortedServices.forEach(service => {
+            const option = document.createElement('option');
+            option.value = service;
+            option.textContent = serviceDisplayNames[service] || service;
+            this.serviceFilter.appendChild(option);
+        });
+
+        console.log('Populated services:', sortedServices);
+    }
+
+    populateCategoryFilter() {
+        if (!this.categoryFilter || !this.updates) return;
+
+        // Extract unique categories from all updates
+        const categories = new Set();
+        
+        this.updates.forEach(update => {
+            if (update.category) {
+                categories.add(update.category);
+            }
+        });
+
+        // Convert to array and sort alphabetically
+        const sortedCategories = Array.from(categories).sort();
+
+        // Create a mapping for better display names
+        const categoryDisplayNames = {
+            'device-management': 'Device Management',
+            'app-management': 'App Management', 
+            'device-security': 'Device Security',
+            'device-configuration': 'Device Configuration',
+            'microsoft-intune-suite': 'Microsoft Intune Suite',
+            'intune-suite': 'Microsoft Intune Suite',
+            'intune-apps': 'Intune Apps',
+            'monitor-troubleshoot': 'Monitor & Troubleshoot',
+            'identity-management': 'Identity Management',
+            'conditional-access': 'Conditional Access',
+            'authentication': 'Authentication',
+            'identity-governance': 'Identity Governance',
+            'privileged-identity': 'Privileged Identity Management',
+            'external-identities': 'External Identities',
+            'application-management': 'Application Management',
+            'notices': 'Notices'
+        };
+
+        // Clear existing options except "All Categories"
+        this.categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+
+        // Add category options
+        sortedCategories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = categoryDisplayNames[category] || 
+                category.split('-').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1)
+                ).join(' ');
+            this.categoryFilter.appendChild(option);
+        });
+
+        console.log('Populated categories:', sortedCategories);
+    }
+
     filterUpdates() {
         const searchTerm = this.searchInput?.value.toLowerCase() || '';
+        const serviceFilter = this.serviceFilter?.value || '';
         const categoryFilter = this.categoryFilter?.value || '';
         const timeFilter = this.timeFilter?.value || '';
 
@@ -246,13 +341,16 @@ class IntuneUpdatesTracker {
                 (update.features && update.features.some(feature => 
                     feature.toLowerCase().includes(searchTerm)));
 
+            // Service filter
+            const matchesService = !serviceFilter || serviceFilter === 'all' || update.service === serviceFilter;
+
             // Category filter
             const matchesCategory = !categoryFilter || categoryFilter === 'all' || update.category === categoryFilter;
 
             // Time filter
             const matchesTime = this.checkTimeFilter(update.date, timeFilter);
 
-            return matchesSearch && matchesCategory && matchesTime;
+            return matchesSearch && matchesService && matchesCategory && matchesTime;
         });
 
         this.currentPage = 1;
