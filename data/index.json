@@ -1,6 +1,6 @@
 {
-  "lastGenerated": "2025-07-15T17:37:09.870Z",
-  "totalUpdates": 175,
+  "lastGenerated": "2025-07-15T19:26:15.799Z",
+  "totalUpdates": 176,
   "totalFiles": 27,
   "totalMonths": 8,
   "totalNotices": 11,
@@ -21,7 +21,7 @@
           "date": "2025-07-14",
           "service": "Intune",
           "serviceRelease": null,
-          "updates": 1
+          "updates": 2
         },
         {
           "filename": "2025-07-14.json",
@@ -42,7 +42,7 @@
           "updates": 2
         }
       ],
-      "totalUpdates": 4,
+      "totalUpdates": 5,
       "serviceReleases": []
     },
     {
@@ -346,7 +346,7 @@
       "date": "2025-07-14",
       "service": "Intune",
       "serviceRelease": null,
-      "updates": 1
+      "updates": 2
     },
     {
       "filename": "2025-07-14.json",

@@ -29,6 +29,19 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         }
       ]
+    },
+    {
+      "topic": "Monitor and troubleshoot",
+      "category": "monitor-troubleshoot",
+      "updates": [
+        {
+          "id": 1387409677,
+          "title": "Export device query results to CSV file",
+          "content": "Now after running a multiple-device query, you can export up to 50,000 query results to a CSV file. For more information, see How to use device query for multiple devices.",
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
     }
   ]
 }
