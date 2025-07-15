@@ -59,6 +59,8 @@ class IntuneUpdatesTracker {
             this.notices = data.notices;
             this.indexData = data.indexData;
             
+            console.log('Init: indexData loaded:', this.indexData);
+            
             this.updateStats();
             this.filterUpdates();
             this.displayNotices();
@@ -334,12 +336,22 @@ class IntuneUpdatesTracker {
                     <h4>${notice.title}</h4>
                     <span class="notice-date">${this.formatDate(notice.date)}</span>
                 </div>
-                <p>${notice.content}</p>
+                <div class="notice-content">${this.renderNoticeContent(notice.content)}</div>
                 ${notice.link ? `<a href="${notice.link}" target="_blank">Learn more <i class="fas fa-external-link-alt"></i></a>` : ''}
             </div>
         `).join('');
 
         this.noticesContainer.innerHTML = noticesHtml;
+    }
+
+    renderNoticeContent(content) {
+        // Convert basic markdown-like formatting to HTML
+        return content
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **bold** to <strong>
+            .replace(/\*(.*?)\*/g, '<em>$1</em>') // *italic* to <em>
+            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>') // [text](url) to links
+            .replace(/\n/g, '<br>') // newlines to <br>
+            .replace(/`(.*?)`/g, '<code>$1</code>'); // `code` to <code>
     }
 
     displayDataFiles() {
@@ -415,8 +427,19 @@ class IntuneUpdatesTracker {
         
         if (deploymentDateElement && deploymentTimeElement) {
             // Use the lastGenerated time from the index data if available
-            const deploymentDate = this.indexData?.lastGenerated ? 
-                new Date(this.indexData.lastGenerated) : new Date();
+            console.log('Index data for deployment time:', this.indexData);
+            
+            let deploymentDate;
+            if (this.indexData && this.indexData.lastGenerated) {
+                deploymentDate = new Date(this.indexData.lastGenerated);
+                console.log('Using lastGenerated from indexData:', this.indexData.lastGenerated);
+            } else {
+                // Fallback to current date if no lastGenerated available
+                deploymentDate = new Date();
+                console.log('No lastGenerated found, using current date');
+            }
+            
+            console.log('Final deployment date:', deploymentDate);
             
             deploymentDateElement.textContent = deploymentDate.toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -428,6 +451,11 @@ class IntuneUpdatesTracker {
                 hour: '2-digit',
                 minute: '2-digit',
                 timeZoneName: 'short'
+            });
+        } else {
+            console.error('Deployment date/time elements not found:', {
+                deploymentDateElement,
+                deploymentTimeElement
             });
         }
     }
