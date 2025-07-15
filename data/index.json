@@ -1,7 +1,7 @@
 {
-  "lastGenerated": "2025-07-15T15:50:44.463Z",
-  "totalUpdates": 103,
-  "totalFiles": 19,
+  "lastGenerated": "2025-07-15T16:29:07.494Z",
+  "totalUpdates": 107,
+  "totalFiles": 21,
   "totalMonths": 8,
   "totalNotices": 11,
   "services": [
@@ -22,9 +22,27 @@
           "service": "Intune",
           "serviceRelease": null,
           "updates": 1
+        },
+        {
+          "filename": "2025-07-14.json",
+          "path": "updates/entra/2025-07-14.json",
+          "week": "Week of July 14, 2025",
+          "date": "2025-07-14",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 2
+        },
+        {
+          "filename": "2025-07-01.json",
+          "path": "updates/entra/2025-07-01.json",
+          "week": "July 2025",
+          "date": "2025-07-01",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 2
         }
       ],
-      "totalUpdates": 1,
+      "totalUpdates": 5,
       "serviceReleases": []
     },
     {
@@ -275,6 +293,24 @@
       "service": "Intune",
       "serviceRelease": null,
       "updates": 1
+    },
+    {
+      "filename": "2025-07-14.json",
+      "path": "updates/entra/2025-07-14.json",
+      "week": "Week of July 14, 2025",
+      "date": "2025-07-14",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 2
+    },
+    {
+      "filename": "2025-07-01.json",
+      "path": "updates/entra/2025-07-01.json",
+      "week": "July 2025",
+      "date": "2025-07-01",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 2
     },
     {
       "filename": "2025-06-23.json",
