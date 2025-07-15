@@ -8,7 +8,7 @@
       "category": "monitor-troubleshoot",
       "updates": [
         {
-          "id": 1752589344415.4893,
+          "id": 1752589962336.8567,
           "title": "Limited live chat support in Intune",
           "content": "Intune is introducing limited live chat support within the Intune admin console. Live chat isn't available for all tenants or inquiries at this time.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
