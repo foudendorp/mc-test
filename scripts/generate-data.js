@@ -287,41 +287,69 @@ async function generateDataFiles() {
             return;
         }
         
-        // Generate notices file (only if changed)
-        const noticesFilePath = `${NOTICES_DIR}/notices.json`;
+        // Generate individual notice files (only if changed)
+        const noticeFiles = [];
+        let noticesUpdated = 0;
+        
         if (notices.length > 0) {
-            const noticesData = {
+            notices.forEach((notice, index) => {
+                // Create a unique filename based on notice title and date
+                const sanitizedTitle = notice.title
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '')
+                    .substring(0, 50); // Limit length
+                
+                const filename = `${notice.date}-${sanitizedTitle}.json`;
+                const filePath = `${NOTICES_DIR}/${filename}`;
+                
+                if (hasContentChanged(filePath, notice)) {
+                    writeFileSync(filePath, JSON.stringify(notice, null, 2));
+                    noticesUpdated++;
+                    console.log(`✅ Updated notices/${filename}`);
+                } else {
+                    console.log(`⏭️  Skipped notices/${filename} (no changes)`);
+                }
+                
+                noticeFiles.push({
+                    filename: filename,
+                    path: `notices/${filename}`,
+                    title: notice.title,
+                    date: notice.date,
+                    type: notice.type,
+                    category: notice.category
+                });
+            });
+            
+            console.log(`📁 Notices processed: ${notices.length}, Files updated: ${noticesUpdated}`);
+        }
+        
+        // Create notices index file
+        const noticesIndexPath = `${NOTICES_DIR}/index.json`;
+        const noticesIndexDataWithoutTimestamp = {
+            totalNotices: notices.length,
+            totalFiles: noticeFiles.length,
+            noticeFiles: noticeFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
+        };
+        
+        if (hasContentChanged(noticesIndexPath, noticesIndexDataWithoutTimestamp)) {
+            const noticesIndexData = {
                 lastUpdated: new Date().toISOString(),
-                notices: notices
+                ...noticesIndexDataWithoutTimestamp
             };
             
-            if (hasContentChanged(noticesFilePath, noticesData)) {
-                writeFileSync(noticesFilePath, JSON.stringify(noticesData, null, 2));
-                console.log(`✅ Updated notices/notices.json with ${notices.length} notices`);
-            } else {
-                console.log(`⏭️  Skipped notices/notices.json (no changes)`);
-            }
+            writeFileSync(noticesIndexPath, JSON.stringify(noticesIndexData, null, 2));
+            console.log(`✅ Updated notices/index.json with ${noticeFiles.length} notice files`);
         } else {
-            // Create minimal notices file
-            const noticesData = {
-                lastUpdated: new Date().toISOString(),
-                notices: []
-            };
-            
-            if (hasContentChanged(noticesFilePath, noticesData)) {
-                writeFileSync(noticesFilePath, JSON.stringify(noticesData, null, 2));
-                console.log('✅ Updated empty notices/notices.json');
-            } else {
-                console.log('⏭️  Skipped empty notices/notices.json (no changes)');
-            }
+            console.log('⏭️  Skipped notices/index.json (no changes)');
         }
         
         // Group data files by month
         const monthlyGroups = groupDataFilesByMonth(dataFiles);
         
-        // Generate index file with monthly grouping (only if changed)
-        const indexData = {
-            lastGenerated: new Date().toISOString(),
+        // Create index data without timestamp first for comparison
+        const indexDataWithoutTimestamp = {
             totalUpdates: totalUpdates,
             totalFiles: dataFiles.length,
             totalMonths: monthlyGroups.length,
@@ -330,7 +358,15 @@ async function generateDataFiles() {
         };
         
         const indexFilePath = `${DATA_DIR}/index.json`;
-        if (hasContentChanged(indexFilePath, indexData)) {
+        
+        // Check if content has changed (excluding timestamp)
+        if (hasContentChanged(indexFilePath, indexDataWithoutTimestamp)) {
+            // Add timestamp only when writing
+            const indexData = {
+                lastGenerated: new Date().toISOString(),
+                ...indexDataWithoutTimestamp
+            };
+            
             writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
             console.log(`✅ Updated index.json with ${dataFiles.length} data files grouped into ${monthlyGroups.length} months`);
         } else {
@@ -389,27 +425,60 @@ async function createFallbackData() {
     console.log('Generated fallback updates/2025-07-14.json');
     
     // Create fallback notices
-    const noticesData = {
+    const fallbackNotice = {
+        id: 1,
+        title: "Data Generation Notice",
+        content: "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn.",
+        date: new Date().toISOString().split('T')[0],
         lastUpdated: new Date().toISOString(),
-        notices: [
+        type: "info",
+        category: "system",
+        status: "active",
+        source: "system"
+    };
+    
+    const noticeFilename = `${fallbackNotice.date}-data-generation-notice.json`;
+    writeFileSync(`${NOTICES_DIR}/${noticeFilename}`, JSON.stringify(fallbackNotice, null, 2));
+    console.log(`Generated fallback notices/${noticeFilename}`);
+    
+    // Create fallback notices index
+    const noticesIndexData = {
+        lastUpdated: new Date().toISOString(),
+        totalNotices: 1,
+        totalFiles: 1,
+        noticeFiles: [
             {
-                id: 1,
-                title: "Data Generation Notice",
-                content: "This site uses automated data generation. The displayed information is currently using fallback data while the system fetches the latest updates from Microsoft Learn.",
-                date: new Date().toISOString().split('T')[0],
-                type: "info"
+                filename: noticeFilename,
+                path: `notices/${noticeFilename}`,
+                title: fallbackNotice.title,
+                date: fallbackNotice.date,
+                type: fallbackNotice.type,
+                category: fallbackNotice.category
             }
         ]
     };
     
-    writeFileSync(`${NOTICES_DIR}/notices.json`, JSON.stringify(noticesData, null, 2));
-    console.log('Generated fallback notices/notices.json');
+    writeFileSync(`${NOTICES_DIR}/index.json`, JSON.stringify(noticesIndexData, null, 2));
+    console.log('Generated fallback notices/index.json');
     
     // Create fallback index
+    const monthlyGroups = groupDataFilesByMonth([
+        {
+            filename: "2025-07-14.json",
+            path: "updates/2025-07-14.json",
+            week: "Week of July 14, 2025",
+            date: "2025-07-14",
+            serviceRelease: null,
+            updates: 1
+        }
+    ]);
+    
     const indexData = {
         lastGenerated: new Date().toISOString(),
         totalUpdates: 1,
         totalFiles: 1,
+        totalMonths: monthlyGroups.length,
+        monthlyGroups: monthlyGroups,
         dataFiles: [
             {
                 filename: "2025-07-14.json",
@@ -452,8 +521,30 @@ function hasContentChanged(filePath, newContent) {
     const existingContent = readExistingFile(filePath);
     if (!existingContent) return true;
     
-    const existingHash = generateFileHash(existingContent);
-    const newHash = generateFileHash(newContent);
+    // For index.json files, exclude timestamp fields from comparison
+    let contentToCompare = newContent;
+    let existingToCompare = existingContent;
+    
+    if (filePath.includes('index.json')) {
+        // Create copies without timestamp fields for comparison
+        contentToCompare = { ...newContent };
+        existingToCompare = { ...existingContent };
+        delete contentToCompare.lastGenerated;
+        delete existingToCompare.lastGenerated;
+        delete contentToCompare.lastUpdated;
+        delete existingToCompare.lastUpdated;
+    }
+    
+    // For individual notice files, exclude lastUpdated from comparison  
+    if (filePath.includes('notices/') && !filePath.includes('index.json')) {
+        contentToCompare = { ...newContent };
+        existingToCompare = { ...existingContent };
+        delete contentToCompare.lastUpdated;
+        delete existingToCompare.lastUpdated;
+    }
+    
+    const existingHash = generateFileHash(existingToCompare);
+    const newHash = generateFileHash(contentToCompare);
     
     return existingHash !== newHash;
 }

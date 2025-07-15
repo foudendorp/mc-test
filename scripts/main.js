@@ -133,12 +133,25 @@ class IntuneUpdatesTracker {
             // Load notices
             let notices = [];
             try {
-                const noticesResponse = await fetch('./data/notices/notices.json');
-                if (noticesResponse.ok) {
-                    const noticesData = await noticesResponse.json();
-                    notices = noticesData.notices || [];
+                const noticesIndexResponse = await fetch('./data/notices/index.json');
+                if (noticesIndexResponse.ok) {
+                    const noticesIndexData = await noticesIndexResponse.json();
+                    const noticeFiles = noticesIndexData.noticeFiles || [];
+                    
+                    // Load individual notice files
+                    for (const noticeFile of noticeFiles) {
+                        try {
+                            const noticeResponse = await fetch(`./data/${noticeFile.path}`);
+                            if (noticeResponse.ok) {
+                                const notice = await noticeResponse.json();
+                                notices.push(notice);
+                            }
+                        } catch (noticeError) {
+                            console.warn(`Error loading notice file ${noticeFile.path}:`, noticeError);
+                        }
+                    }
                 } else {
-                    console.warn('Notices file not found');
+                    console.warn('Notices index file not found');
                 }
             } catch (noticesError) {
                 console.error('Error loading notices:', noticesError);
