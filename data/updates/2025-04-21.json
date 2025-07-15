@@ -8,7 +8,7 @@
       "category": "intune-suite",
       "updates": [
         {
-          "id": 1752583830646.4302,
+          "id": 1752584145859.122,
           "title": "Endpoint Privilege Management elevation rule support for file arguments and parameters",
           "content": "File elevation rules for Endpoint Privilege Management (EPM) now support command line file arguments. When an elevation rule is configured to define one or more file arguments, EPM allows that file to run in an elevated request only when one of the defined arguments is used. EPM blocks elevation of the file should a command line argument be used that isn't defined by the elevation rule. Use of file arguments in your file elevation rules can help you refine how and for what intent different files are successfully run in an elevated context by Endpoint Privilege Management. EPM is available as an Intune Suite add-on-capability.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
@@ -20,13 +20,13 @@
       "category": "app-management",
       "updates": [
         {
-          "id": 1752583830646.8828,
+          "id": 1752584145860.8582,
           "title": "Relationship viewer available for Intune apps",
           "content": "The relationship viewer provides a graphical depiction of the relationships between different applications in the system, including superseding and dependent applications. Admins can find relationship viewer in Intune by selecting Apps > All apps > a Win32 app > Relationship viewer. The relationship viewer supports both Win32 apps and Enterprise App Catalog apps. For more information, see App relationship viewer.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752583830648.4082,
+          "id": 1752584145861.2822,
           "title": "Apple VPP using new API v2.0",
           "content": "Apple recently updated the API for their volume purchase program (VPP), which is used to manage apps and books. Apple's related API is now version 2.0. Version 1.0 is deprecated. To support the Apple updates, Microsoft Intune has updated to use the new API, which is faster and more scalable than the previous version. Applies to:",
           "features": [
@@ -36,7 +36,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752583830650.7668,
+          "id": 1752584145864.5881,
           "title": "Additional org data storage service options for Android and iOS apps",
           "content": "Intune now provides additional storage services options when saving copies of org data using an app protection policy for Android or iOS. In addition to the existing org data storage options, you can also select iManage and Egnyte as storage options. You must select these services as exemptions from your block list by setting Save copies of org data to Block, then selecting the allowed storage services next to the Allow user to save copies to selected services setting. Note that this setting doesn't apply to all applications. For more information about data protection using app protection policies, see iOS app protection policy settings - Data protection and Android app protection policy settings - Data protection. Applies to:",
           "features": [
@@ -52,7 +52,7 @@
       "category": "device-configuration",
       "updates": [
         {
-          "id": 1752583830653.395,
+          "id": 1752584145866.1304,
           "title": "Updated device configuration template for Windows Delivery Optimization",
           "content": "We've updated the device configuration template for Windows Delivery Optimization. The new template uses the settings format as found in the Settings Catalog, with settings that are taken directly from the Windows Configuration Service Providers (CSPs) for Windows Delivery Optimization, as documented by Windows at Policy CSP – DeliveryOptimization. With this change you can no longer create new versions of the old profile. However, your preexisting instances of the old profile remain available to use. For more information about this change, see the Intune Customer Success blog at Support tip: Windows device configuration policies migrating to unified settings platform in Intune. Applies to:",
           "features": [
@@ -62,7 +62,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752583830656.891,
+          "id": 1752584145869.2812,
           "title": "New settings available in the Apple settings catalog",
           "content": "The Settings Catalog lists all the settings you can configure in a device policy, and all in one place. For more information about configuring Settings Catalog profiles in Intune, see Create a policy using settings catalog. We've added a new setting in the Settings Catalog. To see this setting, in the Microsoft Intune admin center, see Devices > Manage devices > Configuration > Create > New policy > macOS for platform > Settings catalog for profile type. Login > Login Window:",
           "features": [
@@ -82,7 +82,7 @@
       "category": "device-management",
       "updates": [
         {
-          "id": 1752583830658.7295,
+          "id": 1752584145872.8733,
           "title": "Custom device naming template for Android Enterprise corporate-owned devices",
           "content": "You can use a custom template for naming Android Enterprise corporate-owned devices when they enroll with Intune. The template is available to configure in the enrollment profile. It can contain a combination of custom text and predefined variables, such as device serial number, device type, and for user-affiliated devices, the owner's username. For more information, see: Applies to:",
           "features": [
@@ -94,7 +94,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752583830659.032,
+          "id": 1752584145872.019,
           "title": "Enrollment-time grouping for Android Enterprise corporate devices",
           "content": "Now available for Android Enterprise corporate-owned devices, enrollment time grouping enables you to assign a static Microsoft Entra group to devices at enrollment time. When a targeted Android device enrolls, it receives all assigned policies, apps, and settings, typically by the time the user lands on the home screen. You can configure one static Microsoft Entra group per enrollment profile under the Device group tab in the Microsoft Intune admin center. For more information, see Enrollment time grouping.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
@@ -106,7 +106,7 @@
       "category": "device-management",
       "updates": [
         {
-          "id": 1752583830661.9736,
+          "id": 1752584145874.7861,
           "title": "Intune ending support for custom profiles for personally owned work profile devices",
           "content": "Starting in April 2025, Intune no longer supports custom profiles for Android Enterprise personally owned work profile devices. With this end of support: All custom policies should be replaced with other policy types. Learn more about Intune ending support for personally owned work profile custom profiles",
           "features": [
@@ -123,7 +123,7 @@
       "category": "device-security",
       "updates": [
         {
-          "id": 1752583830669.0361,
+          "id": 1752584145881.575,
           "title": "New settings added to the Windows security baseline version 24H2",
           "content": "The most recent Intune security baseline for Windows, version 24H2, is updated to include 15 new settings for managing the Windows Configuration Service Provider (CSP) for Lanman Server and Lanman Workstation. These settings were previously unavailable in the baseline due to missing CSP support. The addition of these settings provides better control and configuration options. Because this is an update to an existing baseline version and not a new baseline version, the new settings aren't visible in the baselines properties until you edit and save the baseline: Following are the new settings that are added to the version 24H2 baseline, and the baseline default for each:\nLanman Server Lanman Workstation For more information, see Intune security baselines.",
           "features": [
@@ -154,7 +154,7 @@
       "category": "intune-apps",
       "updates": [
         {
-          "id": 1752583830673.9631,
+          "id": 1752584145885.247,
           "title": "Newly available protected apps for Intune",
           "content": "The following protected apps are now available for Microsoft Intune: For more information about protected apps, see Microsoft Intune protected apps.",
           "features": [
@@ -171,7 +171,7 @@
       "category": "device-management",
       "updates": [
         {
-          "id": 1752583830674.4963,
+          "id": 1752584145886.468,
           "title": "Updates to Intune admin center home page",
           "content": "Microsoft Intune admin center's home page has been updated to include additional links to interactive demos, documentation, and training. To see these updates, navigate to the Microsoft Intune admin center.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
