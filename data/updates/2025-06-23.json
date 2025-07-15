@@ -8,13 +8,13 @@
       "category": "app-management",
       "updates": [
         {
-          "id": 1752585597871.6162,
+          "id": 1752588573548.699,
           "title": "Microsoft Intune support for Apple AI features",
           "content": "Intune app protection policies have new standalone settings for Apple AI features (Genmojis, Writing tools, and screen capture). Note that these standalone settings are supported by apps that have updated to version 19.7.12 or later for Xcode 15, and 20.4.0 or later for Xcode 16 of the Intune App SDK and App Wrapping Tool. Previously, these Apple AI features were blocked when the app protection policy Send Org data to other apps setting is configured to a value other than All apps. For more information about Intune's related app protection policies, see iOS app protection policy settings.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752585597883.2705,
+          "id": 1752588573559.655,
           "title": "Add Enterprise App Catalog apps to ESP blocking apps list",
           "content": "Windows Autopilot now supports Enterprise App Catalog apps. Microsoft Intune Enterprise App Management enables IT admins to easily manage applications from the Enterprise App Catalog. Using Windows Autopilot, you can select apps from the Enterprise App Catalog as blocking apps in the Enrollment Status Page (ESP) and the Device Preparation Page (DPP) profiles. This allows you to ensure those apps are delivered before the user can access the desktop. For related information, see Set up the Enrollment Status Page, Overview of Windows Autopilot device preparation, and Add an Enterprise App Catalog app to Microsoft Intune. Applies to:",
           "features": [
@@ -23,7 +23,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752585597889.7344,
+          "id": 1752588573565.0073,
           "title": "Managed Home Screen orientation changes with Android 16",
           "content": "Starting with Android 16, Android stops enforcing screen orientation on devices with 600dp and larger display settings. This change impacts the Managed Home Screen (MHS) on devices with larger form factors, like tablets. On these Android 16 devices, orientation is determined by the device's orientation setting, not the MHS settings you configure. To learn more about Android 16 changes, go to Behavior changes: Apps targeting Android 16 or higher (opens Android website). Applies to:",
           "features": [
@@ -38,7 +38,7 @@
       "category": "device-configuration",
       "updates": [
         {
-          "id": 1752585597900.0215,
+          "id": 1752588573577.7314,
           "title": "New settings available in the Apple settings catalog",
           "content": "The Settings Catalog lists all the settings you can configure in a device policy, and all in one place. For more information about configuring settings catalog profiles in Intune, go to Create a policy using settings catalog. There are new settings in the settings catalog. To see these settings, in the Microsoft Intune admin center, go to Devices > Manage devices > Configuration > Create > New policy > iOS/iPadOS or macOS for platform > Settings catalog for profile type. Managed Settings: Authentication > Extensible Single Sign On (SSO): Microsoft Edge: Apple deprecated the Identification payload in macOS 15.4.",
           "features": [
@@ -49,7 +49,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752585597906.9639,
+          "id": 1752588573582.0825,
           "title": "New Block Bluetooth setting in the Android Enterprise settings catalog",
           "content": "The Settings Catalog lists all the settings you can configure in a device policy, and all in one place. For more information about configuring Settings Catalog profiles in Intune, see Create a policy using settings catalog. There's a new Block Bluetooth setting (Devices > Manage devices > Configuration > Create > New policy > Android Enterprise for platform > Settings catalog for profile type). When set to True, Bluetooth is disabled on the device. There's also a Block Bluetooth Configuration setting that prevents end users from changing the Bluetooth setting on the device. These settings are different and have different results. Some examples include: For a list of existing settings you can configure in the settings catalog, see Android Enterprise device settings list in the Intune settings catalog. Applies to:",
           "features": [
@@ -68,7 +68,7 @@
       "category": "device-management",
       "updates": [
         {
-          "id": 1752585597908.9724,
+          "id": 1752588573584.3198,
           "title": "New reporting system for improved performance and data consistency",
           "content": "Microsoft Intune is rolling out the new Policy Reporting Service (PRS) V3. The new system brings faster report generation, improved reliability, and better data consistency. In the first phase, some high-traffic compliance and device configuration reports are transitioning to the new system. Users will notice quicker updates in the Intune admin center and fewer issues with stale data. No action is required from users, as your reports transition automatically. To learn more about the Intune reports you can use, see Intune reports.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
@@ -80,7 +80,7 @@
       "category": "device-security",
       "updates": [
         {
-          "id": 1752585597912.2827,
+          "id": 1752588573589.8083,
           "title": "New attributes and S/MIME baseline requirements for SCEP certificate profiles",
           "content": "Intune supports two new attributes for subject name settings in SCEP and PKCS device configuration profiles. They include: Beginning July 16th, you are required to use these attributes in the subject name format if you're using a third party public certificate authority (CA) integrated with the Intune SCEP API for issuing S\\MIME (encryption or signing) certificates anchored up to a public root CA. After that date, a public CA will not issue or sign S\\MIME certificates that omit these attributes. For more information, see S/MIME certificate requirements for third party public CA.",
           "features": [
@@ -96,7 +96,7 @@
       "category": "intune-apps",
       "updates": [
         {
-          "id": 1752585597915.8364,
+          "id": 1752588573591.9426,
           "title": "Newly available protected apps for Intune",
           "content": "The following protected apps are now available for Microsoft Intune: For more information about protected apps, see Microsoft Intune protected apps.",
           "features": [
@@ -114,7 +114,7 @@
       "category": "monitor-troubleshoot",
       "updates": [
         {
-          "id": 1752585597918.7712,
+          "id": 1752588573595.1724,
           "title": "New status column in Windows hardware attestation report",
           "content": "We added a new column, Attest Status, to the Windows hardware attestation report to improve visibility into attestation errors. This column shows error messages received during the attestation process, helping you identify issues from both the service and client sides.  Error types shown in this column include: For more information about the report, see Windows hardware attestation report.",
           "features": [
