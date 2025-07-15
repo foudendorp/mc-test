@@ -8,7 +8,7 @@
       "category": "intune-suite",
       "updates": [
         {
-          "id": 1752584590609.2617,
+          "id": 1752585041892.6875,
           "title": "Endpoint Privilege Management support for ARM 64-bit devices",
           "content": "Endpoint Protection Manager (EPM) now supports managing file elevations on devices that run on ARM 64-bit architecture. Applies to:",
           "features": [
@@ -23,7 +23,7 @@
       "category": "device-configuration",
       "updates": [
         {
-          "id": 1752584590616.2046,
+          "id": 1752585041898.7744,
           "title": "New settings available in the Apple settings catalog",
           "content": "The Settings Catalog lists all the settings you can configure in a device policy, and all in one place. For more information about configuring Settings Catalog profiles in Intune, see Create a policy using settings catalog. There are new settings in the Settings Catalog. To see these settings, in the Microsoft Intune admin center, go to Devices > Manage devices > Configuration > Create > New policy > iOS/iPadOS or macOS for platform > Settings catalog for profile type. Restrictions: Remote Desktop: Restrictions:",
           "features": [
@@ -48,7 +48,7 @@
       "category": "device-management",
       "updates": [
         {
-          "id": 1752584590622.1294,
+          "id": 1752585041904.7573,
           "title": "New settings for Windows LAPS policy",
           "content": "Intune policies for Windows Local Administrator Password Solution (LAPS) now include several new settings and updates to two previously available settings. Use of LAPS which is a Windows built-in solution can help you secure the built-in local administrator account that is present on each Windows device. All the settings that you can manage through Intune LAPS policy are described in the Windows LAPS CSP. The following new settings are available: (Each setting name is a link that opens the CSP documentation for that setting.) The following settings have new options available: By default, each setting in LAPS policies is set to Not configured, which means the addition of these new settings won't change the behavior of your existing policies. To make use of the new settings and options, you can create new profiles or edit your existing profiles. Applies to:",
           "features": [
@@ -69,7 +69,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752584590626.0093,
+          "id": 1752585041908.508,
           "title": "Configure devices to stay on the latest OS version using declarative device management (DDM)",
           "content": "As part of the Settings Catalog, you can now configure devices to automatically update to the latest OS version using DDM. To use these new settings in the Microsoft Intune admin center, go to Devices > Manage devices > Configuration > Create > New policy > iOS/iPadOS or macOSfor platform > Settings catalog for profile type. Declarative device management > Software Update Enforce Latest. Learn more about configuring managed updates through DDM at Managed software updates. Applies To:",
           "features": [
@@ -82,7 +82,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752584590628.527,
+          "id": 1752585041909.3994,
           "title": "Remote Help supports Azure Virtual Desktop muti-session",
           "content": "Remote Help now provides support for multi-session AVD with several users on a single virtual machine. Earlier, Remote Help was supporting Azure Virtual Desktop (AVD) sessions with one user on one virtual machine (VM). For more information, see:",
           "features": [
@@ -93,7 +93,7 @@
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
         },
         {
-          "id": 1752584590628.3806,
+          "id": 1752585041910.8215,
           "title": "Copilot assistant for device query",
           "content": "You can now use Copilot to generate a KQL query to help you get data from across multiple devices in Intune. This capability is available in the Microsoft Intune admin center by selecting Devices > Device query > Query with Copilot. For more information, see Query with Copilot in device query.",
           "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
@@ -105,7 +105,7 @@
       "category": "intune-apps",
       "updates": [
         {
-          "id": 1752584590630.6672,
+          "id": 1752585041911.9023,
           "title": "Newly available protected apps for Intune",
           "content": "The following protected apps are now available for Microsoft Intune: For more information about protected apps, see Microsoft Intune protected apps.",
           "features": [
