@@ -632,6 +632,7 @@ class IntuneUpdatesTracker {
                         <tr>
                             <th>Date</th>
                             <th>Service</th>
+                            <th>Plan Type</th>
                             <th>Type</th>
                             <th>Title</th>
                             <th>Status</th>
@@ -654,6 +655,9 @@ class IntuneUpdatesTracker {
         const typeClass = notice.type || 'info';
         const serviceName = notice.service || 'Unknown';
         
+        // Extract plan type and clean title
+        const { planType, cleanTitle } = this.extractPlanTypeFromTitle(notice.title);
+        
         return `
             <tr class="notice-row" onclick="window.tracker.showNoticeModal('${notice.id}')" style="cursor: pointer;">
                 <td data-label="Date">${formattedDate}</td>
@@ -663,13 +667,16 @@ class IntuneUpdatesTracker {
                         ${serviceName}
                     </span>
                 </td>
+                <td data-label="Plan Type">
+                    ${planType ? `<span class="plan-type-badge">${planType}</span>` : '<span class="plan-type-badge plan-type-none">N/A</span>'}
+                </td>
                 <td data-label="Type">
                     <span class="notice-type-badge notice-type-${typeClass}">
                         <i class="fas ${this.getNoticeIcon(typeClass)}"></i>
                         ${this.formatNoticeType(typeClass)}
                     </span>
                 </td>
-                <td data-label="Title">${this.truncateText(notice.title, 60)}</td>
+                <td data-label="Title">${this.truncateText(cleanTitle, 60)}</td>
                 <td data-label="Status">
                     <span class="notice-status-badge status-${statusClass}">${this.formatStatus(statusClass)}</span>
                 </td>
@@ -706,6 +713,33 @@ class IntuneUpdatesTracker {
         }
     }
 
+    extractPlanTypeFromTitle(title) {
+        // Extract plan type prefixes from title
+        const planTypePrefixes = [
+            'Plan for Change: ',
+            'Plan for change: ',
+            'Important Notice: ',
+            'Notice: ',
+            'Announcement: ',
+            'Breaking Change: '
+        ];
+        
+        for (const prefix of planTypePrefixes) {
+            if (title.startsWith(prefix)) {
+                return {
+                    planType: prefix.replace(': ', '').trim(),
+                    cleanTitle: title.substring(prefix.length).trim()
+                };
+            }
+        }
+        
+        // If no prefix found, return original title with no plan type
+        return {
+            planType: null,
+            cleanTitle: title
+        };
+    }
+
     formatNoticeType(type) {
         return type.charAt(0).toUpperCase() + type.slice(1);
     }
@@ -722,6 +756,7 @@ class IntuneUpdatesTracker {
 
         const formattedDate = this.formatDate(notice.date);
         const typeClass = notice.type || 'info';
+        const { planType, cleanTitle } = this.extractPlanTypeFromTitle(notice.title);
         
         const modalHtml = `
             <div class="modal-overlay" onclick="window.tracker.closeModal()">
@@ -729,7 +764,7 @@ class IntuneUpdatesTracker {
                     <div class="modal-header">
                         <h2>
                             <i class="fas ${this.getNoticeIcon(typeClass)}"></i>
-                            ${notice.title}
+                            ${cleanTitle}
                         </h2>
                         <button class="modal-close" onclick="window.tracker.closeModal()">
                             <i class="fas fa-times"></i>
@@ -740,6 +775,19 @@ class IntuneUpdatesTracker {
                             <div class="meta-item">
                                 <strong>Date:</strong> ${formattedDate}
                             </div>
+                            <div class="meta-item">
+                                <strong>Service:</strong> 
+                                <span class="service-badge service-${(notice.service || 'unknown').toLowerCase()}">
+                                    <i class="fas ${this.getServiceIcon(notice.service || 'Unknown')}"></i>
+                                    ${notice.service || 'Unknown'}
+                                </span>
+                            </div>
+                            ${planType ? `
+                                <div class="meta-item">
+                                    <strong>Plan Type:</strong> 
+                                    <span class="plan-type-badge">${planType}</span>
+                                </div>
+                            ` : ''}
                             <div class="meta-item">
                                 <strong>Type:</strong> 
                                 <span class="notice-type-badge notice-type-${typeClass}">

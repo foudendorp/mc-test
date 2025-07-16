@@ -484,6 +484,24 @@
     color: white;
 }
 
+/* Plan Type Badges */
+.plan-type-badge {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #e74c3c;
+    color: white;
+}
+
+.plan-type-badge.plan-type-none {
+    background: #95a5a6;
+    color: white;
+}
+
 /* Notice Modal Specific Styles */
 .notice-meta-info {
     display: grid;
