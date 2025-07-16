@@ -1,0 +1,12 @@
+{
+  "id": 161418036,
+  "title": "Plan for Change: Blocking screen capture in the latest Intune App SDK for iOS and Intune App Wrapping Tool for iOS",
+  "content": "We recently released updated versions of the Intune App SDK and the Intune App Wrapping Tool. Included in these releases (v19.7.5+ for Xcode 15 and v20.2.0+ for Xcode 16) is the support for blocking screen capture, Genmojis, and writing tools in response to the new AI features in iOS/iPadOS 18.2.",
+  "date": "2025-07-16",
+  "service": "Intune",
+  "type": "warning",
+  "category": "plan-for-change",
+  "status": "active",
+  "source": "microsoft-learn",
+  "lastUpdated": "2025-07-16T09:11:34.929Z"
+}

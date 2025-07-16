@@ -1,0 +1,12 @@
+{
+  "id": 1176575532,
+  "title": "Plan for Change: Intune ending support for Android device administrator on devices with GMS access in December 2024",
+  "content": "Google has deprecated Android device administrator management, continues to remove management capabilities, and no longer provides fixes or improvements. Due to these changes, Intune will be ending support for Android device administrator management on devices with access to Google Mobile Services (GMS) beginning December 31, 2024. Until that time, we support device administrator management on devices running Android 14 and earlier. For more details, read the blog: Microsoft Intune ending support for Android device administrator on devices with GMS access.",
+  "date": "2025-07-16",
+  "service": "Intune",
+  "type": "warning",
+  "category": "plan-for-change",
+  "status": "active",
+  "source": "microsoft-learn",
+  "lastUpdated": "2025-07-16T09:11:34.930Z"
+}
