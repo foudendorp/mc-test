@@ -1,15 +1,15 @@
 {
-  "lastUpdated": "2025-07-16T13:14:46.488Z",
+  "lastUpdated": "2025-07-16T13:25:38.856Z",
   "service": "Entra",
   "serviceName": "Entra ID",
   "totalNotices": 1,
   "totalFiles": 1,
   "noticeFiles": [
     {
-      "filename": "2025-08-20-plan-for-change-roll-out-of-application-based-auth.json",
-      "path": "notices/entra/2025-08-20-plan-for-change-roll-out-of-application-based-auth.json",
+      "filename": "2025-08-21-plan-for-change-roll-out-of-application-based-auth.json",
+      "path": "notices/entra/2025-08-21-plan-for-change-roll-out-of-application-based-auth.json",
       "title": "Plan for change - Roll out of Application Based Authentication on Microsoft Entra Connect Sync",
-      "date": "2025-08-20",
+      "date": "2025-08-21",
       "service": "Entra",
       "type": "warning",
       "category": "plan-for-change"
