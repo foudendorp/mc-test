@@ -1,0 +1,21 @@
+{
+  "week": "Week of January 20, 2025",
+  "date": "2025-01-19",
+  "service": "Intune",
+  "serviceRelease": null,
+  "topics": [
+    {
+      "topic": "Monitor and troubleshoot",
+      "category": "monitor-troubleshoot",
+      "updates": [
+        {
+          "id": 2387376287,
+          "title": "Use Support Assistant to resolve issues",
+          "content": "<p>Support Assistant is now available in Intune. It leverages AI to enhance your help and support experience, ensuring more efficient issue resolution. Support Assistant is available in the <a href=\"https://go.microsoft.com/fwlink/?linkid=2109431\">Microsoft Intune admin center</a> by selecting <strong>Troubleshoot + support</strong> &gt; <strong>Help and Support</strong>, or by selecting the question mark near your profile pic. Currently, the Support Assistant is in preview. You can enable and disable Support Assistant by choosing to opt in and opt out at any time. For related information, see <a href=\"/en-us/mem/get-support\">How to get support in the Microsoft Intune admin center</a>.</p>",
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new#use-support-assistant-to-resolve-issues"
+        }
+      ]
+    }
+  ]
+}

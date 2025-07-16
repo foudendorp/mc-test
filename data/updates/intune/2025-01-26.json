@@ -1,0 +1,26 @@
+{
+  "week": "Week of January 27, 2025",
+  "date": "2025-01-26",
+  "service": "Intune",
+  "serviceRelease": null,
+  "topics": [
+    {
+      "topic": "Device security",
+      "category": "device-security",
+      "updates": [
+        {
+          "id": 122302161,
+          "title": "Security baselines for HoloLens 2",
+          "content": "<p>You can now deploy two distinct instances of the security baseline for HoloLens 2. These baselines represent Microsoft's best practice guidelines and experience from deploying and supporting HoloLens 2 devices to customers across various industries. The two baselines instances:</p><ul><li><p><strong>Standard Security Baseline for HoloLens 2</strong>:\nThe standard security baseline for HoloLens 2 represents the recommendations for configuring security settings that are applicable to all types of customers irrespective of HoloLens 2 use case scenarios. <a href=\"../protect/security-baseline-hololens2-standard\">View the default configuration of settings in the standard security baseline</a>.</p></li><li><p><strong>Advanced Security Baseline for HoloLens 2</strong>:\nThe advanced security baseline for HoloLens 2 represents the recommendations for configuring security settings for the customers who have strict security controls of their environment and require stringent security policies to be applied to any device used in their environment. <a href=\"../protect/security-baseline-hololens2-advanced\">View the default configuration of settings in the advanced security baseline</a>.</p></li></ul><p>To learn more about security baselines with Intune, see <a href=\"../protect/security-baselines\">Use security baselines to configure Windows devices in Intune</a>.</p><p>Applies to:</p><ul><li>Windows</li></ul>",
+          "features": [
+            "Standard Security Baseline for HoloLens 2:\nThe standard security baseline for HoloLens 2 represents the recommendations for configuring security settings that are applicable to all types of customers irrespective of HoloLens 2 use case scenarios. View the default configuration of settings in the standard security baseline.",
+            "Advanced Security Baseline for HoloLens 2:\nThe advanced security baseline for HoloLens 2 represents the recommendations for configuring security settings for the customers who have strict security controls of their environment and require stringent security policies to be applied to any device used in their environment. View the default configuration of settings in the advanced security baseline.",
+            "Windows"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new#security-baselines-for-hololens-2"
+        }
+      ]
+    }
+  ]
+}

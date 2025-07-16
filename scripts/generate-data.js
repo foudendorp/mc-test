@@ -99,7 +99,7 @@ function isPreviousElementHeader(element) {
     return false;
 }
 
-// Helper function to parse update elements
+// Helper function to parse update elements (optimized)
 function parseUpdateElement(currentElement, service) {
     const updateTitle = currentElement.textContent.trim();
     let content = '';
@@ -184,7 +184,7 @@ function parseUpdateElement(currentElement, service) {
 // Parse Microsoft Learn page content for a specific service
 async function fetchServiceUpdates(service) {
     try {
-        console.log(`Fetching ${service.name} updates from Microsoft Learn...`);
+        console.log(`📡 Fetching ${service.name} updates from Microsoft Learn...`);
         const response = await fetch(service.url);
         const html = await response.text();
         
@@ -199,6 +199,7 @@ async function fetchServiceUpdates(service) {
         // Handle different structures for different services
         if (service.tag === 'Entra') {
             // For Entra ID, use enhanced parsing for the comprehensive structure
+            console.log(`🔍 Parsing Entra ID structure...`);
             const weeklyUpdates = await parseEntraUpdates(document, service);
             
             // Still need to parse notices for Entra
@@ -207,6 +208,8 @@ async function fetchServiceUpdates(service) {
                 .filter(h => h.textContent.toLowerCase().includes('plan for change') || 
                             h.textContent.toLowerCase().includes('notice') ||
                             h.textContent.toLowerCase().includes('important'));
+            
+            console.log(`📋 Found ${noticeHeaders.length} potential notices`);
             
             noticeHeaders.forEach(header => {
                 let content = '';
@@ -256,6 +259,9 @@ async function fetchServiceUpdates(service) {
                         noticeDate = stableDate.toISOString().split('T')[0];
                     }
                     
+                    // Extract URL for the notice using the same anchor extraction logic
+                    const noticeLink = extractSectionAnchorLink(header, service.url) || service.url;
+                    
                     // Create notice without timestamp for consistent content
                     const noticeData = {
                         id: generateContentId(header.textContent.trim(), '', content), // Deterministic ID based on content
@@ -266,7 +272,8 @@ async function fetchServiceUpdates(service) {
                         type: 'warning',
                         category: 'plan-for-change',
                         status: 'active',
-                        source: 'microsoft-learn'
+                        source: 'microsoft-learn',
+                        link: noticeLink // Add URL to the notice
                     };
                     
                     notices.push(noticeData);
@@ -279,11 +286,13 @@ async function fetchServiceUpdates(service) {
             const weekHeaders = Array.from(document.querySelectorAll('h2'))
                 .filter(h2 => h2.textContent.includes('Week of'));
             
-            console.log(`Found ${weekHeaders.length} week sections for ${service.name}`);
+            console.log(`📅 Found ${weekHeaders.length} week sections for ${service.name}`);
             
             weekHeaders.forEach((weekHeader, index) => {
                 const weekText = weekHeader.textContent.trim();
-                console.log(`Processing ${service.name}: ${weekText}`);
+                if (index % 5 === 0 || index === weekHeaders.length - 1) {
+                    console.log(`📊 Processing ${service.name}: ${index + 1}/${weekHeaders.length} weeks (Current: ${weekText.substring(0, 30)}...)`);
+                }
                 
                 // Extract date from week header
                 const dateMatch = weekText.match(/Week of (.+?)(?:\s*\(|$)/);
@@ -304,6 +313,7 @@ async function fetchServiceUpdates(service) {
                 // Find content between this week header and the next one
                 let currentElement = weekHeader.nextElementSibling;
                 let currentTopic = null;
+                let updateCount = 0;
                 
                 while (currentElement && !currentElement.textContent.includes('Week of')) {
                     if (currentElement.tagName === 'H3') {
@@ -323,6 +333,7 @@ async function fetchServiceUpdates(service) {
                         const update = parseUpdateElement(currentElement, service);
                         if (update) {
                             currentTopic.updates.push(update);
+                            updateCount++;
                         }
                     }
                     
@@ -339,7 +350,14 @@ async function fetchServiceUpdates(service) {
                 if (hasUpdates) {
                     weeklyUpdates.set(date, weekData);
                 }
+                
+                // Log progress for this week
+                if (updateCount > 0 && (index % 5 === 0 || index === weekHeaders.length - 1)) {
+                    console.log(`   📈 Week ${index + 1}: ${updateCount} updates processed`);
+                }
             });
+            
+            console.log(`✅ Completed ${service.name}: ${weekHeaders.length} weeks, ${weeklyUpdates.size} weeks with updates`);
         }
         
         // Look for important notices (typically at the top of the page)
@@ -377,18 +395,21 @@ async function fetchServiceUpdates(service) {
                 // Create content with HTML markup for proper display
                 const htmlContent = htmlParts.length > 0 ? htmlParts.join('') : `<p>${content}</p>`;
                 
+                // Extract URL for the notice using the same anchor extraction logic
+                const noticeLink = extractSectionAnchorLink(header, service.url) || service.url;
+                
                 // Create notice without timestamp for consistent content
                 const noticeData = {
                     id: generateContentId(header.textContent.trim(), '', content), // Deterministic ID based on content
                     title: header.textContent.trim(),
-                    content: htmlContent, // Now includes HTML markup
-                    content: content.trim(),
+                    content: htmlContent, // HTML markup for proper display
                     date: new Date().toISOString().split('T')[0],
                     service: service.tag, // Add service tag to notices
                     type: 'warning',
                     category: 'plan-for-change',
                     status: 'active',
-                    source: 'microsoft-learn'
+                    source: 'microsoft-learn',
+                    link: noticeLink // Add URL to the notice
                 };
                 
                 notices.push(noticeData);
@@ -407,16 +428,27 @@ async function fetchServiceUpdates(service) {
 async function fetchAllServiceUpdates() {
     const serviceData = {};
     
-    // Fetch from each service
-    for (const [serviceKey, service] of Object.entries(SERVICES)) {
+    // Fetch from each service in parallel for better performance
+    const servicePromises = Object.entries(SERVICES).map(async ([serviceKey, service]) => {
         try {
+            console.log(`\n🚀 Starting ${service.name} fetch...`);
+            const startTime = Date.now();
             const { weeklyUpdates, notices } = await fetchServiceUpdates(service);
-            serviceData[serviceKey] = { weeklyUpdates, notices, service };
-            
+            const endTime = Date.now();
+            console.log(`✅ Completed ${service.name} in ${(endTime - startTime) / 1000}s`);
+            return [serviceKey, { weeklyUpdates, notices, service }];
         } catch (error) {
-            console.error(`Error fetching ${service.name} updates:`, error);
-            serviceData[serviceKey] = { weeklyUpdates: new Map(), notices: [], service };
+            console.error(`❌ Error fetching ${service.name} updates:`, error);
+            return [serviceKey, { weeklyUpdates: new Map(), notices: [], service }];
         }
+    });
+    
+    // Wait for all services to complete
+    const serviceResults = await Promise.all(servicePromises);
+    
+    // Convert results back to object
+    for (const [serviceKey, data] of serviceResults) {
+        serviceData[serviceKey] = data;
     }
     
     return serviceData;
@@ -1498,11 +1530,18 @@ function extractHTMLContent(element) {
 }
 
 // Extract links from element, prioritizing anchor links for section headers
-// Helper function to extract section anchor link from header element
+// Helper function to extract section anchor link from header element (optimized)
 function extractSectionAnchorLink(header, baseUrl) {
     if (!header) return null;
     
-    // Strategy 1: Look for anchor links within the header itself
+    // FASTEST: Check for id attribute first (most common case for Microsoft Learn)
+    const headerId = header.getAttribute('id') || header.getAttribute('data-anchor-id');
+    if (headerId) {
+        const directUrl = `${baseUrl}#${headerId}`;
+        return directUrl;
+    }
+    
+    // FAST: Look for anchor links within the header itself
     const inHeaderLinks = header.querySelectorAll('a[href*="#"]');
     for (const link of inHeaderLinks) {
         const href = link.getAttribute('href');
@@ -1514,64 +1553,12 @@ function extractSectionAnchorLink(header, baseUrl) {
                            link.classList.contains('anchor-link');
             
             if (text.length <= 2 || hasIcon || text === '' || text === '#') {
-                console.log(`Found anchor link within header: ${href}`);
                 return href.startsWith('http') ? href : `${baseUrl}${href}`;
             }
         }
     }
     
-    // Strategy 2: Look for anchor links as siblings (common Microsoft Learn pattern)
-    if (header.nextElementSibling) {
-        const siblingLinks = header.nextElementSibling.querySelectorAll('a[href*="#"]');
-        for (const link of siblingLinks) {
-            const href = link.getAttribute('href');
-            if (href && href.includes('#')) {
-                const text = link.textContent.trim();
-                const hasIcon = link.querySelector('svg, i, .icon') || 
-                               link.className.includes('icon') ||
-                               link.className.includes('anchor');
-                
-                if (text.length <= 2 || hasIcon || text === '' || text === '#') {
-                    console.log(`Found anchor link in sibling element: ${href}`);
-                    return href.startsWith('http') ? href : `${baseUrl}${href}`;
-                }
-            }
-        }
-    }
-    
-    // Strategy 3: Look for anchor links in parent container (covers wrapped scenarios)
-    if (header.parentElement) {
-        const parentLinks = header.parentElement.querySelectorAll('a[href*="#"]');
-        for (const link of parentLinks) {
-            const href = link.getAttribute('href');
-            if (href && href.includes('#')) {
-                const text = link.textContent.trim();
-                const hasIcon = link.querySelector('svg, i, .icon') || 
-                               link.className.includes('icon') ||
-                               link.className.includes('anchor') ||
-                               link.classList.contains('anchor-link');
-                
-                // More specific check - ensure it's close to our header
-                const isNearHeader = Math.abs(Array.from(header.parentElement.children).indexOf(header) - 
-                                             Array.from(header.parentElement.children).indexOf(link)) <= 2;
-                
-                if ((text.length <= 2 || hasIcon || text === '' || text === '#') && isNearHeader) {
-                    console.log(`Found anchor link in parent container: ${href}`);
-                    return href.startsWith('http') ? href : `${baseUrl}${href}`;
-                }
-            }
-        }
-    }
-    
-    // Strategy 4: Look for data-anchor-id or id attributes on the header itself
-    const headerId = header.getAttribute('id') || header.getAttribute('data-anchor-id');
-    if (headerId) {
-        const directUrl = `${baseUrl}#${headerId}`;
-        console.log(`Found header ID attribute: ${directUrl}`);
-        return directUrl;
-    }
-    
-    // Strategy 5: Generate anchor from header text as fallback
+    // Generate anchor from header text as fallback (most reliable for Microsoft Learn)
     const headerText = header.textContent.trim();
     if (headerText) {
         // Fix the double dash issue for Microsoft Learn compatibility
@@ -1584,7 +1571,6 @@ function extractSectionAnchorLink(header, baseUrl) {
         
         if (anchorId) {
             const generatedUrl = `${baseUrl}#${anchorId}`;
-            console.log(`Generated section anchor from header text: ${generatedUrl}`);
             return generatedUrl;
         }
     }

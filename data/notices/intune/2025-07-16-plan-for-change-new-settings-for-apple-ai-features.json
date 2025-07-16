@@ -1,0 +1,13 @@
+{
+  "id": 2261686195,
+  "title": "Plan for Change: New settings for Apple AI features; Genmojis, Writing tools, Screen capture",
+  "content": "<p>Today, the Apple AI features for Genmojis, Writing tools, and screen capture are blocked when the app protection policy (APP) \"Send Org data to other apps\" setting is configured to a value other than \"All apps\". For more details on the current configuration, app requirements, and the list of current Apple AI controls review the blog: <a href=\"https://techcommunity.microsoft.com/blog/intunecustomersuccess/microsoft-intune-support-for-apple-intelligence/4254037\">Microsoft Intune support for Apple Intelligence</a></p><p>In an upcoming release, Intune app protection policies have new standalone settings for blocking screen capture, Genmojis, and Writing tools. These standalone settings are supported by apps that have updated to version 19.7.12 or later for Xcode 15 and 20.4.0 or later for Xcode 16 of the Intune App SDK and App Wrapping Tool.</p>",
+  "date": "2025-07-16",
+  "service": "Intune",
+  "type": "warning",
+  "category": "plan-for-change",
+  "status": "active",
+  "source": "microsoft-learn",
+  "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new#plan-for-change-new-settings-for-apple-ai-features-genmojis-writing-tools-screen-capture",
+  "lastUpdated": "2025-07-16T13:16:33.705Z"
+}
