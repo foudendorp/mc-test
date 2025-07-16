@@ -1,7 +1,7 @@
 {
-  "lastGenerated": "2025-07-16T11:11:20.553Z",
-  "totalUpdates": 257,
-  "totalFiles": 44,
+  "lastGenerated": "2025-07-16T11:26:44.634Z",
+  "totalUpdates": 306,
+  "totalFiles": 50,
   "totalMonths": 8,
   "totalNotices": 11,
   "services": [
@@ -41,6 +41,15 @@
       "monthKey": "2025-06",
       "date": "2025-06-01",
       "weeks": [
+        {
+          "filename": "2025-06-30.json",
+          "path": "updates/entra/2025-06-30.json",
+          "week": "June 2025",
+          "date": "2025-06-30",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 12
+        },
         {
           "filename": "2025-06-29.json",
           "path": "updates/entra/2025-06-29.json",
@@ -87,7 +96,7 @@
           "updates": 1
         }
       ],
-      "totalUpdates": 32,
+      "totalUpdates": 44,
       "serviceReleases": [
         "Service release 2506"
       ]
@@ -97,6 +106,15 @@
       "monthKey": "2025-05",
       "date": "2025-05-01",
       "weeks": [
+        {
+          "filename": "2025-05-31.json",
+          "path": "updates/entra/2025-05-31.json",
+          "week": "May 2025",
+          "date": "2025-05-31",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 5
+        },
         {
           "filename": "2025-05-30.json",
           "path": "updates/entra/2025-05-30.json",
@@ -125,7 +143,7 @@
           "updates": 9
         }
       ],
-      "totalUpdates": 23,
+      "totalUpdates": 28,
       "serviceReleases": [
         "Service release 2505"
       ]
@@ -135,6 +153,15 @@
       "monthKey": "2025-04",
       "date": "2025-04-01",
       "weeks": [
+        {
+          "filename": "2025-04-30.json",
+          "path": "updates/entra/2025-04-30.json",
+          "week": "April 2025",
+          "date": "2025-04-30",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 6
+        },
         {
           "filename": "2025-04-29.json",
           "path": "updates/entra/2025-04-29.json",
@@ -199,7 +226,7 @@
           "updates": 1
         }
       ],
-      "totalUpdates": 36,
+      "totalUpdates": 42,
       "serviceReleases": [
         "Service release 2504"
       ]
@@ -209,6 +236,15 @@
       "monthKey": "2025-03",
       "date": "2025-03-01",
       "weeks": [
+        {
+          "filename": "2025-03-31.json",
+          "path": "updates/entra/2025-03-31.json",
+          "week": "March 2025",
+          "date": "2025-03-31",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 9
+        },
         {
           "filename": "2025-03-30.json",
           "path": "updates/entra/2025-03-30.json",
@@ -255,7 +291,7 @@
           "updates": 1
         }
       ],
-      "totalUpdates": 25,
+      "totalUpdates": 34,
       "serviceReleases": [
         "Service release 2503"
       ]
@@ -265,6 +301,15 @@
       "monthKey": "2025-02",
       "date": "2025-02-01",
       "weeks": [
+        {
+          "filename": "2025-02-28.json",
+          "path": "updates/entra/2025-02-28.json",
+          "week": "February 2025",
+          "date": "2025-02-28",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 6
+        },
         {
           "filename": "2025-02-27.json",
           "path": "updates/entra/2025-02-27.json",
@@ -347,7 +392,7 @@
           "updates": 5
         }
       ],
-      "totalUpdates": 46,
+      "totalUpdates": 52,
       "serviceReleases": [
         "Service release 2502",
         "Service release 2501"
@@ -358,6 +403,15 @@
       "monthKey": "2025-01",
       "date": "2025-01-01",
       "weeks": [
+        {
+          "filename": "2025-01-31.json",
+          "path": "updates/entra/2025-01-31.json",
+          "week": "January 2025",
+          "date": "2025-01-31",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 11
+        },
         {
           "filename": "2025-01-30.json",
           "path": "updates/entra/2025-01-30.json",
@@ -404,7 +458,7 @@
           "updates": 1
         }
       ],
-      "totalUpdates": 15,
+      "totalUpdates": 26,
       "serviceReleases": []
     },
     {
@@ -511,6 +565,15 @@
       "updates": 2
     },
     {
+      "filename": "2025-06-30.json",
+      "path": "updates/entra/2025-06-30.json",
+      "week": "June 2025",
+      "date": "2025-06-30",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 12
+    },
+    {
       "filename": "2025-06-29.json",
       "path": "updates/entra/2025-06-29.json",
       "week": "June 2025",
@@ -556,6 +619,15 @@
       "updates": 1
     },
     {
+      "filename": "2025-05-31.json",
+      "path": "updates/entra/2025-05-31.json",
+      "week": "May 2025",
+      "date": "2025-05-31",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 5
+    },
+    {
       "filename": "2025-05-30.json",
       "path": "updates/entra/2025-05-30.json",
       "week": "May 2025",
@@ -581,6 +653,15 @@
       "service": "Intune",
       "serviceRelease": "Service release 2505",
       "updates": 9
+    },
+    {
+      "filename": "2025-04-30.json",
+      "path": "updates/entra/2025-04-30.json",
+      "week": "April 2025",
+      "date": "2025-04-30",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 6
     },
     {
       "filename": "2025-04-29.json",
@@ -646,6 +727,15 @@
       "updates": 1
     },
     {
+      "filename": "2025-03-31.json",
+      "path": "updates/entra/2025-03-31.json",
+      "week": "March 2025",
+      "date": "2025-03-31",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 9
+    },
+    {
       "filename": "2025-03-30.json",
       "path": "updates/entra/2025-03-30.json",
       "week": "March 2025",
@@ -689,6 +779,15 @@
       "service": "Intune",
       "serviceRelease": null,
       "updates": 1
+    },
+    {
+      "filename": "2025-02-28.json",
+      "path": "updates/entra/2025-02-28.json",
+      "week": "February 2025",
+      "date": "2025-02-28",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 6
     },
     {
       "filename": "2025-02-27.json",
@@ -770,6 +869,15 @@
       "service": "Intune",
       "serviceRelease": "Service release 2501",
       "updates": 5
+    },
+    {
+      "filename": "2025-01-31.json",
+      "path": "updates/entra/2025-01-31.json",
+      "week": "January 2025",
+      "date": "2025-01-31",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 11
     },
     {
       "filename": "2025-01-30.json",
