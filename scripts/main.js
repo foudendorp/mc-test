@@ -631,6 +631,7 @@ class IntuneUpdatesTracker {
                     <thead>
                         <tr>
                             <th>Date</th>
+                            <th>Service</th>
                             <th>Type</th>
                             <th>Title</th>
                             <th>Status</th>
@@ -651,10 +652,17 @@ class IntuneUpdatesTracker {
         const formattedDate = this.formatDate(notice.date);
         const statusClass = notice.status || 'active';
         const typeClass = notice.type || 'info';
+        const serviceName = notice.service || 'Unknown';
         
         return `
             <tr class="notice-row" onclick="window.tracker.showNoticeModal('${notice.id}')" style="cursor: pointer;">
                 <td data-label="Date">${formattedDate}</td>
+                <td data-label="Service">
+                    <span class="service-badge service-${serviceName.toLowerCase()}">
+                        <i class="fas ${this.getServiceIcon(serviceName)}"></i>
+                        ${serviceName}
+                    </span>
+                </td>
                 <td data-label="Type">
                     <span class="notice-type-badge notice-type-${typeClass}">
                         <i class="fas ${this.getNoticeIcon(typeClass)}"></i>
@@ -681,6 +689,20 @@ class IntuneUpdatesTracker {
             case 'info': return 'fa-info-circle';
             case 'success': return 'fa-check-circle';
             default: return 'fa-info-circle';
+        }
+    }
+
+    getServiceIcon(service) {
+        switch (service.toLowerCase()) {
+            case 'intune': return 'fa-shield-alt';
+            case 'entra': return 'fa-key';
+            case 'defender': return 'fa-shield-virus';
+            case 'teams': return 'fa-users';
+            case 'exchange': return 'fa-envelope';
+            case 'sharepoint': return 'fa-share-alt';
+            case 'onedrive': return 'fa-cloud';
+            case 'office': return 'fa-file-alt';
+            default: return 'fa-cog';
         }
     }
 
