@@ -1,0 +1,550 @@
+{
+  "lastGenerated": "2025-07-16T13:16:24.206Z",
+  "totalUpdates": 153,
+  "totalFiles": 25,
+  "totalMonths": 8,
+  "totalNotices": 11,
+  "services": [
+    "Intune",
+    "Entra"
+  ],
+  "monthlyGroups": [
+    {
+      "month": "July 2025",
+      "monthKey": "2025-07",
+      "date": "2025-07-01",
+      "weeks": [
+        {
+          "filename": "2025-07-14.json",
+          "path": "updates/intune/2025-07-14.json",
+          "week": "Week of July 14, 2025",
+          "date": "2025-07-14",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 2
+        }
+      ],
+      "totalUpdates": 2,
+      "serviceReleases": []
+    },
+    {
+      "month": "June 2025",
+      "monthKey": "2025-06",
+      "date": "2025-06-01",
+      "weeks": [
+        {
+          "filename": "2025-06-30.json",
+          "path": "updates/entra/2025-06-30.json",
+          "week": "June 2025",
+          "date": "2025-06-30",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 12
+        },
+        {
+          "filename": "2025-06-23.json",
+          "path": "updates/intune/2025-06-23.json",
+          "week": "Week of June 23, 2025 (Service release 2506)",
+          "date": "2025-06-23",
+          "service": "Intune",
+          "serviceRelease": "Service release 2506",
+          "updates": 9
+        },
+        {
+          "filename": "2025-06-09.json",
+          "path": "updates/intune/2025-06-09.json",
+          "week": "Week of June 9, 2025",
+          "date": "2025-06-09",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 1
+        }
+      ],
+      "totalUpdates": 22,
+      "serviceReleases": [
+        "Service release 2506"
+      ]
+    },
+    {
+      "month": "May 2025",
+      "monthKey": "2025-05",
+      "date": "2025-05-01",
+      "weeks": [
+        {
+          "filename": "2025-05-31.json",
+          "path": "updates/entra/2025-05-31.json",
+          "week": "May 2025",
+          "date": "2025-05-31",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 5
+        },
+        {
+          "filename": "2025-05-26.json",
+          "path": "updates/intune/2025-05-26.json",
+          "week": "Week of May 26, 2025 (Service release 2505)",
+          "date": "2025-05-26",
+          "service": "Intune",
+          "serviceRelease": "Service release 2505",
+          "updates": 9
+        }
+      ],
+      "totalUpdates": 14,
+      "serviceReleases": [
+        "Service release 2505"
+      ]
+    },
+    {
+      "month": "April 2025",
+      "monthKey": "2025-04",
+      "date": "2025-04-01",
+      "weeks": [
+        {
+          "filename": "2025-04-30.json",
+          "path": "updates/entra/2025-04-30.json",
+          "week": "April 2025",
+          "date": "2025-04-30",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 6
+        },
+        {
+          "filename": "2025-04-28.json",
+          "path": "updates/intune/2025-04-28.json",
+          "week": "Week of April 28, 2025",
+          "date": "2025-04-28",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 2
+        },
+        {
+          "filename": "2025-04-21.json",
+          "path": "updates/intune/2025-04-21.json",
+          "week": "Week of April 21, 2025 (Service release 2504)",
+          "date": "2025-04-21",
+          "service": "Intune",
+          "serviceRelease": "Service release 2504",
+          "updates": 12
+        },
+        {
+          "filename": "2025-04-14.json",
+          "path": "updates/intune/2025-04-14.json",
+          "week": "Week of April 14, 2025",
+          "date": "2025-04-14",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 1
+        }
+      ],
+      "totalUpdates": 21,
+      "serviceReleases": [
+        "Service release 2504"
+      ]
+    },
+    {
+      "month": "March 2025",
+      "monthKey": "2025-03",
+      "date": "2025-03-01",
+      "weeks": [
+        {
+          "filename": "2025-03-31.json",
+          "path": "updates/entra/2025-03-31.json",
+          "week": "March 2025",
+          "date": "2025-03-31",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 9
+        },
+        {
+          "filename": "2025-03-17.json",
+          "path": "updates/intune/2025-03-17.json",
+          "week": "Week of March 17, 2025 (Service release 2503)",
+          "date": "2025-03-17",
+          "service": "Intune",
+          "serviceRelease": "Service release 2503",
+          "updates": 7
+        },
+        {
+          "filename": "2025-03-03.json",
+          "path": "updates/intune/2025-03-03.json",
+          "week": "Week of March 03, 2025",
+          "date": "2025-03-03",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 1
+        }
+      ],
+      "totalUpdates": 17,
+      "serviceReleases": [
+        "Service release 2503"
+      ]
+    },
+    {
+      "month": "February 2025",
+      "monthKey": "2025-02",
+      "date": "2025-02-01",
+      "weeks": [
+        {
+          "filename": "2025-02-28.json",
+          "path": "updates/entra/2025-02-28.json",
+          "week": "February 2025",
+          "date": "2025-02-28",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 6
+        },
+        {
+          "filename": "2025-02-24.json",
+          "path": "updates/intune/2025-02-24.json",
+          "week": "Week of February 24, 2025 (Service release 2502)",
+          "date": "2025-02-24",
+          "service": "Intune",
+          "serviceRelease": "Service release 2502",
+          "updates": 12
+        },
+        {
+          "filename": "2025-02-17.json",
+          "path": "updates/intune/2025-02-17.json",
+          "week": "Week of February 17, 2025",
+          "date": "2025-02-17",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 1
+        },
+        {
+          "filename": "2025-02-10.json",
+          "path": "updates/intune/2025-02-10.json",
+          "week": "Week of February 10, 2025",
+          "date": "2025-02-10",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 2
+        },
+        {
+          "filename": "2025-02-05.json",
+          "path": "updates/intune/2025-02-05.json",
+          "week": "Week of February 5, 2025 (Service release 2501)",
+          "date": "2025-02-05",
+          "service": "Intune",
+          "serviceRelease": "Service release 2501",
+          "updates": 5
+        }
+      ],
+      "totalUpdates": 26,
+      "serviceReleases": [
+        "Service release 2502",
+        "Service release 2501"
+      ]
+    },
+    {
+      "month": "January 2025",
+      "monthKey": "2025-01",
+      "date": "2025-01-01",
+      "weeks": [
+        {
+          "filename": "2025-01-31.json",
+          "path": "updates/entra/2025-01-31.json",
+          "week": "January 2025",
+          "date": "2025-01-31",
+          "service": "Entra",
+          "serviceRelease": null,
+          "updates": 11
+        },
+        {
+          "filename": "2025-01-27.json",
+          "path": "updates/intune/2025-01-27.json",
+          "week": "Week of January 27, 2025",
+          "date": "2025-01-27",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 1
+        },
+        {
+          "filename": "2025-01-20.json",
+          "path": "updates/intune/2025-01-20.json",
+          "week": "Week of January 20, 2025",
+          "date": "2025-01-20",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 1
+        }
+      ],
+      "totalUpdates": 13,
+      "serviceReleases": []
+    },
+    {
+      "month": "December 2024",
+      "monthKey": "2024-12",
+      "date": "2024-12-01",
+      "weeks": [
+        {
+          "filename": "2024-12-30.json",
+          "path": "updates/intune/2024-12-30.json",
+          "week": "Week of December 30, 2024",
+          "date": "2024-12-30",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 1
+        },
+        {
+          "filename": "2024-12-16.json",
+          "path": "updates/intune/2024-12-16.json",
+          "week": "Week of December 16, 2024 (Service release 2412)",
+          "date": "2024-12-16",
+          "service": "Intune",
+          "serviceRelease": "Service release 2412",
+          "updates": 4
+        },
+        {
+          "filename": "2024-12-09.json",
+          "path": "updates/intune/2024-12-09.json",
+          "week": "Week of December 9, 2024",
+          "date": "2024-12-09",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 1
+        },
+        {
+          "filename": "2024-12-02.json",
+          "path": "updates/intune/2024-12-02.json",
+          "week": "Week of December 2, 2024",
+          "date": "2024-12-02",
+          "service": "Intune",
+          "serviceRelease": null,
+          "updates": 32
+        }
+      ],
+      "totalUpdates": 38,
+      "serviceReleases": [
+        "Service release 2412"
+      ]
+    }
+  ],
+  "dataFiles": [
+    {
+      "filename": "2025-07-14.json",
+      "path": "updates/intune/2025-07-14.json",
+      "week": "Week of July 14, 2025",
+      "date": "2025-07-14",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 2
+    },
+    {
+      "filename": "2025-06-30.json",
+      "path": "updates/entra/2025-06-30.json",
+      "week": "June 2025",
+      "date": "2025-06-30",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 12
+    },
+    {
+      "filename": "2025-06-23.json",
+      "path": "updates/intune/2025-06-23.json",
+      "week": "Week of June 23, 2025 (Service release 2506)",
+      "date": "2025-06-23",
+      "service": "Intune",
+      "serviceRelease": "Service release 2506",
+      "updates": 9
+    },
+    {
+      "filename": "2025-06-09.json",
+      "path": "updates/intune/2025-06-09.json",
+      "week": "Week of June 9, 2025",
+      "date": "2025-06-09",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-05-31.json",
+      "path": "updates/entra/2025-05-31.json",
+      "week": "May 2025",
+      "date": "2025-05-31",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 5
+    },
+    {
+      "filename": "2025-05-26.json",
+      "path": "updates/intune/2025-05-26.json",
+      "week": "Week of May 26, 2025 (Service release 2505)",
+      "date": "2025-05-26",
+      "service": "Intune",
+      "serviceRelease": "Service release 2505",
+      "updates": 9
+    },
+    {
+      "filename": "2025-04-30.json",
+      "path": "updates/entra/2025-04-30.json",
+      "week": "April 2025",
+      "date": "2025-04-30",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 6
+    },
+    {
+      "filename": "2025-04-28.json",
+      "path": "updates/intune/2025-04-28.json",
+      "week": "Week of April 28, 2025",
+      "date": "2025-04-28",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 2
+    },
+    {
+      "filename": "2025-04-21.json",
+      "path": "updates/intune/2025-04-21.json",
+      "week": "Week of April 21, 2025 (Service release 2504)",
+      "date": "2025-04-21",
+      "service": "Intune",
+      "serviceRelease": "Service release 2504",
+      "updates": 12
+    },
+    {
+      "filename": "2025-04-14.json",
+      "path": "updates/intune/2025-04-14.json",
+      "week": "Week of April 14, 2025",
+      "date": "2025-04-14",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-03-31.json",
+      "path": "updates/entra/2025-03-31.json",
+      "week": "March 2025",
+      "date": "2025-03-31",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 9
+    },
+    {
+      "filename": "2025-03-17.json",
+      "path": "updates/intune/2025-03-17.json",
+      "week": "Week of March 17, 2025 (Service release 2503)",
+      "date": "2025-03-17",
+      "service": "Intune",
+      "serviceRelease": "Service release 2503",
+      "updates": 7
+    },
+    {
+      "filename": "2025-03-03.json",
+      "path": "updates/intune/2025-03-03.json",
+      "week": "Week of March 03, 2025",
+      "date": "2025-03-03",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-02-28.json",
+      "path": "updates/entra/2025-02-28.json",
+      "week": "February 2025",
+      "date": "2025-02-28",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 6
+    },
+    {
+      "filename": "2025-02-24.json",
+      "path": "updates/intune/2025-02-24.json",
+      "week": "Week of February 24, 2025 (Service release 2502)",
+      "date": "2025-02-24",
+      "service": "Intune",
+      "serviceRelease": "Service release 2502",
+      "updates": 12
+    },
+    {
+      "filename": "2025-02-17.json",
+      "path": "updates/intune/2025-02-17.json",
+      "week": "Week of February 17, 2025",
+      "date": "2025-02-17",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-02-10.json",
+      "path": "updates/intune/2025-02-10.json",
+      "week": "Week of February 10, 2025",
+      "date": "2025-02-10",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 2
+    },
+    {
+      "filename": "2025-02-05.json",
+      "path": "updates/intune/2025-02-05.json",
+      "week": "Week of February 5, 2025 (Service release 2501)",
+      "date": "2025-02-05",
+      "service": "Intune",
+      "serviceRelease": "Service release 2501",
+      "updates": 5
+    },
+    {
+      "filename": "2025-01-31.json",
+      "path": "updates/entra/2025-01-31.json",
+      "week": "January 2025",
+      "date": "2025-01-31",
+      "service": "Entra",
+      "serviceRelease": null,
+      "updates": 11
+    },
+    {
+      "filename": "2025-01-27.json",
+      "path": "updates/intune/2025-01-27.json",
+      "week": "Week of January 27, 2025",
+      "date": "2025-01-27",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2025-01-20.json",
+      "path": "updates/intune/2025-01-20.json",
+      "week": "Week of January 20, 2025",
+      "date": "2025-01-20",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2024-12-30.json",
+      "path": "updates/intune/2024-12-30.json",
+      "week": "Week of December 30, 2024",
+      "date": "2024-12-30",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2024-12-16.json",
+      "path": "updates/intune/2024-12-16.json",
+      "week": "Week of December 16, 2024 (Service release 2412)",
+      "date": "2024-12-16",
+      "service": "Intune",
+      "serviceRelease": "Service release 2412",
+      "updates": 4
+    },
+    {
+      "filename": "2024-12-09.json",
+      "path": "updates/intune/2024-12-09.json",
+      "week": "Week of December 9, 2024",
+      "date": "2024-12-09",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 1
+    },
+    {
+      "filename": "2024-12-02.json",
+      "path": "updates/intune/2024-12-02.json",
+      "week": "Week of December 2, 2024",
+      "date": "2024-12-02",
+      "service": "Intune",
+      "serviceRelease": null,
+      "updates": 32
+    }
+  ]
+}
