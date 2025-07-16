@@ -74,13 +74,15 @@ jobs:
 
       - name: Commit updated data files
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add data/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "🤖 Auto-update Intune data files $(date +'%Y-%m-%d %H:%M')"
+            echo "Changes detected in data files:"
+            git diff --staged --name-only
+            git commit -m "🤖 Auto-update data files $(date +'%Y-%m-%d %H:%M UTC')"
             git push
           fi
 

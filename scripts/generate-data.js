@@ -226,12 +226,34 @@ async function fetchServiceUpdates(service) {
                 }
                 
                 if (content) {
+                    // Extract date from content if possible, otherwise use a stable date based on content
+                    let noticeDate = new Date().toISOString().split('T')[0]; // Default to today
+                    
+                    // Try to extract date from the title or content
+                    const dateMatch = (header.textContent + ' ' + content).match(/(\d{4}-\d{2}-\d{2}|\w+ \d{1,2}, \d{4}|\w+ \d{4})/i);
+                    if (dateMatch) {
+                        try {
+                            const extractedDate = new Date(dateMatch[1]);
+                            if (!isNaN(extractedDate.getTime())) {
+                                noticeDate = extractedDate.toISOString().split('T')[0];
+                            }
+                        } catch (e) {
+                            // Keep default date if parsing fails
+                        }
+                    } else {
+                        // If no date found, use a stable date based on content hash to avoid daily regeneration
+                        const contentHash = require('crypto').createHash('md5').update(header.textContent.trim() + content.trim()).digest('hex');
+                        const stableDate = new Date(2025, 0, 1); // Base date: Jan 1, 2025
+                        stableDate.setDate(1 + (parseInt(contentHash.substring(0, 8), 16) % 365)); // Add 0-364 days based on content
+                        noticeDate = stableDate.toISOString().split('T')[0];
+                    }
+                    
                     // Create notice without timestamp for consistent content
                     const noticeData = {
                         id: generateContentId(header.textContent.trim(), '', content), // Deterministic ID based on content
                         title: header.textContent.trim(),
                         content: content.trim(),
-                        date: new Date().toISOString().split('T')[0],
+                        date: noticeDate, // Use extracted or stable date instead of current date
                         service: service.tag, // Add service tag to notices
                         type: 'warning',
                         category: 'plan-for-change',
@@ -562,7 +584,11 @@ async function generateDataFiles() {
                     const filename = `${notice.date}-${sanitizedTitle}.json`;
                     const filePath = `${serviceNoticesDir}/${filename}`;
                     
-                    if (hasContentChanged(filePath, notice)) {
+                    // Check if file exists and content has changed
+                    const fileExists = existsSync(filePath);
+                    const contentChanged = hasContentChanged(filePath, notice);
+                    
+                    if (contentChanged) {
                         // Add timestamp only when writing
                         const noticeWithTimestamp = {
                             ...notice,
@@ -571,9 +597,18 @@ async function generateDataFiles() {
                         
                         writeFileSync(filePath, JSON.stringify(noticeWithTimestamp, null, 2));
                         noticesUpdated++;
-                        console.log(`✅ Updated ${serviceKey}/notices/${filename}`);
+                        
+                        if (fileExists) {
+                            console.log(`✅ Updated ${serviceKey}/notices/${filename} (content changed)`);
+                        } else {
+                            console.log(`✅ Created ${serviceKey}/notices/${filename} (new notice)`);
+                        }
                     } else {
-                        console.log(`⏭️  Skipped ${serviceKey}/notices/${filename} (no changes)`);
+                        if (fileExists) {
+                            console.log(`⏭️  Skipped ${serviceKey}/notices/${filename} (no changes)`);
+                        } else {
+                            console.log(`⚠️  Notice exists with same content: ${filename}`);
+                        }
                     }
                     
                     serviceNoticeFiles.push({
