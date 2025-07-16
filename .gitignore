@@ -75,3 +75,7 @@ local.settings.json
 # Temporary files
 *.tmp
 *.temp
+
+# Generated data files (created by GitHub Actions)
+data/
+!data/.gitkeep
