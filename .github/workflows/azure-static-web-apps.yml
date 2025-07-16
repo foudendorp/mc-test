@@ -72,19 +72,11 @@ jobs:
             find data/ -type f -exec ls -la {} \;
           fi
 
-      - name: Commit updated data files
+      - name: Data generation complete
         run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add data/
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            echo "Changes detected in data files:"
-            git diff --staged --name-only
-            git commit -m "🤖 Auto-update data files $(date +'%Y-%m-%d %H:%M UTC')"
-            git push
-          fi
+          echo "✅ Data files generated successfully during build"
+          echo "📊 Generated files will be included in the static web app deployment"
+          echo "🚫 No git commit needed - data files are now excluded from repository"
 
       - name: Build And Deploy
         id: builddeploy

@@ -1,27 +1,23 @@
 name: Auto Rebuild Site Data
 
 on:
-  schedule:
-    # Run every 6 hours starting at 7 AM CEST (5 AM UTC)
-    # 7 AM CEST = 5 AM UTC, 1 PM CEST = 11 AM UTC, 7 PM CEST = 5 PM UTC, 1 AM CEST = 11 PM UTC
-    - cron: '0 5,11,17,23 * * *'
+  # Disable this workflow since data generation is now handled by Azure Static Web Apps workflow
+  # schedule:
+  #   - cron: '0 5,11,17,23 * * *'
   
-  # Allow manual triggering
+  # Allow manual triggering for testing
   workflow_dispatch:
 
-# Grant necessary permissions to the GITHUB_TOKEN
-permissions:
-  contents: write
+# Note: This workflow is now primarily for testing the data generation script
+# The Azure Static Web Apps workflow handles automatic data generation and deployment
 
 jobs:
-  rebuild-data:
+  test-data-generation:
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -34,34 +30,25 @@ jobs:
           npm install
         fi
         
-    - name: Generate fresh data
+    - name: Test data generation
       run: |
+        echo "🧪 Testing data generation script..."
         node scripts/generate-data.js
         
-    - name: Check for changes
-      id: changes
+    - name: Verify generated files
       run: |
-        if [ -n "$(git status --porcelain)" ]; then
-          echo "changes=true" >> $GITHUB_OUTPUT
-          echo "Changes detected in data files"
+        echo "📁 Checking generated data structure..."
+        if [ -d "data" ]; then
+          echo "✅ Data directory created"
+          find data/ -type f -name "*.json" | head -10
+          echo "📊 Total JSON files: $(find data/ -name "*.json" | wc -l)"
         else
-          echo "changes=false" >> $GITHUB_OUTPUT
-          echo "No changes detected"
+          echo "❌ Data directory not found"
+          exit 1
         fi
-        
-    - name: Commit and push changes
-      if: steps.changes.outputs.changes == 'true'
-      run: |
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git add data/
-        git commit -m "Auto-update: Rebuild site data $(date '+%Y-%m-%d %H:%M UTC')"
-        git push
         
     - name: Summary
       run: |
-        if [ "${{ steps.changes.outputs.changes }}" = "true" ]; then
-          echo "✅ Site data has been updated with latest Microsoft Learn content"
-        else
-          echo "ℹ️ No new updates found - site data is current"
-        fi
+        echo "✅ Data generation test completed successfully"
+        echo "ℹ️ Note: Generated files are not committed (excluded by .gitignore)"
+        echo "🚀 Actual deployment happens via Azure Static Web Apps workflow"
