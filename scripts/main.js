@@ -625,6 +625,13 @@ class IntuneUpdatesTracker {
             return;
         }
 
+        // Sort notices by date (most recent first)
+        const sortedNotices = [...this.notices].sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateB - dateA; // Descending order (newest first)
+        });
+
         const noticesHtml = `
             <div class="notices-table-container">
                 <table class="notices-table">
@@ -640,7 +647,7 @@ class IntuneUpdatesTracker {
                         </tr>
                     </thead>
                     <tbody>
-                        ${this.notices.map(notice => this.createNoticeRow(notice)).join('')}
+                        ${sortedNotices.map(notice => this.createNoticeRow(notice)).join('')}
                     </tbody>
                 </table>
             </div>
@@ -718,6 +725,8 @@ class IntuneUpdatesTracker {
         const planTypePrefixes = [
             'Plan for Change: ',
             'Plan for change: ',
+            'Plan for Change - ',  // Added dash variant
+            'Plan for change - ',  // Added dash variant
             'Important Notice: ',
             'Notice: ',
             'Announcement: ',
@@ -726,8 +735,18 @@ class IntuneUpdatesTracker {
         
         for (const prefix of planTypePrefixes) {
             if (title.startsWith(prefix)) {
+                // Extract the plan type part, handling both colon and dash formats
+                let planType;
+                if (prefix.includes(':')) {
+                    planType = prefix.replace(': ', '').trim();
+                } else if (prefix.includes(' - ')) {
+                    planType = prefix.replace(' - ', '').trim();
+                } else {
+                    planType = prefix.trim();
+                }
+                
                 return {
-                    planType: prefix.replace(': ', '').trim(),
+                    planType: planType,
                     cleanTitle: title.substring(prefix.length).trim()
                 };
             }
@@ -757,6 +776,9 @@ class IntuneUpdatesTracker {
         const formattedDate = this.formatDate(notice.date);
         const typeClass = notice.type || 'info';
         const { planType, cleanTitle } = this.extractPlanTypeFromTitle(notice.title);
+        
+        // Extract structured metadata from content (for Entra notices)
+        const structuredMetadata = this.extractStructuredMetadata(notice.content);
         
         const modalHtml = `
             <div class="modal-overlay" onclick="window.tracker.closeModal()">
@@ -801,9 +823,14 @@ class IntuneUpdatesTracker {
                                     <span class="notice-status-badge status-${notice.status}">${this.formatStatus(notice.status)}</span>
                                 </div>
                             ` : ''}
-                            ${notice.category ? `
+                            ${structuredMetadata.serviceCategory || notice.category ? `
                                 <div class="meta-item">
-                                    <strong>Category:</strong> ${this.formatStatus(notice.category)}
+                                    <strong>Service Category:</strong> ${structuredMetadata.serviceCategory || this.formatStatus(notice.category)}
+                                </div>
+                            ` : ''}
+                            ${structuredMetadata.productCapability ? `
+                                <div class="meta-item">
+                                    <strong>Product Capability:</strong> ${structuredMetadata.productCapability}
                                 </div>
                             ` : ''}
                             ${notice.lastUpdated ? `
@@ -837,8 +864,24 @@ class IntuneUpdatesTracker {
     }
 
     renderNoticeContent(content) {
+        // If content is already HTML markup, return it as-is
+        if (content.includes('<') && content.includes('>')) {
+            return content;
+        }
+        
+        // Remove structured metadata lines from content before rendering
+        let cleanContent = content;
+        
+        // Remove Type, Service category, and Product capability lines
+        cleanContent = cleanContent.replace(/\*\*Type:\*\*\s*[^\n]*\n*/gi, '');
+        cleanContent = cleanContent.replace(/\*\*Service category:\*\*\s*[^\n]*\n*/gi, '');
+        cleanContent = cleanContent.replace(/\*\*Product capability:\*\*\s*[^\n]*\n*/gi, '');
+        
+        // Remove any extra leading/trailing whitespace or newlines
+        cleanContent = cleanContent.trim();
+        
         // Convert basic markdown-like formatting to HTML
-        return content
+        return cleanContent
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **bold** to <strong>
             .replace(/\*(.*?)\*/g, '<em>$1</em>') // *italic* to <em>
             .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>') // [text](url) to links
@@ -1131,6 +1174,26 @@ class IntuneUpdatesTracker {
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
+    }
+
+    extractStructuredMetadata(content) {
+        const metadata = {};
+        
+        if (!content) return metadata;
+        
+        // Extract service category
+        const serviceCategoryMatch = content.match(/\*\*Service category:\*\*\s*(.+?)(?:\n|$)/i);
+        if (serviceCategoryMatch) {
+            metadata.serviceCategory = serviceCategoryMatch[1].trim();
+        }
+        
+        // Extract product capability
+        const productCapabilityMatch = content.match(/\*\*Product capability:\*\*\s*(.+?)(?:\n|$)/i);
+        if (productCapabilityMatch) {
+            metadata.productCapability = productCapabilityMatch[1].trim();
+        }
+        
+        return metadata;
     }
 }
 

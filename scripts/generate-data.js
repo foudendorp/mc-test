@@ -107,6 +107,12 @@ function parseUpdateElement(currentElement, service) {
     let link = '';
     const htmlParts = [];
     
+    // First, try to extract the section anchor link from the header itself
+    const sectionAnchorLink = extractSectionAnchorLink(currentElement, service.url);
+    if (sectionAnchorLink) {
+        link = sectionAnchorLink;
+    }
+    
     // Get content from following elements
     let nextEl = currentElement.nextElementSibling;
     while (nextEl && nextEl.tagName !== 'H4' && nextEl.tagName !== 'H3' && nextEl.tagName !== 'H2') {
@@ -135,10 +141,12 @@ function parseUpdateElement(currentElement, service) {
             }
         }
         
-        // Look for links
-        const links = nextEl.querySelectorAll('a[href*="learn.microsoft.com"]');
-        if (links.length > 0) {
-            link = links[0].href;
+        // Fallback: Look for content links if we didn't get a section anchor
+        if (!link) {
+            const links = nextEl.querySelectorAll('a[href*="learn.microsoft.com"]');
+            if (links.length > 0) {
+                link = links[0].href;
+            }
         }
         
         nextEl = nextEl.nextElementSibling;
@@ -242,7 +250,7 @@ async function fetchServiceUpdates(service) {
                         }
                     } else {
                         // If no date found, use a stable date based on content hash to avoid daily regeneration
-                        const contentHash = require('crypto').createHash('md5').update(header.textContent.trim() + content.trim()).digest('hex');
+                        const contentHash = crypto.createHash('md5').update(header.textContent.trim() + content.trim()).digest('hex');
                         const stableDate = new Date(2025, 0, 1); // Base date: Jan 1, 2025
                         stableDate.setDate(1 + (parseInt(contentHash.substring(0, 8), 16) % 365)); // Add 0-364 days based on content
                         noticeDate = stableDate.toISOString().split('T')[0];
@@ -1180,7 +1188,7 @@ function parseTableUpdates(table, monthData) {
                 subtitle: type ? `Type: ${type}` : undefined,
                 content: finalContent, // Now includes HTML markup
                 service: 'Entra',
-                link: extractLinks(descriptionCell)[0]?.url || 'whats-new-archive'
+                link: extractLinks(descriptionCell, 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new')[0]?.url || 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new'
             };
             
             // Use Product Capability as the topic (for "Topic" column)
@@ -1219,7 +1227,7 @@ function parseListUpdates(list, monthData) {
                 subtitle: undefined,
                 content: contentHTML, // Now includes HTML markup
                 service: 'Entra',
-                link: extractLinks(item)[0]?.url || 'whats-new-archive'
+                link: extractLinks(item, 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new')[0]?.url || 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new'
             };
             
             // Find or create general topic
@@ -1417,7 +1425,7 @@ function parseEntraUpdateFromHeader(header, date) {
         service: 'Entra',
         serviceCategory: serviceCategory, // Keep for topic assignment logic
         productCapability: productCapability, // Keep for topic assignment logic  
-        link: extractLinks(header.parentElement)[0]?.url || 'whats-new-archive'
+        link: extractSectionAnchorLink(header, 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new') || extractLinks(header.parentElement)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
     };
     
     console.log(`Created update:`, JSON.stringify(update, null, 2));
@@ -1489,15 +1497,159 @@ function extractHTMLContent(element) {
     return html;
 }
 
-// Extract links from element
-function extractLinks(element) {
+// Extract links from element, prioritizing anchor links for section headers
+// Helper function to extract section anchor link from header element
+function extractSectionAnchorLink(header, baseUrl) {
+    if (!header) return null;
+    
+    // Strategy 1: Look for anchor links within the header itself
+    const inHeaderLinks = header.querySelectorAll('a[href*="#"]');
+    for (const link of inHeaderLinks) {
+        const href = link.getAttribute('href');
+        if (href && href.includes('#')) {
+            const text = link.textContent.trim();
+            const hasIcon = link.querySelector('svg, i, .icon') || 
+                           link.className.includes('icon') ||
+                           link.className.includes('anchor') ||
+                           link.classList.contains('anchor-link');
+            
+            if (text.length <= 2 || hasIcon || text === '' || text === '#') {
+                console.log(`Found anchor link within header: ${href}`);
+                return href.startsWith('http') ? href : `${baseUrl}${href}`;
+            }
+        }
+    }
+    
+    // Strategy 2: Look for anchor links as siblings (common Microsoft Learn pattern)
+    if (header.nextElementSibling) {
+        const siblingLinks = header.nextElementSibling.querySelectorAll('a[href*="#"]');
+        for (const link of siblingLinks) {
+            const href = link.getAttribute('href');
+            if (href && href.includes('#')) {
+                const text = link.textContent.trim();
+                const hasIcon = link.querySelector('svg, i, .icon') || 
+                               link.className.includes('icon') ||
+                               link.className.includes('anchor');
+                
+                if (text.length <= 2 || hasIcon || text === '' || text === '#') {
+                    console.log(`Found anchor link in sibling element: ${href}`);
+                    return href.startsWith('http') ? href : `${baseUrl}${href}`;
+                }
+            }
+        }
+    }
+    
+    // Strategy 3: Look for anchor links in parent container (covers wrapped scenarios)
+    if (header.parentElement) {
+        const parentLinks = header.parentElement.querySelectorAll('a[href*="#"]');
+        for (const link of parentLinks) {
+            const href = link.getAttribute('href');
+            if (href && href.includes('#')) {
+                const text = link.textContent.trim();
+                const hasIcon = link.querySelector('svg, i, .icon') || 
+                               link.className.includes('icon') ||
+                               link.className.includes('anchor') ||
+                               link.classList.contains('anchor-link');
+                
+                // More specific check - ensure it's close to our header
+                const isNearHeader = Math.abs(Array.from(header.parentElement.children).indexOf(header) - 
+                                             Array.from(header.parentElement.children).indexOf(link)) <= 2;
+                
+                if ((text.length <= 2 || hasIcon || text === '' || text === '#') && isNearHeader) {
+                    console.log(`Found anchor link in parent container: ${href}`);
+                    return href.startsWith('http') ? href : `${baseUrl}${href}`;
+                }
+            }
+        }
+    }
+    
+    // Strategy 4: Look for data-anchor-id or id attributes on the header itself
+    const headerId = header.getAttribute('id') || header.getAttribute('data-anchor-id');
+    if (headerId) {
+        const directUrl = `${baseUrl}#${headerId}`;
+        console.log(`Found header ID attribute: ${directUrl}`);
+        return directUrl;
+    }
+    
+    // Strategy 5: Generate anchor from header text as fallback
+    const headerText = header.textContent.trim();
+    if (headerText) {
+        // Fix the double dash issue for Microsoft Learn compatibility
+        const anchorId = headerText
+            .toLowerCase()
+            .replace(/–/g, '--')      // Replace em-dash with double dash FIRST
+            .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+            .replace(/\s+/g, '-')     // Replace spaces with hyphens
+            .replace(/^-|-$/g, '');   // Remove leading/trailing hyphens (keep internal double dashes)
+        
+        if (anchorId) {
+            const generatedUrl = `${baseUrl}#${anchorId}`;
+            console.log(`Generated section anchor from header text: ${generatedUrl}`);
+            return generatedUrl;
+        }
+    }
+    
+    return null;
+}
+
+function extractLinks(element, baseUrl = '') {
     if (!element) return [];
     
-    const links = Array.from(element.querySelectorAll('a'));
-    return links.map(link => ({
-        text: link.textContent.trim(),
-        url: link.href
-    })).filter(link => link.url && link.text);
+    // First, look for the anchor link icon that appears next to headers on Microsoft Learn
+    // These usually have an href that includes a fragment identifier (#)
+    const anchorLinks = Array.from(element.querySelectorAll('a[href*="#"]'));
+    const sectionAnchorLinks = anchorLinks.filter(link => {
+        // Look for links that contain fragment identifiers and are likely section anchors
+        const href = link.href;
+        const text = link.textContent.trim();
+        
+        // Microsoft Learn anchor links often have no text content or contain icons
+        // They typically point to the same page with a fragment
+        return href.includes('#') && (
+            text === '' || 
+            text.length < 3 || 
+            link.querySelector('i, svg, .icon') || // Contains icon elements
+            link.classList.contains('anchor') ||
+            link.getAttribute('aria-label')?.includes('anchor') ||
+            link.getAttribute('title')?.includes('anchor') ||
+            href.includes('whats-new') // Ensure it's still on the what's new page
+        );
+    });
+    
+    // If we found anchor links, prioritize those
+    if (sectionAnchorLinks.length > 0) {
+        const bestAnchorLink = sectionAnchorLinks[0];
+        console.log(`Found section anchor link: ${bestAnchorLink.href}`);
+        return [{
+            text: 'Section Link',
+            url: bestAnchorLink.href
+        }];
+    }
+    
+    // Fallback: look for any links within the element
+    const allLinks = Array.from(element.querySelectorAll('a'));
+    const validLinks = allLinks
+        .map(link => ({
+            text: link.textContent.trim(),
+            url: link.href
+        }))
+        .filter(link => {
+            const url = link.url;
+            return url && (
+                url.includes('learn.microsoft.com') || 
+                url.startsWith('/') || 
+                url.startsWith('../')
+            );
+        })
+        .map(link => ({
+            ...link,
+            // Convert relative URLs to absolute
+            url: link.url.startsWith('http') ? link.url : 
+                 link.url.startsWith('/') ? `https://learn.microsoft.com${link.url}` :
+                 baseUrl ? `${baseUrl.replace(/\/[^\/]*$/, '/')}${link.url}` : link.url
+        }));
+    
+    return validLinks.length > 0 ? validLinks : [];
 }
 
 // Infer update type from title
