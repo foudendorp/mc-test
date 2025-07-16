@@ -14,6 +14,11 @@ const SERVICES = {
         name: 'Entra ID',
         url: 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new',
         tag: 'Entra'
+    },
+    defender: {
+        name: 'Defender for Endpoint',
+        url: 'https://learn.microsoft.com/en-us/defender-xdr/whats-new',
+        tag: 'Defender'
     }
 };
 
@@ -26,6 +31,8 @@ const INTUNE_UPDATES_DIR = './data/updates/intune';
 const INTUNE_NOTICES_DIR = './data/notices/intune';
 const ENTRA_UPDATES_DIR = './data/updates/entra';
 const ENTRA_NOTICES_DIR = './data/notices/entra';
+const DEFENDER_UPDATES_DIR = './data/updates/defender';
+const DEFENDER_NOTICES_DIR = './data/notices/defender';
 
 // Ensure data directories exist
 if (!existsSync(DATA_DIR)) {
@@ -48,6 +55,12 @@ if (!existsSync(ENTRA_UPDATES_DIR)) {
 }
 if (!existsSync(ENTRA_NOTICES_DIR)) {
     mkdirSync(ENTRA_NOTICES_DIR, { recursive: true });
+}
+if (!existsSync(DEFENDER_UPDATES_DIR)) {
+    mkdirSync(DEFENDER_UPDATES_DIR, { recursive: true });
+}
+if (!existsSync(DEFENDER_NOTICES_DIR)) {
+    mkdirSync(DEFENDER_NOTICES_DIR, { recursive: true });
 }
 
 // Helper function to check if an element is a month header
@@ -176,7 +189,7 @@ function parseUpdateElement(currentElement, service) {
         subtitle: subtitle || undefined,
         content: htmlContent, // Now includes HTML markup
         features: features.length > 0 ? features : undefined,
-        service: service.tag, // Add service tag to individual updates
+        service: service.name, // Use service.name for display consistency
         link: link || service.url
     };
 }
@@ -268,7 +281,7 @@ async function fetchServiceUpdates(service) {
                         title: header.textContent.trim(),
                         content: content.trim(),
                         date: noticeDate, // Use extracted or stable date instead of current date
-                        service: service.tag, // Add service tag to notices
+                        service: service.tag, // Keep service.tag for internal processing
                         type: 'warning',
                         category: 'plan-for-change',
                         status: 'active',
@@ -276,6 +289,54 @@ async function fetchServiceUpdates(service) {
                         link: noticeLink // Add URL to the notice
                     };
                     
+                    notices.push(noticeData);
+                }
+            });
+            
+            return { weeklyUpdates, notices };
+        } else if (service.tag === 'Defender') {
+            // For Defender for Endpoint, use month-based parsing with bullet points
+            console.log(`🔍 Parsing Defender for Endpoint structure...`);
+            const weeklyUpdates = await parseDefenderUpdates(document, service);
+            
+            // Parse notices for Defender for Endpoint (if any)
+            const notices = [];
+            const noticeHeaders = Array.from(document.querySelectorAll('h3, h4'))
+                .filter(h => h.textContent.toLowerCase().includes('plan for change') || 
+                            h.textContent.toLowerCase().includes('notice') ||
+                            h.textContent.toLowerCase().includes('important'));
+            
+            console.log(`📋 Found ${noticeHeaders.length} potential notices`);
+            
+            noticeHeaders.forEach(header => {
+                let content = '';
+                let nextEl = header.nextElementSibling;
+                
+                while (nextEl && !['H2', 'H3', 'H4'].includes(nextEl.tagName)) {
+                    if (nextEl.tagName === 'P') {
+                        content += (content ? '\n' : '') + nextEl.textContent.trim();
+                    } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
+                        const listItems = Array.from(nextEl.querySelectorAll('li'));
+                        const listText = listItems.map(li => '• ' + li.textContent.trim()).join('\n');
+                        content += (content ? '\n' : '') + listText;
+                    }
+                    nextEl = nextEl.nextElementSibling;
+                }
+                
+                if (content) {
+                    const noticeLink = extractSectionAnchorLink(header, service.url) || service.url;
+                    const noticeData = {
+                        id: generateContentId(header.textContent.trim(), '', content),
+                        title: header.textContent.trim(),
+                        content: content.trim(),
+                        date: new Date().toISOString().split('T')[0],
+                        service: service.tag, // Keep service.tag for internal processing
+                        type: 'warning',
+                        category: 'plan-for-change',
+                        status: 'active',
+                        source: 'microsoft-learn',
+                        link: noticeLink
+                    };
                     notices.push(noticeData);
                 }
             });
@@ -305,7 +366,7 @@ async function fetchServiceUpdates(service) {
                 const weekData = {
                     week: weekText,
                     date: date,
-                    service: service.tag, // Add service tag
+                    service: service.name, // Use service.name for display consistency
                     serviceRelease: serviceRelease,
                     topics: []
                 };
@@ -404,7 +465,7 @@ async function fetchServiceUpdates(service) {
                     title: header.textContent.trim(),
                     content: htmlContent, // HTML markup for proper display
                     date: new Date().toISOString().split('T')[0],
-                    service: service.tag, // Add service tag to notices
+                    service: service.tag, // Keep service.tag for internal processing
                     type: 'warning',
                     category: 'plan-for-change',
                     status: 'active',
@@ -476,6 +537,19 @@ function mapTopicToCategory(topicText) {
     if (topic.includes('external') && topic.includes('identities')) return 'external-identities';
     if (topic.includes('application') && topic.includes('management')) return 'application-management';
     
+    // Defender for Endpoint-specific mappings
+    if (topic.includes('monthly') && topic.includes('updates')) return 'monthly-updates';
+    if (topic.includes('advanced') && topic.includes('hunting')) return 'threat-hunting';
+    if (topic.includes('incident') || topic.includes('response')) return 'incident-response';
+    if (topic.includes('copilot') || topic.includes('ai')) return 'ai-security';
+    if (topic.includes('api') || topic.includes('integration')) return 'integration';
+    if (topic.includes('attack') || topic.includes('disruption')) return 'threat-protection';
+    if (topic.includes('alert') || topic.includes('management')) return 'alert-management';
+    if (topic.includes('report') || topic.includes('analytics')) return 'reporting';
+    if (topic.includes('threat')) return 'threat-intelligence';
+    if (topic.includes('portal') || topic.includes('experience')) return 'user-experience';
+    if (topic.includes('detection') || topic.includes('rule')) return 'threat-hunting';
+    
     // General mappings
     if (topic.includes('app') || topic.includes('application')) return 'app-management';
     if (topic.includes('device')) return 'device-management';
@@ -491,7 +565,7 @@ async function generateDataFiles() {
     console.log('Starting data generation...');
     
     // Ensure all service directories exist
-    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR].forEach(dir => {
+    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR, DEFENDER_UPDATES_DIR, DEFENDER_NOTICES_DIR].forEach(dir => {
         if (!existsSync(dir)) {
             console.log(`Creating directory: ${dir}`);
             mkdirSync(dir, { recursive: true });
@@ -518,8 +592,12 @@ async function generateDataFiles() {
             let filesUpdated = 0;
             
             // Determine service directory
-            const serviceUpdatesDir = serviceKey === 'intune' ? INTUNE_UPDATES_DIR : ENTRA_UPDATES_DIR;
-            const serviceNoticesDir = serviceKey === 'intune' ? INTUNE_NOTICES_DIR : ENTRA_NOTICES_DIR;
+            const serviceUpdatesDir = serviceKey === 'intune' ? INTUNE_UPDATES_DIR : 
+                                    serviceKey === 'entra' ? ENTRA_UPDATES_DIR : 
+                                    DEFENDER_UPDATES_DIR;
+            const serviceNoticesDir = serviceKey === 'intune' ? INTUNE_NOTICES_DIR : 
+                                    serviceKey === 'entra' ? ENTRA_NOTICES_DIR : 
+                                    DEFENDER_NOTICES_DIR;
             
             for (const [date, weekData] of weeklyUpdates) {
                 const filename = `${date}.json`;
@@ -541,7 +619,7 @@ async function generateDataFiles() {
                         path: `updates/${serviceKey}/${filename}`,
                         week: weekData.week || weekData.month || `Week of ${weekData.date}`,
                         date: weekData.date,
-                        service: service.tag,
+                        service: service.name, // Use service.name instead of service.tag for display
                         serviceRelease: weekData.serviceRelease,
                         updates: updateCount
                     });
@@ -589,7 +667,7 @@ async function generateDataFiles() {
                                         path: `updates/${serviceKey}/${filename}`,
                                         week: displayText,
                                         date: existingData.date,
-                                        service: existingData.service || service.tag,
+                                        service: existingData.service || service.name, // Use service.name as fallback
                                         serviceRelease: existingData.serviceRelease || null,
                                         updates: updateCount
                                     });
@@ -656,7 +734,7 @@ async function generateDataFiles() {
                         path: `notices/${serviceKey}/${filename}`,
                         title: notice.title,
                         date: notice.date,
-                        service: service.tag,
+                        service: service.name, // Use service.name instead of service.tag for display
                         type: notice.type,
                         category: notice.category
                     });
@@ -709,7 +787,7 @@ async function generateDataFiles() {
             totalFiles: allDataFiles.length,
             totalMonths: monthlyGroups.length,
             totalNotices: totalNotices,
-            services: Object.keys(serviceData).map(key => serviceData[key].service.tag),
+            services: Object.keys(serviceData).map(key => serviceData[key].service.name), // Use service.name for display
             monthlyGroups: monthlyGroups,
             dataFiles: allDataFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
         };
@@ -747,7 +825,7 @@ async function createFallbackData() {
     console.log('Creating fallback data with service separation...');
     
     // Ensure all service directories exist
-    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR].forEach(dir => {
+    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR, DEFENDER_UPDATES_DIR, DEFENDER_NOTICES_DIR].forEach(dir => {
         if (!existsSync(dir)) {
             console.log(`Creating directory: ${dir}`);
             mkdirSync(dir, { recursive: true });
@@ -790,7 +868,7 @@ async function createFallbackData() {
     const fallbackEntraData = {
         month: "July 2025", // Use month instead of week for Entra
         date: "2025-07-14",
-        service: "Entra",
+        service: "Entra ID", // Use full service name for consistency
         serviceRelease: null,
         topics: [
             {
@@ -807,7 +885,7 @@ async function createFallbackData() {
                             "Improved multi-factor authentication",
                             "Better integration with Microsoft 365"
                         ],
-                        service: "Entra",
+                        service: "Entra ID", // Use full service name for consistency
                         link: "https://learn.microsoft.com/en-us/entra/fundamentals/whats-new"
                     }
                 ]
@@ -817,6 +895,33 @@ async function createFallbackData() {
     
     writeFileSync(`${ENTRA_UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackEntraData, null, 2));
     console.log('Generated fallback updates/entra/2025-07-14.json');
+    
+    // Create fallback Defender for Endpoint update data
+    const fallbackDefenderData = {
+        month: "July 2025", // Use month instead of week for Defender
+        date: "2025-07-14",
+        service: "Defender for Endpoint", // Use full service name for consistency
+        serviceRelease: null,
+        topics: [
+            {
+                topic: "July 2025 Updates",
+                category: "monthly-updates",
+                updates: [
+                    {
+                        id: generateContentId("July 2025 Updates", "Monthly Summary", "Microsoft Defender for Endpoint continues to evolve with new features for threat detection, investigation, and response capabilities."),
+                        title: "July 2025 Updates",
+                        subtitle: "Monthly Summary",
+                        content: "<ul><li>New advanced hunting tables are now available for preview, providing enhanced visibility into security events across Microsoft 365 workloads</li><li>Enhanced query performance and reliability for threat hunting operations</li><li>Improved integration with Microsoft Sentinel for comprehensive security operations</li><li>Updated incident response workflows with automated containment actions</li><li>Enhanced Microsoft Copilot integration for natural language threat hunting queries</li></ul>",
+                        service: "Defender for Endpoint", // Use full service name for consistency
+                        link: "https://learn.microsoft.com/en-us/defender-xdr/whats-new"
+                    }
+                ]
+            }
+        ]
+    };
+    
+    writeFileSync(`${DEFENDER_UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackDefenderData, null, 2));
+    console.log('Generated fallback updates/defender/2025-07-14.json');
     
     // Create fallback system notice
     const fallbackNoticeBase = {
@@ -838,11 +943,11 @@ async function createFallbackData() {
     
     const noticeFilename = `${fallbackNotice.date}-data-generation-notice.json`;
     
-    // Create notices in both service directories for visibility
-    [INTUNE_NOTICES_DIR, ENTRA_NOTICES_DIR].forEach(dir => {
+    // Create notices in all service directories for visibility
+    [INTUNE_NOTICES_DIR, ENTRA_NOTICES_DIR, DEFENDER_NOTICES_DIR].forEach(dir => {
         writeFileSync(`${dir}/${noticeFilename}`, JSON.stringify(fallbackNotice, null, 2));
     });
-    console.log(`Generated fallback notices in both service directories`);
+    console.log(`Generated fallback notices in all service directories`);
     
     // Create service-specific notices indexes
     const noticeFileEntry = {
@@ -876,7 +981,18 @@ async function createFallbackData() {
         noticeFiles: [noticeFileEntry]
     };
     writeFileSync(`${ENTRA_NOTICES_DIR}/index.json`, JSON.stringify(entraNoticesIndexData, null, 2));
-    console.log('Generated fallback notices indexes for both services');
+    
+    // Defender notices index
+    const defenderNoticesIndexData = {
+        lastUpdated: new Date().toISOString(),
+        service: "Defender", // Keep service tag for internal routing
+        serviceName: "Defender for Endpoint",
+        totalNotices: 1,
+        totalFiles: 1,
+        noticeFiles: [noticeFileEntry]
+    };
+    writeFileSync(`${DEFENDER_NOTICES_DIR}/index.json`, JSON.stringify(defenderNoticesIndexData, null, 2));
+    console.log('Generated fallback notices indexes for all services');
     
     // Create fallback main index
     const allDataFiles = [
@@ -885,7 +1001,7 @@ async function createFallbackData() {
             path: "updates/intune/2025-07-14.json",
             week: "Week of July 14, 2025",
             date: "2025-07-14",
-            service: "Intune",
+            service: "Intune", // Use full service name
             serviceRelease: null,
             updates: 1
         },
@@ -894,7 +1010,16 @@ async function createFallbackData() {
             path: "updates/entra/2025-07-14.json",
             week: "July 2025", // Use month for Entra display
             date: "2025-07-14",
-            service: "Entra",
+            service: "Entra ID", // Use full service name
+            serviceRelease: null,
+            updates: 1
+        },
+        {
+            filename: "2025-07-14.json",
+            path: "updates/defender/2025-07-14.json",
+            week: "July 2025", // Use month for Defender display
+            date: "2025-07-14",
+            service: "Defender for Endpoint", // Use full service name
             serviceRelease: null,
             updates: 1
         }
@@ -904,11 +1029,11 @@ async function createFallbackData() {
     
     const indexData = {
         lastGenerated: new Date().toISOString(),
-        totalUpdates: 2,
-        totalFiles: 2,
+        totalUpdates: 3,
+        totalFiles: 3,
         totalMonths: monthlyGroups.length,
-        totalNotices: 2,
-        services: ["Intune", "Entra"],
+        totalNotices: 3,
+        services: ["Intune", "Entra ID", "Defender for Endpoint"], // Use full service names
         monthlyGroups: monthlyGroups,
         dataFiles: allDataFiles
     };
@@ -1093,7 +1218,7 @@ async function parseEntraUpdates(document, service) {
                     const monthData = {
                         month: monthText,
                         date: monthDate,
-                        service: service.tag,
+                        service: service.name, // Use service.name for display consistency
                         serviceRelease: null,
                         topics: []
                     };
@@ -1124,7 +1249,7 @@ async function parseEntraUpdates(document, service) {
         const monthData = {
             month: monthText,
             date: dateString,
-            service: service.tag,
+            service: service.name, // Use service.name for display consistency
             serviceRelease: null,
             topics: []
         };
@@ -1186,6 +1311,233 @@ async function parseEntraUpdates(document, service) {
     console.log(`Total months with updates: ${weeklyUpdates.size}`);
     
     return weeklyUpdates;
+}
+
+// Enhanced parsing function specifically for Defender for Endpoint updates
+async function parseDefenderUpdates(document, service) {
+    const weeklyUpdates = new Map();
+    
+    console.log(`\n=== DEBUGGING DEFENDER FOR ENDPOINT STRUCTURE ===`);
+    console.log(`Processing ${service.name} from ${service.url}`);
+    
+    // Look for month-based headers (e.g., "July 2025", "June 2025")
+    const monthHeaders = Array.from(document.querySelectorAll('h2'))
+        .filter(header => {
+            const text = header.textContent.trim();
+            const isMonth = /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
+            if (isMonth) {
+                console.log(`Found month header: "${text}" (${header.tagName})`);
+            }
+            return isMonth;
+        });
+    
+    console.log(`\nFound ${monthHeaders.length} month sections for ${service.name}`);
+    
+    // Process found month headers
+    for (const monthHeader of monthHeaders) {
+        const monthText = monthHeader.textContent.trim();
+        console.log(`\n=== Processing ${service.name}: ${monthText} ===`);
+        
+        // Extract date from month header
+        const [monthName, year] = monthText.split(' ');
+        const monthIndex = new Date(Date.parse(monthName + " 1, 2000")).getMonth();
+        const lastDayOfMonth = new Date(parseInt(year), monthIndex + 1, 0);
+        const dateString = lastDayOfMonth.toISOString().split('T')[0];
+        
+        // Extract URL for the month section using the month header
+        const monthLink = extractSectionAnchorLink(monthHeader, service.url) || service.url;
+        
+        const monthData = {
+            month: monthText,
+            date: dateString,
+            service: service.name, // Use service.name for display consistency
+            serviceRelease: null,
+            topics: []
+        };
+        
+        // Collect all bullet points for this month and combine them into a single update
+        const allBulletPoints = [];
+        let currentElement = monthHeader.nextElementSibling;
+        
+        console.log(`Looking for content after month header...`);
+        
+        while (currentElement && !isNextMonthHeader(currentElement)) {
+            if (currentElement.tagName === 'UL') {
+                console.log(`Found bullet list, collecting bullet points...`);
+                const listItems = Array.from(currentElement.querySelectorAll('li'));
+                
+                listItems.forEach(item => {
+                    const fullText = extractTextContent(item);
+                    if (fullText.trim()) {
+                        const itemHTML = extractHTMLContent(item);
+                        allBulletPoints.push({
+                            text: fullText.trim(),
+                            html: itemHTML
+                        });
+                    }
+                });
+            }
+            
+            currentElement = currentElement.nextElementSibling;
+        }
+        
+        // If we found bullet points, create a single combined update for the month
+        if (allBulletPoints.length > 0) {
+            console.log(`Found ${allBulletPoints.length} updates in ${monthText}, combining into single update`);
+            
+            // Create combined HTML content with all bullet points
+            const combinedHTML = `<ul>${allBulletPoints.map(bp => `<li>${bp.html}</li>`).join('')}</ul>`;
+            const combinedText = allBulletPoints.map(bp => bp.text).join(' ');
+            
+            // Create a single update for the entire month
+            const monthlyUpdate = {
+                id: generateContentId(`${monthText} Updates`, 'Monthly Summary', combinedText),
+                title: `${monthText} Updates`,
+                subtitle: 'Monthly Summary',
+                content: combinedHTML,
+                service: service.name, // Use service.name for display consistency
+                link: monthLink
+            };
+            
+            // Create a single topic containing the monthly update
+            const monthlyTopic = {
+                topic: `${monthText} Updates`,
+                category: 'monthly-updates',
+                updates: [monthlyUpdate]
+            };
+            
+            monthData.topics.push(monthlyTopic);
+            
+            console.log(`✅ Created combined update for ${monthText} with ${allBulletPoints.length} bullet points`);
+            weeklyUpdates.set(dateString, monthData);
+        } else {
+            console.log(`❌ Skipping month ${monthText} - no updates found`);
+        }
+    }
+    
+    console.log(`\n=== DEFENDER FOR ENDPOINT PARSING COMPLETE ===`);
+    console.log(`Total months with updates: ${weeklyUpdates.size}`);
+    
+    return weeklyUpdates;
+}
+
+// DEPRECATED: Parse Defender for Endpoint bullet list updates (replaced by combined monthly updates)
+// function parseDefenderBulletList(bulletList, monthData, service) {
+//     const listItems = Array.from(bulletList.querySelectorAll('li'));
+//     let updateCount = 0;
+//     
+//     listItems.forEach(item => {
+//         const fullText = extractTextContent(item);
+//         if (!fullText.trim()) return;
+//         
+//         console.log(`Parsing Defender update: "${fullText.substring(0, 80)}..."`);
+//         
+//         // Extract status (GA, Preview) from the beginning
+//         let status = 'Update';
+//         let cleanTitle = fullText;
+//         
+//         if (fullText.startsWith('(GA)') || fullText.includes('(GA)')) {
+//             status = 'General Availability';
+//             cleanTitle = fullText.replace(/^\(GA\)\s*/, '').replace(/\(GA\)/, '').trim();
+//         } else if (fullText.startsWith('(Preview)') || fullText.includes('(Preview)')) {
+//             status = 'Preview';
+//             cleanTitle = fullText.replace(/^\(Preview\)\s*/, '').replace(/\(Preview\)/, '').trim();
+//         }
+//         
+//         // Extract the title (first sentence or until first period/colon)
+//         const titleMatch = cleanTitle.match(/^([^.]+\.?)\s*(.*)$/);
+//         const title = titleMatch ? titleMatch[1].replace(/\.$/, '').trim() : cleanTitle.split('.')[0].trim();
+//         const description = titleMatch && titleMatch[2] ? titleMatch[2].trim() : '';
+//         
+//         console.log(`Cleaned title: "${title}"`);
+//         console.log(`Status: "${status}"`);
+//         
+//         // Get HTML content for better formatting
+//         const itemHTML = extractHTMLContent(item);
+//         const contentHTML = itemHTML ? `<p>${itemHTML}</p>` : `<p>${fullText}</p>`;
+//         
+//         // Extract link from the item
+//         const links = extractLinks(item, service.url);
+//         const updateLink = links.length > 0 ? links[0].url : service.url;
+//         
+//         // Create update object
+//         const update = {
+//             id: generateContentId(title, status, fullText),
+//             title: title,
+//             subtitle: status,
+//             content: contentHTML,
+//             service: service.tag,
+//             link: updateLink
+//         };
+//         
+//         // Determine topic based on content
+//         const topicName = inferDefenderTopic(title, fullText);
+//         let topic = monthData.topics.find(t => t.topic === topicName);
+//         if (!topic) {
+//             topic = {
+//                 topic: topicName,
+//                 category: mapDefenderTopicToCategory(topicName),
+//                 updates: []
+//             };
+//             monthData.topics.push(topic);
+//         }
+//         
+//         topic.updates.push(update);
+//         updateCount++;
+//         
+//         console.log(`Created update: ${title} -> Topic: ${topicName}`);
+//     });
+//     
+//     return updateCount;
+// }
+
+// Infer topic from Defender for Endpoint update content
+function inferDefenderTopic(title, content) {
+    const lowerTitle = title.toLowerCase();
+    const lowerContent = content.toLowerCase();
+    
+    if (lowerTitle.includes('advanced hunting') || lowerContent.includes('advanced hunting')) {
+        return 'Advanced Hunting';
+    } else if (lowerTitle.includes('incident') || lowerContent.includes('incident')) {
+        return 'Incident Management';
+    } else if (lowerTitle.includes('copilot') || lowerContent.includes('copilot')) {
+        return 'Microsoft Copilot';
+    } else if (lowerTitle.includes('api') || lowerContent.includes('api')) {
+        return 'API & Integration';
+    } else if (lowerTitle.includes('attack disruption') || lowerContent.includes('attack disruption')) {
+        return 'Attack Disruption';
+    } else if (lowerTitle.includes('detection') || lowerContent.includes('detection') || lowerTitle.includes('rule')) {
+        return 'Detection Rules';
+    } else if (lowerTitle.includes('table') || lowerContent.includes('table') || lowerTitle.includes('schema')) {
+        return 'Advanced Hunting';
+    } else if (lowerTitle.includes('alert') || lowerContent.includes('alert')) {
+        return 'Alert Management';
+    } else if (lowerTitle.includes('report') || lowerContent.includes('report') || lowerTitle.includes('summary')) {
+        return 'Reporting';
+    } else if (lowerTitle.includes('threat') || lowerContent.includes('threat')) {
+        return 'Threat Analytics';
+    } else if (lowerTitle.includes('portal') || lowerContent.includes('portal')) {
+        return 'Portal Experience';
+    }
+    
+    return 'General Updates';
+}
+
+// Map Defender for Endpoint topic to category
+function mapDefenderTopicToCategory(topicName) {
+    const lowerTopic = topicName.toLowerCase();
+    
+    if (lowerTopic.includes('hunting') || lowerTopic.includes('detection')) return 'threat-hunting';
+    if (lowerTopic.includes('incident') || lowerTopic.includes('response')) return 'incident-response';
+    if (lowerTopic.includes('copilot') || lowerTopic.includes('ai')) return 'ai-security';
+    if (lowerTopic.includes('api') || lowerTopic.includes('integration')) return 'integration';
+    if (lowerTopic.includes('attack') || lowerTopic.includes('disruption')) return 'threat-protection';
+    if (lowerTopic.includes('alert') || lowerTopic.includes('management')) return 'alert-management';
+    if (lowerTopic.includes('report') || lowerTopic.includes('analytics')) return 'reporting';
+    if (lowerTopic.includes('threat')) return 'threat-intelligence';
+    if (lowerTopic.includes('portal') || lowerTopic.includes('experience')) return 'user-experience';
+    
+    return 'security-operations'; // Default category for Defender
 }
 
 // Parse table-based updates (common in Microsoft Learn)
