@@ -505,8 +505,8 @@ class IntuneUpdatesTracker {
         const featuresCount = update.features ? update.features.length : 0;
         const monthName = this.extractMonthFromWeek(update.week || update.date);
         
-        // Extract type from title
-        const type = this.extractTypeFromTitle(update.title);
+        // Extract type from subtitle or fallback to title extraction
+        const type = update.subtitle || this.extractTypeFromTitle(update.title);
         
         // This function should only handle Intune updates - Entra updates go through createGroupedEntraUpdates
         return `
@@ -586,7 +586,7 @@ class IntuneUpdatesTracker {
     
     createEntraUpdateCard(update, showMonth = true) {
         const categoryName = this.formatCategoryName(update.category);
-        const type = this.extractTypeFromTitle(update.title);
+        const type = update.subtitle || this.extractTypeFromTitle(update.title);
         const monthName = this.extractMonthFromWeek(update.week || update.date);
         
         return `
@@ -936,7 +936,7 @@ class IntuneUpdatesTracker {
 
         const formattedDate = this.formatDate(update.date);
         const categoryName = this.formatCategoryName(update.category);
-        const type = this.extractTypeFromTitle(update.title);
+        const type = update.subtitle || this.extractTypeFromTitle(update.title);
         const monthName = this.extractMonthFromWeek(update.week || update.date);
         
         const featuresHtml = update.features ? 

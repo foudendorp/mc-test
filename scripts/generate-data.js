@@ -1253,11 +1253,54 @@ function parseDirectSection(header, monthData) {
 
 // Parse update from header element specifically for Entra format
 function parseEntraUpdateFromHeader(header, date) {
-    const title = extractTextContent(header);
-    console.log(`Parsing Entra update: "${title}"`);
+    const originalTitle = extractTextContent(header);
+    console.log(`Parsing Entra update: "${originalTitle}"`);
+    
+    // Extract availability status and clean the title
+    let cleanTitle = originalTitle;
+    let availabilityStatus = null;
+    
+    const statusMap = [
+        { prefix: 'General Availability - ', status: 'General Availability' },
+        { prefix: 'General Availability – ', status: 'General Availability' }, // Different dash character
+        { prefix: 'General Availability- ', status: 'General Availability' }, // No space before dash
+        { prefix: 'General Availability ΓÇô ', status: 'General Availability' }, // Another dash character variant
+        { prefix: 'Public Preview - ', status: 'Public Preview' },
+        { prefix: 'Public Preview – ', status: 'Public Preview' }, // Different dash character
+        { prefix: 'Public Preview- ', status: 'Public Preview' }, // No space before dash
+        { prefix: 'Public Preview ΓÇô ', status: 'Public Preview' }, // Another dash character variant
+        { prefix: 'Deprecated - ', status: 'Deprecated' },
+        { prefix: 'Deprecated – ', status: 'Deprecated' }, // Different dash character
+        { prefix: 'Deprecated- ', status: 'Deprecated' }, // No space before dash
+        { prefix: 'Deprecated ΓÇô ', status: 'Deprecated' }, // Another dash character variant
+        { prefix: 'New feature - ', status: 'New feature' },
+        { prefix: 'New feature – ', status: 'New feature' }, // Different dash character
+        { prefix: 'New feature- ', status: 'New feature' }, // No space before dash
+        { prefix: 'New feature ΓÇô ', status: 'New feature' }, // Another dash character variant
+        { prefix: 'Changed feature - ', status: 'Changed feature' },
+        { prefix: 'Changed feature – ', status: 'Changed feature' }, // Different dash character
+        { prefix: 'Changed feature- ', status: 'Changed feature' }, // No space before dash
+        { prefix: 'Changed feature ΓÇô ', status: 'Changed feature' }, // Another dash character variant
+        { prefix: 'Plan for change - ', status: 'Plan for change' },
+        { prefix: 'Plan for change – ', status: 'Plan for change' }, // Different dash character
+        { prefix: 'Plan for change- ', status: 'Plan for change' }, // No space before dash
+        { prefix: 'Plan for change ΓÇô ', status: 'Plan for change' } // Another dash character variant
+    ];
+    
+    // Extract availability status and remove prefix from title
+    for (const item of statusMap) {
+        if (cleanTitle.startsWith(item.prefix)) {
+            availabilityStatus = item.status;
+            cleanTitle = cleanTitle.substring(item.prefix.length);
+            break;
+        }
+    }
+    
+    console.log(`Cleaned title: "${cleanTitle}"`);
+    console.log(`Availability status: "${availabilityStatus}"`);
     
     // Look for the structured content after the header
-    let description = title;
+    let description = cleanTitle;
     let type = 'Update';
     let serviceCategory = 'General';
     let productCapability = null;
@@ -1319,11 +1362,22 @@ function parseEntraUpdateFromHeader(header, date) {
     const htmlContent = htmlParts.length > 0 ? htmlParts.join('') : `<p>${description}</p>`;
     const finalContent = htmlContent + (productCapability ? ` <span class="product-capability">- ${productCapability}</span>` : '');
     
+    // If no availability status was found in prefix, try to use the extracted type if it looks like an availability status
+    let finalSubtitle = availabilityStatus;
+    if (!finalSubtitle && type) {
+        const availabilityTypes = ['General Availability', 'Public Preview', 'Deprecated', 'Plan for change'];
+        if (availabilityTypes.includes(type)) {
+            finalSubtitle = type;
+        } else {
+            finalSubtitle = `Type: ${type}`;
+        }
+    }
+    
     // Convert to frontend-compatible format with correct field mapping
     const update = {
-        id: generateContentId(title, type, description),
-        title: title, // Topic (Title) from Microsoft Learn
-        subtitle: type ? `Type: ${type}` : undefined,
+        id: generateContentId(cleanTitle, finalSubtitle || type, description),
+        title: cleanTitle, // Use cleaned title without type prefix
+        subtitle: finalSubtitle || (type ? `Type: ${type}` : undefined),
         content: finalContent, // Now includes HTML markup
         service: 'Entra',
         serviceCategory: serviceCategory, // Keep for topic assignment logic

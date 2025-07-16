@@ -1,0 +1,88 @@
+{
+  "week": "Week of February 5, 2025 (Service release 2501)",
+  "date": "2025-02-04",
+  "service": "Intune",
+  "serviceRelease": "Service release 2501",
+  "topics": [
+    {
+      "topic": "Microsoft Intune Suite",
+      "category": "intune-suite",
+      "updates": [
+        {
+          "id": 3904630258,
+          "title": "Use Microsoft Security Copilot with Endpoint Privilege Management to help identify potential elevation risks",
+          "content": "<p>When your Azure Tenant is licensed for Microsoft Security Copilot, you can now use Security Copilot to help you investigate Endpoint Privilege Management (EPM) file elevation requests from within the EPM <a href=\"../protect/epm-support-approved#use-microsoft-security-copilot-to-analyze-file-elevation-requests\">support approved</a> work flow.</p><p>With this capability, while reviewing the properties of a file elevation request, you'll now find option to <strong>Analyze with Copilot</strong>. Use of this option directs Security Copilot to use the files hash in a prompt Microsoft Defender Threat Intelligence to evaluate the file potential indicators of compromise so you can then make a more informed decision to either approve or deny that file elevation request. Some of the results that are returned to your current view in the admin center include:</p><ul><li>The files' reputation</li><li>Information about the trust of the publisher</li><li>The risk score for the user requesting the file elevation</li><li>The risk score of the device from which the elevation was submitted</li></ul><p>EPM is available as an <a href=\"intune-add-ons\">Intune Suite add-on-capability</a>. To learn more about how you can currently use Copilot in Intune, see <a href=\"../copilot/copilot-intune-overview\">Microsoft Copilot in Intune</a>.</p><p>To learn more about Microsoft Security Copilot, see, <a href=\"/en-us/copilot/security/microsoft-security-copilot\">Microsoft Security Copilot</a>.</p>",
+          "features": [
+            "The files' reputation",
+            "Information about the trust of the publisher",
+            "The risk score for the user requesting the file elevation",
+            "The risk score of the device from which the elevation was submitted"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "App management",
+      "category": "app-management",
+      "updates": [
+        {
+          "id": 4243593631,
+          "title": "Update to Apps workload experience in Intune",
+          "content": "<p>The Apps area in Intune, commonly known as the Apps workload, is updated to provide a more consistent UI and improved navigation structure so you can find the information you need faster. To find the <strong>App</strong> workload in Intune, navigate to <a href=\"https://go.microsoft.com/fwlink/?linkid=2109431\">Microsoft Intune admin center</a> and select <strong>Apps</strong>.</p>",
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device configuration",
+      "category": "device-configuration",
+      "updates": [
+        {
+          "id": 1488102978,
+          "title": "New settings available in the Windows settings catalog to Configure multiple display mode",
+          "content": "<p>The Settings Catalog lists all the settings you can configure in a device policy, and all in one place.</p><p>There are new settings in the Settings Catalog to <em>Configure Multiple Display Mode</em> for\nWindows 24H2. To see available settings, in the Microsoft Intune admin center, go to <strong>Devices</strong> &gt; <strong>Manage devices</strong> &gt; <strong>Configuration</strong> &gt; <strong>Create</strong> &gt; <strong>New policy</strong> &gt; <strong>Windows 10 and later for platform</strong> &gt; <strong>Settings catalog</strong> for profile type.</p><p>The <strong>Configure Multiple Display Mode</strong> setting allows monitors to extend or clone the display by default, facilitating the need for manual setup. It streamlines the multi-monitor configuration process, ensuring a consistent and user-friendly experience.</p><p>Applies to:</p><ul><li>Windows</li></ul>",
+          "features": [
+            "Windows"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Device security",
+      "category": "device-security",
+      "updates": [
+        {
+          "id": 3139043868,
+          "title": "Updated security baseline for Microsoft Edge v128",
+          "content": "<p>You can now deploy the Intune security baseline for <strong>Microsoft Edge version 128</strong>. This update brings support for recent settings so you can continue to maintain best-practice configurations for Microsoft Edge.</p><p><a href=\"../protect/security-baseline-v2-edge-settings?pivots=edge-v128\">View the default configuration of settings in the updated baseline</a>.</p><p>For information about security baselines with Intune, see <a href=\"../protect/security-baselines\">Use security baselines to configure Windows devices in Intune</a>.</p><p>Applies to:</p><ul><li>Windows</li></ul>",
+          "features": [
+            "Windows"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    },
+    {
+      "topic": "Intune apps",
+      "category": "intune-apps",
+      "updates": [
+        {
+          "id": 538889328,
+          "title": "Newly available protected app for Intune",
+          "content": "<p>The following protected app is now available for Microsoft Intune:</p><ul><li>MoveInSync by MoveInSync Technologies</li></ul><p>For more information about protected apps, see <a href=\"../apps/apps-supported-intune-apps\">Microsoft Intune protected apps</a>.</p>",
+          "features": [
+            "MoveInSync by MoveInSync Technologies"
+          ],
+          "service": "Intune",
+          "link": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new"
+        }
+      ]
+    }
+  ]
+}
