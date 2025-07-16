@@ -1,25 +1,20 @@
-name: Manual Data Generation Test
+name: Test Data Generation Script
 
 on:
   workflow_dispatch:
     inputs:
       force_regenerate:
-        description: 'Force regenerate all data files'
+        description: 'Force regenerate all data files (for testing)'
         required: false
         default: false
         type: boolean
 
 jobs:
-  generate_data:
+  test_data_generation:
     runs-on: ubuntu-latest
-    name: Generate JSON Data Files
-    permissions:
-      contents: write
-      actions: read
+    name: Test Data Generation Script
     steps:
       - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -50,23 +45,16 @@ jobs:
           echo "📊 File contents summary:"
           find data/ -name "*.json" -exec echo "=== {} ===" \; -exec head -10 {} \;
 
-      - name: Commit and push generated files
+      - name: Test data generation results
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action Data Generator"
-          
-          git add data/
-          
-          if git diff --staged --quiet; then
-            echo "📝 No changes to commit"
-          else
-            echo "💾 Committing generated data files..."
-            git commit -m "🤖 Manual data generation: $(date +'%Y-%m-%d %H:%M UTC')"
-            git push
-            echo "✅ Data files committed and pushed successfully"
-          fi
+          echo "📊 Data generation test completed"
+          echo "🚫 Generated files are not committed (excluded by .gitignore)"
+          echo "ℹ️ This workflow is for testing the data generation script only"
+          echo "🚀 Actual deployment happens automatically via Azure Static Web Apps"
 
       - name: Summary
         run: |
-          echo "🎉 Manual data generation completed!"
-          echo "Check your repository for updated JSON files in the data/ directory."
+          echo "🎉 Manual data generation test completed!"
+          echo "✅ Data generation script is working correctly"
+          echo "📝 Note: Files are generated but not committed to repository"
+          echo "🌐 Live updates happen automatically through Azure Static Web Apps deployment"
