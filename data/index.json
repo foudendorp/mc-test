@@ -1,9 +1,9 @@
 {
-  "lastGenerated": "2025-07-16T11:39:10.030Z",
+  "lastGenerated": "2025-07-16T11:44:37.585Z",
   "totalUpdates": 306,
   "totalFiles": 50,
   "totalMonths": 8,
-  "totalNotices": 0,
+  "totalNotices": 10,
   "services": [
     "Intune",
     "Entra"
