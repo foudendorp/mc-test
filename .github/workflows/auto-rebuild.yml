@@ -1,0 +1,63 @@
+name: Auto Rebuild Site Data
+
+on:
+  schedule:
+    # Run every 6 hours starting at 7 AM CEST (5 AM UTC)
+    # 7 AM CEST = 5 AM UTC, 1 PM CEST = 11 AM UTC, 7 PM CEST = 5 PM UTC, 1 AM CEST = 11 PM UTC
+    - cron: '0 5,11,17,23 * * *'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  rebuild-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: |
+        if [ -f package.json ]; then
+          npm install
+        fi
+        
+    - name: Generate fresh data
+      run: |
+        node scripts/generate-data.js
+        
+    - name: Check for changes
+      id: changes
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "changes=true" >> $GITHUB_OUTPUT
+          echo "Changes detected in data files"
+        else
+          echo "changes=false" >> $GITHUB_OUTPUT
+          echo "No changes detected"
+        fi
+        
+    - name: Commit and push changes
+      if: steps.changes.outputs.changes == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/
+        git commit -m "Auto-update: Rebuild site data $(date '+%Y-%m-%d %H:%M UTC')"
+        git push
+        
+    - name: Summary
+      run: |
+        if [ "${{ steps.changes.outputs.changes }}" = "true" ]; then
+          echo "✅ Site data has been updated with latest Microsoft Learn content"
+        else
+          echo "ℹ️ No new updates found - site data is current"
+        fi
