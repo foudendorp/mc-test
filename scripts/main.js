@@ -229,12 +229,12 @@ class IntuneUpdatesTracker {
         // Convert to array and sort alphabetically
         const sortedServices = Array.from(services).sort();
 
-        // Create a mapping for better display names to match notices table
+        // Create a mapping for better display names
         const serviceDisplayNames = {
-            'Intune': 'Intune',
-            'Entra': 'Entra ID', 
-            'Entra ID': 'Entra ID',
-            'Defender for Endpoint': 'Defender for Endpoint'
+            'Intune': 'Microsoft Intune',
+            'Entra': 'Microsoft Entra ID',
+            'Entra ID': 'Microsoft Entra ID',
+            'Defender for Endpoint': 'Microsoft Defender for Endpoint'
         };
 
         // Clear existing options except "All Services"
@@ -438,7 +438,10 @@ class IntuneUpdatesTracker {
                 html += `
                     <div class="unified-updates-section">
                         <h2 class="service-section-title">
-                            <span class="service-badge service-${serviceFilterValue.toLowerCase()}">${serviceFilterValue === 'Entra' ? 'Microsoft Entra ID' : serviceFilterValue === 'Intune' ? 'Microsoft Intune' : serviceFilterValue}</span>
+                            <span class="service-badge service-${this.getServiceCssClass(serviceFilterValue)}">
+                                <i class="fas ${this.getServiceIcon(serviceFilterValue)}"></i>
+                                ${this.getServiceDisplayName(serviceFilterValue)}
+                            </span>
                         </h2>
                         <div class="updates-table-container">
                             <table class="updates-table">
@@ -466,7 +469,10 @@ class IntuneUpdatesTracker {
                 html += `
                     <div class="unified-updates-section">
                         <h2 class="service-section-title">
-                            <span class="service-badge">All Microsoft Cloud Updates</span>
+                            <span class="service-badge service-system">
+                                <i class="fas fa-cloud"></i>
+                                All Microsoft Cloud Updates
+                            </span>
                         </h2>
                         <div class="updates-table-container">
                             <table class="updates-table">
@@ -516,7 +522,10 @@ class IntuneUpdatesTracker {
                 <td data-label="Date">${formattedDate}</td>
                 <td data-label="Month">${monthName}</td>
                 <td data-label="Service">
-                    <span class="service-badge service-${(update.service || 'unknown').toLowerCase()}">${update.service || 'Unknown'}</span>
+                    <span class="service-badge service-${this.getServiceCssClass(update.service)}">
+                        <i class="fas ${this.getServiceIcon(update.service)}"></i>
+                        ${update.service || 'Unknown'}
+                    </span>
                 </td>
                 <td data-label="Category">
                     <span class="category-badge category-${update.category}">${categoryName}</span>
@@ -671,7 +680,7 @@ class IntuneUpdatesTracker {
             <tr class="notice-row" onclick="window.tracker.showNoticeModal('${notice.id}')" style="cursor: pointer;">
                 <td data-label="Date">${formattedDate}</td>
                 <td data-label="Service">
-                    <span class="service-badge service-${serviceName.toLowerCase()}">
+                    <span class="service-badge service-${this.getServiceCssClass(serviceName)}">
                         <i class="fas ${this.getServiceIcon(serviceName)}"></i>
                         ${serviceName}
                     </span>
@@ -722,6 +731,34 @@ class IntuneUpdatesTracker {
             case 'office': return 'fa-file-alt';
             default: return 'fa-cog';
         }
+    }
+
+    getServiceCssClass(service) {
+        if (!service) return 'unknown';
+        
+        switch (service.toLowerCase()) {
+            case 'intune': return 'intune';
+            case 'entra': return 'entra-id';
+            case 'entra id': return 'entra-id';
+            case 'defender': return 'defender';
+            case 'defender for endpoint': return 'defender-for-endpoint';
+            case 'teams': return 'teams';
+            case 'exchange': return 'exchange';
+            case 'sharepoint': return 'sharepoint';
+            case 'onedrive': return 'onedrive';
+            case 'office': return 'office';
+            default: return 'unknown';
+        }
+    }
+
+    getServiceDisplayName(service) {
+        const serviceDisplayNames = {
+            'Intune': 'Microsoft Intune',
+            'Entra': 'Microsoft Entra ID',
+            'Entra ID': 'Microsoft Entra ID',
+            'Defender for Endpoint': 'Microsoft Defender for Endpoint'
+        };
+        return serviceDisplayNames[service] || service;
     }
 
     extractPlanTypeFromTitle(title) {

@@ -281,7 +281,7 @@ async function fetchServiceUpdates(service) {
                         title: header.textContent.trim(),
                         content: content.trim(),
                         date: noticeDate, // Use extracted or stable date instead of current date
-                        service: service.tag, // Keep service.tag for internal processing
+                        service: service.name, // Use service.name for display consistency
                         type: 'warning',
                         category: 'plan-for-change',
                         status: 'active',
@@ -330,7 +330,7 @@ async function fetchServiceUpdates(service) {
                         title: header.textContent.trim(),
                         content: content.trim(),
                         date: new Date().toISOString().split('T')[0],
-                        service: service.tag, // Keep service.tag for internal processing
+                        service: service.name, // Use service.name for display consistency
                         type: 'warning',
                         category: 'plan-for-change',
                         status: 'active',
@@ -465,7 +465,7 @@ async function fetchServiceUpdates(service) {
                     title: header.textContent.trim(),
                     content: htmlContent, // HTML markup for proper display
                     date: new Date().toISOString().split('T')[0],
-                    service: service.tag, // Keep service.tag for internal processing
+                    service: service.name, // Use service.name for display consistency
                     type: 'warning',
                     category: 'plan-for-change',
                     status: 'active',
@@ -974,7 +974,7 @@ async function createFallbackData() {
     // Entra notices index
     const entraNoticesIndexData = {
         lastUpdated: new Date().toISOString(),
-        service: "Entra",
+        service: "Entra ID",
         serviceName: "Microsoft Entra ID",
         totalNotices: 1,
         totalFiles: 1,
@@ -1571,7 +1571,7 @@ function parseTableUpdates(table, monthData) {
                 title: title, // Topic (Title) from Microsoft Learn
                 subtitle: type ? `Type: ${type}` : undefined,
                 content: finalContent, // Now includes HTML markup
-                service: 'Entra',
+                service: 'Entra ID',
                 link: extractLinks(descriptionCell, 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new')[0]?.url || 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new'
             };
             
@@ -1610,7 +1610,7 @@ function parseListUpdates(list, monthData) {
                 title: text,
                 subtitle: undefined,
                 content: contentHTML, // Now includes HTML markup
-                service: 'Entra',
+                service: 'Entra ID',
                 link: extractLinks(item, 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new')[0]?.url || 'https://learn.microsoft.com/en-us/mem/intune/fundamentals/whats-new'
             };
             
@@ -1806,7 +1806,7 @@ function parseEntraUpdateFromHeader(header, date) {
         title: cleanTitle, // Use cleaned title without type prefix
         subtitle: finalSubtitle || (type ? `Type: ${type}` : undefined),
         content: finalContent, // Now includes HTML markup
-        service: 'Entra',
+        service: 'Entra ID',
         serviceCategory: serviceCategory, // Keep for topic assignment logic
         productCapability: productCapability, // Keep for topic assignment logic  
         link: extractSectionAnchorLink(header, 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new') || extractLinks(header.parentElement)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'

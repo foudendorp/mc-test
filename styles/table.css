@@ -142,6 +142,9 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .service-intune {
@@ -149,9 +152,14 @@
     color: #0277bd;
 }
 
-.service-entra {
+.service-entra-id {
     background-color: #f3e5f5;
     color: #6a1b9a;
+}
+
+.service-defender-for-endpoint {
+    background-color: #fff3e0;
+    color: #f57c00;
 }
 
 .service-system {
@@ -162,6 +170,36 @@
 .service-unknown {
     background-color: #fafafa;
     color: #757575;
+}
+
+.service-teams {
+    background-color: #f3e5f5;
+    color: #6a1b9a;
+}
+
+.service-exchange {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.service-sharepoint {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.service-onedrive {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.service-office {
+    background-color: #fce4ec;
+    color: #c2185b;
+}
+
+.service-defender {
+    background-color: #fff3e0;
+    color: #f57c00;
 }
 
 /* Action button */
