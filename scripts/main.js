@@ -229,10 +229,12 @@ class IntuneUpdatesTracker {
         // Convert to array and sort alphabetically
         const sortedServices = Array.from(services).sort();
 
-        // Create a mapping for better display names
+        // Create a mapping for better display names to match notices table
         const serviceDisplayNames = {
-            'Intune': 'Microsoft Intune',
-            'Entra': 'Microsoft Entra ID'
+            'Intune': 'Intune',
+            'Entra': 'Entra ID', 
+            'Entra ID': 'Entra ID',
+            'Defender for Endpoint': 'Defender for Endpoint'
         };
 
         // Clear existing options except "All Services"
@@ -710,7 +712,9 @@ class IntuneUpdatesTracker {
         switch (service.toLowerCase()) {
             case 'intune': return 'fa-shield-alt';
             case 'entra': return 'fa-key';
+            case 'entra id': return 'fa-key';
             case 'defender': return 'fa-shield-virus';
+            case 'defender for endpoint': return 'fa-shield-virus';
             case 'teams': return 'fa-users';
             case 'exchange': return 'fa-envelope';
             case 'sharepoint': return 'fa-share-alt';
