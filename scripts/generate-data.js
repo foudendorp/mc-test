@@ -19,6 +19,11 @@ const SERVICES = {
         name: 'Defender for Endpoint',
         url: 'https://learn.microsoft.com/en-us/defender-xdr/whats-new',
         tag: 'Defender'
+    },
+    windows365: {
+        name: 'Windows 365',
+        url: 'https://learn.microsoft.com/en-us/windows-365/enterprise/whats-new',
+        tag: 'Windows365'
     }
 };
 
@@ -33,6 +38,8 @@ const ENTRA_UPDATES_DIR = './data/updates/entra';
 const ENTRA_NOTICES_DIR = './data/notices/entra';
 const DEFENDER_UPDATES_DIR = './data/updates/defender';
 const DEFENDER_NOTICES_DIR = './data/notices/defender';
+const WINDOWS365_UPDATES_DIR = './data/updates/windows365';
+const WINDOWS365_NOTICES_DIR = './data/notices/windows365';
 
 // Ensure data directories exist
 if (!existsSync(DATA_DIR)) {
@@ -61,6 +68,12 @@ if (!existsSync(DEFENDER_UPDATES_DIR)) {
 }
 if (!existsSync(DEFENDER_NOTICES_DIR)) {
     mkdirSync(DEFENDER_NOTICES_DIR, { recursive: true });
+}
+if (!existsSync(WINDOWS365_UPDATES_DIR)) {
+    mkdirSync(WINDOWS365_UPDATES_DIR, { recursive: true });
+}
+if (!existsSync(WINDOWS365_NOTICES_DIR)) {
+    mkdirSync(WINDOWS365_NOTICES_DIR, { recursive: true });
 }
 
 // Helper function to check if an element is a month header
@@ -172,9 +185,24 @@ function parseUpdateElement(currentElement, service) {
     const colonIndex = title.indexOf(':');
     const dashIndex = title.indexOf(' - ');
     
+    // Only split on colon if the part before it looks like a status indicator
     if (colonIndex > 0) {
-        subtitle = title.substring(colonIndex + 1).trim();
-        title = title.substring(0, colonIndex).trim();
+        const beforeColon = title.substring(0, colonIndex).trim();
+        const statusIndicators = [
+            'General Availability', 'Public Preview', 'Private Preview', 'Deprecated', 
+            'Plan for Change', 'Important Notice', 'Notice', 'Announcement', 'Breaking Change'
+        ];
+        
+        // Check if the part before colon is a known status indicator
+        const isStatusIndicator = statusIndicators.some(status => 
+            beforeColon.toLowerCase().includes(status.toLowerCase())
+        );
+        
+        if (isStatusIndicator) {
+            subtitle = title.substring(colonIndex + 1).trim();
+            title = title.substring(0, colonIndex).trim();
+        }
+        // If not a status indicator, keep the full title including the colon
     } else if (dashIndex > 0) {
         subtitle = title.substring(dashIndex + 3).trim();
         title = title.substring(0, dashIndex).trim();
@@ -183,6 +211,9 @@ function parseUpdateElement(currentElement, service) {
     // Create content with HTML markup for proper display
     const htmlContent = htmlParts.length > 0 ? htmlParts.join('') : `<p>${content || 'No additional details available.'}</p>`;
     
+    // Determine category based on title content first, then fall back to default
+    const titleBasedCategory = mapTitleToCategory(title, service.name);
+    
     return {
         id: generateContentId(title, subtitle, content), // Deterministic ID based on content
         title: title,
@@ -190,6 +221,7 @@ function parseUpdateElement(currentElement, service) {
         content: htmlContent, // Now includes HTML markup
         features: features.length > 0 ? features : undefined,
         service: service.name, // Use service.name for display consistency
+        category: titleBasedCategory, // Add individual update categorization
         link: link || service.url
     };
 }
@@ -343,7 +375,7 @@ async function fetchServiceUpdates(service) {
             
             return { weeklyUpdates, notices };
         } else {
-            // For Intune and other services, use week-based structure
+            // For Intune, Windows 365, and other services, use week-based structure
             const weekHeaders = Array.from(document.querySelectorAll('h2'))
                 .filter(h2 => h2.textContent.includes('Week of'));
             
@@ -393,6 +425,10 @@ async function fetchServiceUpdates(service) {
                         // Individual update
                         const update = parseUpdateElement(currentElement, service);
                         if (update) {
+                            // If the update has a specific category, update the topic category to match
+                            if (update.category && update.category !== currentTopic.category) {
+                                currentTopic.category = update.category;
+                            }
                             currentTopic.updates.push(update);
                             updateCount++;
                         }
@@ -550,6 +586,17 @@ function mapTopicToCategory(topicText) {
     if (topic.includes('portal') || topic.includes('experience')) return 'user-experience';
     if (topic.includes('detection') || topic.includes('rule')) return 'threat-hunting';
     
+    // Windows 365-specific mappings
+    if (topic.includes('provisioning') || topic.includes('custom images') || topic.includes('data disk')) return 'provisioning';
+    if (topic.includes('disaster recovery') || topic.includes('backup') || topic.includes('restore')) return 'device-management';
+    if (topic.includes('azure virtual desktop') || topic.includes('avd')) return 'integration';
+    if (topic.includes('gallery') || topic.includes('apps')) return 'app-management';
+    if (topic.includes('network') || topic.includes('connectivity')) return 'device-configuration';
+    if (topic.includes('security') || topic.includes('compliance')) return 'device-security';
+    if (topic.includes('performance') || topic.includes('optimization')) return 'device-configuration';
+    if (topic.includes('licensing') || topic.includes('billing')) return 'device-management';
+    if (topic.includes('monitoring') || topic.includes('analytics')) return 'monitor-troubleshoot';
+    
     // General mappings
     if (topic.includes('app') || topic.includes('application')) return 'app-management';
     if (topic.includes('device')) return 'device-management';
@@ -560,12 +607,50 @@ function mapTopicToCategory(topicText) {
     return 'device-management'; // Default category
 }
 
+// Enhanced category mapping based on title content for Windows 365
+function mapTitleToCategory(title, service) {
+    const titleLower = title.toLowerCase();
+    
+    // Windows 365 specific title-based mappings
+    if (service === 'Windows 365') {
+        if (titleLower.includes('data disk not allowed') || titleLower.includes('custom images')) {
+            return 'provisioning';
+        }
+        if (titleLower.includes('disaster recovery') || titleLower.includes('backup') || titleLower.includes('restore')) {
+            return 'device-management';
+        }
+        if (titleLower.includes('azure virtual desktop') || titleLower.includes('avd')) {
+            return 'integration';
+        }
+        if (titleLower.includes('gallery') || titleLower.includes('apps')) {
+            return 'app-management';
+        }
+        if (titleLower.includes('network') || titleLower.includes('connectivity')) {
+            return 'device-configuration';
+        }
+        if (titleLower.includes('security') || titleLower.includes('compliance')) {
+            return 'device-security';
+        }
+        if (titleLower.includes('performance') || titleLower.includes('optimization')) {
+            return 'device-configuration';
+        }
+        if (titleLower.includes('licensing') || titleLower.includes('billing')) {
+            return 'device-management';
+        }
+        if (titleLower.includes('monitoring') || titleLower.includes('analytics')) {
+            return 'monitor-troubleshoot';
+        }
+    }
+    
+    return null; // Return null if no specific mapping found, will fall back to topic-based mapping
+}
+
 // Generate JSON files separated by service
 async function generateDataFiles() {
     console.log('Starting data generation...');
     
     // Ensure all service directories exist
-    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR, DEFENDER_UPDATES_DIR, DEFENDER_NOTICES_DIR].forEach(dir => {
+    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR, DEFENDER_UPDATES_DIR, DEFENDER_NOTICES_DIR, WINDOWS365_UPDATES_DIR, WINDOWS365_NOTICES_DIR].forEach(dir => {
         if (!existsSync(dir)) {
             console.log(`Creating directory: ${dir}`);
             mkdirSync(dir, { recursive: true });
@@ -594,10 +679,12 @@ async function generateDataFiles() {
             // Determine service directory
             const serviceUpdatesDir = serviceKey === 'intune' ? INTUNE_UPDATES_DIR : 
                                     serviceKey === 'entra' ? ENTRA_UPDATES_DIR : 
-                                    DEFENDER_UPDATES_DIR;
+                                    serviceKey === 'defender' ? DEFENDER_UPDATES_DIR :
+                                    WINDOWS365_UPDATES_DIR;
             const serviceNoticesDir = serviceKey === 'intune' ? INTUNE_NOTICES_DIR : 
                                     serviceKey === 'entra' ? ENTRA_NOTICES_DIR : 
-                                    DEFENDER_NOTICES_DIR;
+                                    serviceKey === 'defender' ? DEFENDER_NOTICES_DIR :
+                                    WINDOWS365_NOTICES_DIR;
             
             for (const [date, weekData] of weeklyUpdates) {
                 const filename = `${date}.json`;
@@ -825,7 +912,7 @@ async function createFallbackData() {
     console.log('Creating fallback data with service separation...');
     
     // Ensure all service directories exist
-    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR, DEFENDER_UPDATES_DIR, DEFENDER_NOTICES_DIR].forEach(dir => {
+    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR, DEFENDER_UPDATES_DIR, DEFENDER_NOTICES_DIR, WINDOWS365_UPDATES_DIR, WINDOWS365_NOTICES_DIR].forEach(dir => {
         if (!existsSync(dir)) {
             console.log(`Creating directory: ${dir}`);
             mkdirSync(dir, { recursive: true });

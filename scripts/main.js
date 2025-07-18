@@ -142,7 +142,7 @@ class IntuneUpdatesTracker {
             let notices = [];
             try {
                 // List of service directories to check for notices
-                const serviceDirectories = ['intune', 'entra'];
+                const serviceDirectories = ['intune', 'entra', 'windows365'];
                 
                 for (const service of serviceDirectories) {
                     try {
@@ -724,6 +724,7 @@ class IntuneUpdatesTracker {
             case 'entra id': return 'fa-key';
             case 'defender': return 'fa-shield-virus';
             case 'defender for endpoint': return 'fa-shield-virus';
+            case 'windows 365': return 'fa-desktop';
             case 'teams': return 'fa-users';
             case 'exchange': return 'fa-envelope';
             case 'sharepoint': return 'fa-share-alt';
@@ -742,6 +743,7 @@ class IntuneUpdatesTracker {
             case 'entra id': return 'entra-id';
             case 'defender': return 'defender';
             case 'defender for endpoint': return 'defender-for-endpoint';
+            case 'windows 365': return 'windows-365';
             case 'teams': return 'teams';
             case 'exchange': return 'exchange';
             case 'sharepoint': return 'sharepoint';
@@ -756,7 +758,8 @@ class IntuneUpdatesTracker {
             'Intune': 'Microsoft Intune',
             'Entra': 'Microsoft Entra ID',
             'Entra ID': 'Microsoft Entra ID',
-            'Defender for Endpoint': 'Microsoft Defender for Endpoint'
+            'Defender for Endpoint': 'Microsoft Defender for Endpoint',
+            'Windows 365': 'Windows 365'
         };
         return serviceDisplayNames[service] || service;
     }
