@@ -1,2 +1,2 @@
-# This file ensures the data directory is tracked in git
-# while the actual generated files are ignored
+# This file ensures the data directory is tracked by Git
+# The data directory may be empty when data files are gitignored
