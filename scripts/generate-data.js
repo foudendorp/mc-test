@@ -16,30 +16,51 @@ const SERVICES = {
         tag: 'Entra'
     },
     defender: {
-        name: 'Defender for Endpoint',
+        name: 'Defender XDR',
         url: 'https://learn.microsoft.com/en-us/defender-xdr/whats-new',
         tag: 'Defender'
+    },
+    defenderoffice: {
+        name: 'Defender for Office 365',
+        url: 'https://learn.microsoft.com/en-us/defender-office-365/defender-for-office-365-whats-new',
+        tag: 'DefenderOffice'
+    },
+    defenderendpoint: {
+        name: 'Defender for Endpoint',
+        url: 'https://learn.microsoft.com/en-us/defender-endpoint/whats-new-in-microsoft-defender-endpoint',
+        tag: 'DefenderEndpoint'
     },
     windows365: {
         name: 'Windows 365',
         url: 'https://learn.microsoft.com/en-us/windows-365/enterprise/whats-new',
         tag: 'Windows365'
+    },
+    defenderidentity: {
+        name: 'Microsoft Defender for Identity',
+        displayName: 'Defender for Identity', // Shorter name for table display
+        url: 'https://learn.microsoft.com/en-us/defender-for-identity/whats-new',
+        tag: 'DefenderIdentity'
+    },
+    defendercloudapps: {
+        name: 'Microsoft Defender for Cloud Apps',
+        displayName: 'Defender for Cloud Apps', // Shorter name for table display
+        url: 'https://learn.microsoft.com/en-us/defender-cloud-apps/release-notes',
+        tag: 'DefenderCloudApps'
     }
 };
 
 const DATA_DIR = './data';
 const UPDATES_DIR = './data/updates';
-const NOTICES_DIR = './data/notices';
 
-// Service-specific directories
+// Service-specific directories for updates only
 const INTUNE_UPDATES_DIR = './data/updates/intune';
-const INTUNE_NOTICES_DIR = './data/notices/intune';
 const ENTRA_UPDATES_DIR = './data/updates/entra';
-const ENTRA_NOTICES_DIR = './data/notices/entra';
 const DEFENDER_UPDATES_DIR = './data/updates/defender';
-const DEFENDER_NOTICES_DIR = './data/notices/defender';
+const DEFENDEROFFICE_UPDATES_DIR = './data/updates/defenderoffice';
+const DEFENDERENDPOINT_UPDATES_DIR = './data/updates/defenderendpoint';
+const DEFENDERIDENTITY_UPDATES_DIR = './data/updates/defenderidentity';
+const DEFENDERCLOUDAPPS_UPDATES_DIR = './data/updates/defendercloudapps';
 const WINDOWS365_UPDATES_DIR = './data/updates/windows365';
-const WINDOWS365_NOTICES_DIR = './data/notices/windows365';
 
 // Ensure data directories exist
 if (!existsSync(DATA_DIR)) {
@@ -48,39 +69,41 @@ if (!existsSync(DATA_DIR)) {
 if (!existsSync(UPDATES_DIR)) {
     mkdirSync(UPDATES_DIR, { recursive: true });
 }
-if (!existsSync(NOTICES_DIR)) {
-    mkdirSync(NOTICES_DIR, { recursive: true });
-}
 if (!existsSync(INTUNE_UPDATES_DIR)) {
     mkdirSync(INTUNE_UPDATES_DIR, { recursive: true });
-}
-if (!existsSync(INTUNE_NOTICES_DIR)) {
-    mkdirSync(INTUNE_NOTICES_DIR, { recursive: true });
 }
 if (!existsSync(ENTRA_UPDATES_DIR)) {
     mkdirSync(ENTRA_UPDATES_DIR, { recursive: true });
 }
-if (!existsSync(ENTRA_NOTICES_DIR)) {
-    mkdirSync(ENTRA_NOTICES_DIR, { recursive: true });
-}
 if (!existsSync(DEFENDER_UPDATES_DIR)) {
     mkdirSync(DEFENDER_UPDATES_DIR, { recursive: true });
 }
-if (!existsSync(DEFENDER_NOTICES_DIR)) {
-    mkdirSync(DEFENDER_NOTICES_DIR, { recursive: true });
+if (!existsSync(DEFENDEROFFICE_UPDATES_DIR)) {
+    mkdirSync(DEFENDEROFFICE_UPDATES_DIR, { recursive: true });
+}
+if (!existsSync(DEFENDERENDPOINT_UPDATES_DIR)) {
+    mkdirSync(DEFENDERENDPOINT_UPDATES_DIR, { recursive: true });
+}
+if (!existsSync(DEFENDERIDENTITY_UPDATES_DIR)) {
+    mkdirSync(DEFENDERIDENTITY_UPDATES_DIR, { recursive: true });
+}
+if (!existsSync(DEFENDERCLOUDAPPS_UPDATES_DIR)) {
+    mkdirSync(DEFENDERCLOUDAPPS_UPDATES_DIR, { recursive: true });
 }
 if (!existsSync(WINDOWS365_UPDATES_DIR)) {
     mkdirSync(WINDOWS365_UPDATES_DIR, { recursive: true });
-}
-if (!existsSync(WINDOWS365_NOTICES_DIR)) {
-    mkdirSync(WINDOWS365_NOTICES_DIR, { recursive: true });
 }
 
 // Helper function to check if an element is a month header
 function isNextMonthHeader(element) {
     if (!element || element.tagName !== 'H2') return false;
     const text = element.textContent.trim();
-    return /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i.test(text);
+    
+    // Handle both single months like "January 2025" and compound months like "November-December 2024"
+    const singleMonthPattern = /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i;
+    const compoundMonthPattern = /^(January|February|March|April|May|June|July|August|September|October|November|December)[-\s]+(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i;
+    
+    return singleMonthPattern.test(text) || compoundMonthPattern.test(text);
 }
 
 // Helper function to check if the previous element is a header (to avoid double-parsing lists)
@@ -124,6 +147,369 @@ function isPreviousElementHeader(element) {
     console.log(`    No header found within reasonable distance, treating as standalone list`);
     return false;
 }
+
+// Helper function to parse Intune update elements 
+// Handles two different structures:
+// 1. "What's new" section: H3 (Category) -> H4 (Individual Topics as separate updates)
+// 2. "Notices" section: H3 (Topics as "Notice" updates) -> H4 (Sub-content)
+function parseIntuneUpdateElement(currentElement, service) {
+    const elementTitle = currentElement.textContent.trim();
+    
+    // Check if we're in the "Notices" section
+    const isNoticeSection = isInNoticesSection(currentElement);
+    
+    if (isNoticeSection) {
+        // For Notices section: H3 topics become "Notice" type updates with H4 sub-content
+        return parseNoticeUpdate(currentElement, service);
+    } else {
+        // For What's new section: H4 topics become individual updates under H3 category
+        return parseWhatsNewUpdates(currentElement, service);
+    }
+}
+
+// Helper function to check if an element is within the Notices section
+function isInNoticesSection(element) {
+    let currentEl = element;
+    // Look backwards up to 500 elements to find a "Notices" H2 header (generous limit for future growth)
+    let lookBack = 0;
+    
+    while (currentEl && lookBack < 500) {
+        if (currentEl.tagName === 'H2' && currentEl.textContent.trim().toLowerCase().includes('notice')) {
+            return true;
+        }
+        // Stop looking if we find another H2 (different section)
+        if (currentEl.tagName === 'H2' && !currentEl.textContent.trim().toLowerCase().includes('notice')) {
+            return false;
+        }
+        currentEl = currentEl.previousElementSibling;
+        lookBack++;
+    }
+    
+    return false;
+}
+
+// Helper function to generate anchor URL for notices based on title
+function generateNoticeAnchorUrl(title, baseUrl) {
+    if (!title) return baseUrl;
+    
+    // Convert title to anchor format (lowercase, spaces to hyphens, remove special chars)
+    const anchor = title
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+        .replace(/\s+/g, '-')     // Replace spaces with hyphens
+        .replace(/-+/g, '-')      // Replace multiple hyphens with single hyphen
+        .replace(/^-|-$/g, '');   // Remove leading/trailing hyphens
+    
+    return `${baseUrl}#${anchor}`;
+}
+
+// Parse H3 topics in Notices section as individual "Notice" updates
+function parseNoticeUpdate(currentElement, service) {
+    let noticeTitle = currentElement.textContent.trim();
+    const category = 'notices';
+    
+    let content = [];
+    let features = [];
+    let hasFoundMeaningfulContent = false;
+    
+    // Get content from following elements until next H3 or H2
+    let nextEl = currentElement.nextElementSibling;
+    
+    while (nextEl && nextEl.tagName !== 'H3' && nextEl.tagName !== 'H2') {
+        if (nextEl.tagName === 'H4') {
+            // Add H4 as a subheading in the content (keep all H4s as subsections)
+            const h4Title = nextEl.textContent.trim();
+            content.push(`<h4>${h4Title}</h4>`);
+            
+            // If notice title is generic/empty, use first meaningful H4 as title
+            if (!hasFoundMeaningfulContent && h4Title && h4Title.length > 5) {
+                hasFoundMeaningfulContent = true;
+                if (!noticeTitle || noticeTitle.length < 5 || noticeTitle === 'Notice' || /^(Update|Plan for|Change)/.test(noticeTitle)) {
+                    // Clean up the title by removing common prefixes
+                    noticeTitle = h4Title
+                        .replace(/^(Update to the latest|Plan for [Cc]hange:|Plan for change:|How does this change affect|How can you prepare)\s*/i, '')
+                        .replace(/^\s*•\s*/, '');
+                }
+            }
+            
+        } else if (nextEl.tagName === 'P') {
+            const text = nextEl.textContent.trim();
+            if (text) {
+                const htmlContent = extractHTMLContent(nextEl);
+                content.push(`<p>${htmlContent}</p>`);
+                
+                // If notice title is still generic, use first meaningful paragraph
+                if (!hasFoundMeaningfulContent && text.length > 20) {
+                    hasFoundMeaningfulContent = true;
+                    if (!noticeTitle || noticeTitle.length < 5 || noticeTitle === 'Notice') {
+                        // Use first sentence or first 100 chars as title
+                        const sentences = text.split(/[.!?]+/);
+                        noticeTitle = sentences[0].trim().substring(0, 100);
+                        if (noticeTitle.length === 100) noticeTitle += '...';
+                    }
+                }
+            }
+        } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
+            const listItems = Array.from(nextEl.querySelectorAll('li'));
+            const listText = listItems.map(li => li.textContent.trim());
+            const listHTML = extractHTMLContent(nextEl);
+            
+            features.push(...listText);
+            if (listHTML.trim()) {
+                content.push(`<${nextEl.tagName.toLowerCase()}>${listHTML}</${nextEl.tagName.toLowerCase()}>`);
+            }
+        }
+        
+        nextEl = nextEl.nextElementSibling;
+    }
+    
+    if (content.length > 0) {
+        const htmlContent = content.join('');
+        
+        // Generate anchor URL based on the notice title for Microsoft Learn What's New page
+        const link = generateNoticeAnchorUrl(noticeTitle, service.url);
+        
+        // Determine the notice type based on the title
+        let noticeType = 'notice'; // Default type for notices
+        if (noticeTitle && noticeTitle.toLowerCase().includes('plan for change')) {
+            noticeType = 'plan-for-change';
+        }
+        
+        const update = {
+            id: generateContentId(noticeTitle, '', htmlContent),
+            title: noticeTitle || 'Notice',
+            content: htmlContent,
+            features: features.length > 0 ? features : undefined,
+            service: service.displayName || service.name,
+            category: category,
+            type: noticeType, // Dynamic type based on notice title
+            link: link
+        };
+        
+        return [update];
+    }
+    
+    return [];
+}
+
+// Parse H4 topics in What's new section as individual updates under H3 category
+function parseWhatsNewUpdates(currentElement, service) {
+    const categoryTitle = currentElement.textContent.trim();
+    const category = mapTopicToCategory(categoryTitle) || 'device-management';
+    const updates = [];
+    
+    // Find all H4 elements that belong to this H3 category
+    let nextEl = currentElement.nextElementSibling;
+    
+    while (nextEl && nextEl.tagName !== 'H3' && nextEl.tagName !== 'H2' && !nextEl.textContent.includes('Week of')) {
+        if (nextEl.tagName === 'H4') {
+            // Each H4 becomes a separate update
+            const h4Update = parseH4Update(nextEl, service, category);
+            if (h4Update) {
+                updates.push(h4Update);
+            }
+            
+            // Skip past the content of this H4 to avoid double-processing
+            nextEl = skipPastH4Content(nextEl);
+        } else {
+            nextEl = nextEl.nextElementSibling;
+        }
+    }
+    
+    return updates;
+}
+
+// Parse individual H4 topic as a separate update
+function parseH4Update(h4Element, service, category) {
+    const topicTitle = h4Element.textContent.trim();
+    let content = [];
+    let features = [];
+    
+    // Get content from following elements until next H4, H3, or H2
+    let nextEl = h4Element.nextElementSibling;
+    
+    while (nextEl && nextEl.tagName !== 'H4' && nextEl.tagName !== 'H3' && nextEl.tagName !== 'H2' && !nextEl.textContent.includes('Week of')) {
+        if (nextEl.tagName === 'P') {
+            const text = nextEl.textContent.trim();
+            if (text) {
+                const htmlContent = extractHTMLContent(nextEl);
+                content.push(`<p>${htmlContent}</p>`);
+            }
+        } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
+            const listItems = Array.from(nextEl.querySelectorAll('li'));
+            const listText = listItems.map(li => li.textContent.trim());
+            const listHTML = extractHTMLContent(nextEl);
+            
+            features.push(...listText);
+            if (listHTML.trim()) {
+                content.push(`<${nextEl.tagName.toLowerCase()}>${listHTML}</${nextEl.tagName.toLowerCase()}>`);
+            }
+        }
+        
+        nextEl = nextEl.nextElementSibling;
+    }
+    
+    if (content.length > 0) {
+        const htmlContent = content.join('');
+        const link = extractLinkFromContent(htmlContent, service.url);
+        
+        return {
+            id: generateContentId(topicTitle, '', htmlContent),
+            title: topicTitle,
+            content: htmlContent,
+            features: features.length > 0 ? features : undefined,
+            service: service.displayName || service.name,
+            category: category,
+            type: 'update',
+            link: link || service.url
+        };
+    }
+    
+    return null;
+}
+
+// Helper function to skip past all content belonging to an H4
+function skipPastH4Content(h4Element) {
+    let nextEl = h4Element.nextElementSibling;
+    
+    // Skip all content until we reach another H4, H3, H2, or Week header
+    while (nextEl && nextEl.tagName !== 'H4' && nextEl.tagName !== 'H3' && nextEl.tagName !== 'H2' && !nextEl.textContent.includes('Week of')) {
+        nextEl = nextEl.nextElementSibling;
+    }
+    
+    return nextEl;
+}
+
+// Helper function to parse orphaned H4 elements in notices section as a single notice
+function parseOrphanedH4sAsNotice(startingH4Element, service) {
+    let noticeTitle = 'Notice'; // Default title for orphaned H4s
+    const category = 'notices';
+    let content = [];
+    let features = [];
+    let hasFoundMeaningfulTitle = false;
+    
+    // Collect all consecutive H4s and their content
+    let currentElement = startingH4Element;
+    
+    while (currentElement && currentElement.tagName !== 'H3' && currentElement.tagName !== 'H2') {
+        if (currentElement.tagName === 'H4') {
+            const h4Title = currentElement.textContent.trim();
+            
+            // Don't use "How does this change affect..." or "How can you prepare?" as the main title
+            if (!hasFoundMeaningfulTitle && h4Title && 
+                !h4Title.toLowerCase().includes('how does this change affect') &&
+                !h4Title.toLowerCase().includes('how can you prepare') &&
+                h4Title.length > 5) {
+                noticeTitle = h4Title;
+                hasFoundMeaningfulTitle = true;
+            }
+            
+            // Add H4 as a subheading in the content
+            content.push(`<h4>${h4Title}</h4>`);
+            
+            // Get content following this H4
+            let nextEl = currentElement.nextElementSibling;
+            while (nextEl && nextEl.tagName !== 'H4' && nextEl.tagName !== 'H3' && nextEl.tagName !== 'H2') {
+                if (nextEl.tagName === 'P') {
+                    const text = nextEl.textContent.trim();
+                    if (text) {
+                        const htmlContent = extractHTMLContent(nextEl);
+                        content.push(`<p>${htmlContent}</p>`);
+                        
+                        // If we still don't have a meaningful title, use the first paragraph
+                        if (!hasFoundMeaningfulTitle && text.length > 20) {
+                            const sentences = text.split(/[.!?]+/);
+                            noticeTitle = sentences[0].trim().substring(0, 100);
+                            if (noticeTitle.length === 100) noticeTitle += '...';
+                            hasFoundMeaningfulTitle = true;
+                        }
+                    }
+                } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
+                    const listItems = Array.from(nextEl.querySelectorAll('li'));
+                    const listText = listItems.map(li => li.textContent.trim());
+                    const listHTML = extractHTMLContent(nextEl);
+                    
+                    features.push(...listText);
+                    if (listHTML.trim()) {
+                        content.push(`<${nextEl.tagName.toLowerCase()}>${listHTML}</${nextEl.tagName.toLowerCase()}>`);
+                    }
+                }
+                nextEl = nextEl.nextElementSibling;
+            }
+            
+            currentElement = nextEl; // Move to next H4 or end
+        } else {
+            // Skip non-H4 elements (shouldn't happen in this context)
+            currentElement = currentElement.nextElementSibling;
+        }
+    }
+    
+    if (content.length > 0) {
+        const htmlContent = content.join('');
+        
+        // Generate anchor URL based on the notice title for Microsoft Learn What's New page
+        const link = generateNoticeAnchorUrl(noticeTitle, service.url);
+        
+        // Determine the notice type based on the title
+        let noticeType = 'notice'; // Default type for notices
+        if (noticeTitle && noticeTitle.toLowerCase().includes('plan for change')) {
+            noticeType = 'plan-for-change';
+        }
+        
+        const update = {
+            id: generateContentId(noticeTitle, '', htmlContent),
+            title: noticeTitle,
+            content: htmlContent,
+            features: features.length > 0 ? features : undefined,
+            service: service.displayName || service.name,
+            category: category,
+            type: noticeType,
+            link: link
+        };
+        
+        return [update];
+    }
+    
+    return [];
+}
+
+// Helper function to extract links from HTML content
+function extractLinkFromContent(htmlContent, baseUrl) {
+    if (!htmlContent) return baseUrl;
+    
+    const linkRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>/g;
+    const match = linkRegex.exec(htmlContent);
+    
+    if (match && match[1]) {
+        const href = match[1];
+        
+        // If it's already a full URL, return as-is
+        if (href.startsWith('http://') || href.startsWith('https://')) {
+            return href;
+        }
+        
+        // If it's a relative link starting with / or ../, make it absolute
+        if (href.startsWith('/') || href.startsWith('../')) {
+            return new URL(href, baseUrl).href;
+        }
+        
+        // For bare anchor references or paths without leading slash, 
+        // assume they are meant to be anchor links on the main page
+        if (href.includes('#')) {
+            // If it contains a hash, treat it as an anchor link on the main page
+            return `${baseUrl}#${href.split('#')[1]}`;
+        } else if (!href.includes('/') && !href.includes('.')) {
+            // If it's just a simple name without slashes or dots, treat it as an anchor
+            return `${baseUrl}#${href}`;
+        }
+        
+        // For other relative paths, make them absolute relative to the base URL directory
+        return new URL(href, baseUrl).href;
+    }
+    
+    return baseUrl;
+}
+
 
 // Helper function to parse update elements (optimized)
 function parseUpdateElement(currentElement, service) {
@@ -214,14 +600,38 @@ function parseUpdateElement(currentElement, service) {
     // Determine category based on title content first, then fall back to default
     const titleBasedCategory = mapTitleToCategory(title, service.name);
     
+    // Determine the type based on the title prefix
+    let updateType = 'update'; // default type
+    if (title.toLowerCase().includes('plan for change')) {
+        updateType = 'plan-for-change';
+    } else if (title.toLowerCase().includes('breaking change')) {
+        updateType = 'breaking-change';
+    } else if (title.toLowerCase().includes('general availability')) {
+        updateType = 'general-availability';
+    } else if (title.toLowerCase().includes('public preview')) {
+        updateType = 'public-preview';
+    } else if (title.toLowerCase().includes('important')) {
+        updateType = 'important';
+    }
+    
+    // For Plan for Change items, swap title and subtitle so the descriptive content becomes the title
+    let finalTitle = title;
+    let finalSubtitle = subtitle;
+    
+    if (updateType === 'plan-for-change' && subtitle) {
+        finalTitle = subtitle;  // Use the descriptive content as the title
+        finalSubtitle = title;  // Use "Plan for Change" as the subtitle
+    }
+    
     return {
-        id: generateContentId(title, subtitle, content), // Deterministic ID based on content
-        title: title,
-        subtitle: subtitle || undefined,
+        id: generateContentId(finalTitle, finalSubtitle, content), // Deterministic ID based on content
+        title: finalTitle,
+        subtitle: finalSubtitle || undefined,
         content: htmlContent, // Now includes HTML markup
         features: features.length > 0 ? features : undefined,
-        service: service.name, // Use service.name for display consistency
+        service: service.displayName || service.name, // Use displayName for table display, fallback to name
         category: titleBasedCategory, // Add individual update categorization
+        type: updateType, // Add type field to distinguish different kinds of updates
         link: link || service.url
     };
 }
@@ -237,149 +647,136 @@ async function fetchServiceUpdates(service) {
         const dom = new JSDOM(html);
         const document = dom.window.document;
         
-        const updates = [];
-        const notices = [];
         const weeklyUpdates = new Map();
         
         // Handle different structures for different services
-        if (service.tag === 'Entra') {
-            // For Entra ID, use enhanced parsing for the comprehensive structure
-            console.log(`🔍 Parsing Entra ID structure...`);
+        if (service.tag === 'Entra' || service.tag === 'DefenderIdentity' || service.tag === 'DefenderCloudApps') {
+            // For Entra ID, Microsoft Defender for Identity, and Microsoft Defender for Cloud Apps, use enhanced parsing for the comprehensive structure
+            console.log(`🔍 Parsing ${service.name} structure...`);
             const weeklyUpdates = await parseEntraUpdates(document, service);
             
-            // Still need to parse notices for Entra
-            const notices = [];
-            const noticeHeaders = Array.from(document.querySelectorAll('h3, h4'))
-                .filter(h => h.textContent.toLowerCase().includes('plan for change') || 
-                            h.textContent.toLowerCase().includes('notice') ||
-                            h.textContent.toLowerCase().includes('important'));
-            
-            console.log(`📋 Found ${noticeHeaders.length} potential notices`);
-            
-            noticeHeaders.forEach(header => {
-                let content = '';
-                let nextEl = header.nextElementSibling;
-                
-                while (nextEl && !['H2', 'H3', 'H4'].includes(nextEl.tagName)) {
-                    if (nextEl.tagName === 'P') {
-                        // Preserve HTML markup by converting to markdown-like syntax
-                        let htmlContent = nextEl.innerHTML.trim();
-                        
-                        // Convert HTML to markdown-like syntax
-                        htmlContent = htmlContent
-                            .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**') // <strong> to **bold**
-                            .replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**') // <b> to **bold**
-                            .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*') // <em> to *italic*
-                            .replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*') // <i> to *italic*
-                            .replace(/<code[^>]*>(.*?)<\/code>/gi, '`$1`') // <code> to `code`
-                            .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)') // <a> to [text](url)
-                            .replace(/<br\s*\/?>/gi, '\n') // <br> to newline
-                            .replace(/<[^>]+>/g, ''); // Remove any remaining HTML tags
-                        
-                        content += (content ? '\n' : '') + htmlContent;
-                    }
-                    nextEl = nextEl.nextElementSibling;
-                }
-                
-                if (content) {
-                    // Extract date from content if possible, otherwise use a stable date based on content
-                    let noticeDate = new Date().toISOString().split('T')[0]; // Default to today
-                    
-                    // Try to extract date from the title or content
-                    const dateMatch = (header.textContent + ' ' + content).match(/(\d{4}-\d{2}-\d{2}|\w+ \d{1,2}, \d{4}|\w+ \d{4})/i);
-                    if (dateMatch) {
-                        try {
-                            const extractedDate = new Date(dateMatch[1]);
-                            if (!isNaN(extractedDate.getTime())) {
-                                noticeDate = extractedDate.toISOString().split('T')[0];
-                            }
-                        } catch (e) {
-                            // Keep default date if parsing fails
-                        }
-                    } else {
-                        // If no date found, use a stable date based on content hash to avoid daily regeneration
-                        const contentHash = crypto.createHash('md5').update(header.textContent.trim() + content.trim()).digest('hex');
-                        const stableDate = new Date(2025, 0, 1); // Base date: Jan 1, 2025
-                        stableDate.setDate(1 + (parseInt(contentHash.substring(0, 8), 16) % 365)); // Add 0-364 days based on content
-                        noticeDate = stableDate.toISOString().split('T')[0];
-                    }
-                    
-                    // Extract URL for the notice using the same anchor extraction logic
-                    const noticeLink = extractSectionAnchorLink(header, service.url) || service.url;
-                    
-                    // Create notice without timestamp for consistent content
-                    const noticeData = {
-                        id: generateContentId(header.textContent.trim(), '', content), // Deterministic ID based on content
-                        title: header.textContent.trim(),
-                        content: content.trim(),
-                        date: noticeDate, // Use extracted or stable date instead of current date
-                        service: service.name, // Use service.name for display consistency
-                        type: 'warning',
-                        category: 'plan-for-change',
-                        status: 'active',
-                        source: 'microsoft-learn',
-                        link: noticeLink // Add URL to the notice
-                    };
-                    
-                    notices.push(noticeData);
-                }
-            });
-            
-            return { weeklyUpdates, notices };
+            return { weeklyUpdates, notices: [] };
         } else if (service.tag === 'Defender') {
-            // For Defender for Endpoint, use month-based parsing with bullet points
-            console.log(`🔍 Parsing Defender for Endpoint structure...`);
+            // For Defender XDR, use month-based parsing with bullet points
+            console.log(`🔍 Parsing Defender XDR structure...`);
             const weeklyUpdates = await parseDefenderUpdates(document, service);
             
-            // Parse notices for Defender for Endpoint (if any)
-            const notices = [];
-            const noticeHeaders = Array.from(document.querySelectorAll('h3, h4'))
-                .filter(h => h.textContent.toLowerCase().includes('plan for change') || 
-                            h.textContent.toLowerCase().includes('notice') ||
-                            h.textContent.toLowerCase().includes('important'));
+            return { weeklyUpdates, notices: [] };
+        } else if (service.tag === 'DefenderOffice') {
+            // For Defender for Office 365, use month-based parsing with bullet points (same as Defender XDR)
+            console.log(`🔍 Parsing Defender for Office 365 structure...`);
+            const weeklyUpdates = await parseDefenderOfficeUpdates(document, service);
             
-            console.log(`📋 Found ${noticeHeaders.length} potential notices`);
+            return { weeklyUpdates, notices: [] };
+        } else if (service.tag === 'DefenderEndpoint') {
+            // For Defender for Endpoint, use month-based parsing with bullet points (same as Defender XDR)
+            console.log(`🔍 Parsing Defender for Endpoint structure...`);
+            const weeklyUpdates = await parseDefenderEndpointUpdates(document, service);
             
-            noticeHeaders.forEach(header => {
-                let content = '';
-                let nextEl = header.nextElementSibling;
-                
-                while (nextEl && !['H2', 'H3', 'H4'].includes(nextEl.tagName)) {
-                    if (nextEl.tagName === 'P') {
-                        content += (content ? '\n' : '') + nextEl.textContent.trim();
-                    } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
-                        const listItems = Array.from(nextEl.querySelectorAll('li'));
-                        const listText = listItems.map(li => '• ' + li.textContent.trim()).join('\n');
-                        content += (content ? '\n' : '') + listText;
-                    }
-                    nextEl = nextEl.nextElementSibling;
-                }
-                
-                if (content) {
-                    const noticeLink = extractSectionAnchorLink(header, service.url) || service.url;
-                    const noticeData = {
-                        id: generateContentId(header.textContent.trim(), '', content),
-                        title: header.textContent.trim(),
-                        content: content.trim(),
-                        date: new Date().toISOString().split('T')[0],
-                        service: service.name, // Use service.name for display consistency
-                        type: 'warning',
-                        category: 'plan-for-change',
-                        status: 'active',
-                        source: 'microsoft-learn',
-                        link: noticeLink
-                    };
-                    notices.push(noticeData);
-                }
-            });
-            
-            return { weeklyUpdates, notices };
+            return { weeklyUpdates, notices: [] };
         } else {
             // For Intune, Windows 365, and other services, use week-based structure
             const weekHeaders = Array.from(document.querySelectorAll('h2'))
                 .filter(h2 => h2.textContent.includes('Week of'));
             
             console.log(`📅 Found ${weekHeaders.length} week sections for ${service.name}`);
+            
+            // For Intune, also process the Notices section
+            if (service.name === 'Intune') {
+                const noticesHeader = Array.from(document.querySelectorAll('h2'))
+                    .find(h2 => h2.textContent.trim().toLowerCase().includes('notice'));
+                
+                if (noticesHeader) {
+                    console.log(`📋 Found Notices section for ${service.name}`);
+                    
+                    // Process notices as a separate "week" entry
+                    const noticesDate = new Date().toISOString().split('T')[0]; // Use current date for notices
+                    const noticesWeekData = {
+                        week: "Notices",
+                        date: noticesDate,
+                        service: service.displayName || service.name,
+                        serviceRelease: null,
+                        topics: []
+                    };
+                    
+                    // Find H3 elements in the Notices section
+                    let currentElement = noticesHeader.nextElementSibling;
+                    let currentTopic = null;
+                    let noticeUpdateCount = 0;
+                    
+                    // Process until we hit another H2 or end of content
+                    while (currentElement && currentElement.tagName !== 'H2') {
+                        if (currentElement.tagName === 'H3') {
+                            // Each H3 in notices becomes a separate notice update
+                            if (currentTopic) {
+                                noticesWeekData.topics.push(currentTopic);
+                            }
+                            
+                            const noticeText = currentElement.textContent.trim();
+                            currentTopic = {
+                                topic: 'Notices', // Group all notices under one topic
+                                category: 'notices',
+                                updates: []
+                            };
+                            
+                            // Parse this H3 as a notice (always process, even if title is empty)
+                            const noticeUpdates = parseIntuneUpdateElement(currentElement, service);
+                            if (noticeUpdates && noticeUpdates.length > 0) {
+                                currentTopic.updates.push(...noticeUpdates);
+                                noticeUpdateCount += noticeUpdates.length;
+                            }
+                            
+                            // Skip ahead past all content for this H3
+                            while (currentElement.nextElementSibling && 
+                                   currentElement.nextElementSibling.tagName !== 'H3' && 
+                                   currentElement.nextElementSibling.tagName !== 'H2') {
+                                currentElement = currentElement.nextElementSibling;
+                            }
+                        } else if (currentElement.tagName === 'H4') {
+                            // This is a stray H4 that wasn't grouped under an H3 - it should be processed as part of notices
+                            
+                            // Create a new topic if we don't have one
+                            if (!currentTopic) {
+                                currentTopic = {
+                                    topic: 'Notices',
+                                    category: 'notices',
+                                    updates: []
+                                };
+                            }
+                            
+                            // Process this H4 and any following elements as a notice
+                            // We need to find the parent H3 or group these H4s together
+                            const orphanedH4Updates = parseOrphanedH4sAsNotice(currentElement, service);
+                            if (orphanedH4Updates && orphanedH4Updates.length > 0) {
+                                currentTopic.updates.push(...orphanedH4Updates);
+                                noticeUpdateCount += orphanedH4Updates.length;
+                            }
+                            
+                            // Skip past the content we just processed
+                            while (currentElement && currentElement.tagName !== 'H3' && currentElement.tagName !== 'H2') {
+                                currentElement = currentElement.nextElementSibling;
+                            }
+                            continue; // Don't advance currentElement again
+                        } else {
+                            // Skip non-H3/H4 elements
+                            currentElement = currentElement.nextElementSibling;
+                        }
+                        
+                        currentElement = currentElement.nextElementSibling;
+                    }
+                    
+                    // Add the last topic (if it exists)
+                    if (currentTopic) {
+                        noticesWeekData.topics.push(currentTopic);
+                    }
+                    
+                    // Add notices data if we found any
+                    if (noticeUpdateCount > 0) {
+                        weeklyUpdates.set(noticesDate + '-notices', noticesWeekData);
+                        console.log(`📋 Processed ${noticeUpdateCount} notice updates`);
+                    }
+                }
+            }
             
             weekHeaders.forEach((weekHeader, index) => {
                 const weekText = weekHeader.textContent.trim();
@@ -398,7 +795,7 @@ async function fetchServiceUpdates(service) {
                 const weekData = {
                     week: weekText,
                     date: date,
-                    service: service.name, // Use service.name for display consistency
+                    service: service.displayName || service.name, // Use displayName for table display, fallback to name
                     serviceRelease: serviceRelease,
                     topics: []
                 };
@@ -416,13 +813,31 @@ async function fetchServiceUpdates(service) {
                         }
                         
                         const topicText = currentElement.textContent.trim();
+                        const cleanedTopicText = cleanTopicText(topicText);
                         currentTopic = {
-                            topic: topicText,
-                            category: mapTopicToCategory(topicText),
+                            topic: cleanedTopicText,
+                            category: mapTopicToCategory(cleanedTopicText),
                             updates: []
                         };
-                    } else if (currentElement.tagName === 'H4' && currentTopic) {
-                        // Individual update
+                        
+                        // For Intune, always use parseIntuneUpdateElement which properly handles H4 subsections
+                        if (service.name === 'Intune') {
+                            // parseIntuneUpdateElement returns an array of updates (one for each H4)
+                            const updates = parseIntuneUpdateElement(currentElement, service);
+                            if (updates && updates.length > 0) {
+                                currentTopic.updates.push(...updates);
+                                updateCount += updates.length;
+                            }
+                            
+                            // Skip ahead past all H4 subsections for this H3
+                            while (currentElement.nextElementSibling && 
+                                   currentElement.nextElementSibling.tagName !== 'H3' && 
+                                   !currentElement.nextElementSibling.textContent.includes('Week of')) {
+                                currentElement = currentElement.nextElementSibling;
+                            }
+                        }
+                    } else if (currentElement.tagName === 'H4' && currentTopic && service.name !== 'Intune') {
+                        // Individual update (for non-Intune services that use H4 as separate updates)
                         const update = parseUpdateElement(currentElement, service);
                         if (update) {
                             // If the update has a specific category, update the topic category to match
@@ -437,7 +852,7 @@ async function fetchServiceUpdates(service) {
                     currentElement = currentElement.nextElementSibling;
                 }
                 
-                // Add the last topic
+                // Add the last topic (if it exists)
                 if (currentTopic) {
                     weekData.topics.push(currentTopic);
                 }
@@ -457,63 +872,7 @@ async function fetchServiceUpdates(service) {
             console.log(`✅ Completed ${service.name}: ${weekHeaders.length} weeks, ${weeklyUpdates.size} weeks with updates`);
         }
         
-        // Look for important notices (typically at the top of the page)
-        const noticeHeaders = Array.from(document.querySelectorAll('h3, h4'))
-            .filter(h => h.textContent.toLowerCase().includes('plan for change') || 
-                        h.textContent.toLowerCase().includes('notice') ||
-                        h.textContent.toLowerCase().includes('important'));
-        
-        noticeHeaders.forEach(header => {
-            let content = '';
-            const htmlParts = [];
-            let nextEl = header.nextElementSibling;
-            
-            while (nextEl && !['H2', 'H3', 'H4'].includes(nextEl.tagName)) {
-                if (nextEl.tagName === 'P') {
-                    // Preserve HTML markup for better formatting
-                    const text = nextEl.textContent.trim();
-                    const htmlContent = extractHTMLContent(nextEl);
-                    
-                    content += (content ? '\n' : '') + text;
-                    htmlParts.push(`<p>${htmlContent}</p>`);
-                } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
-                    // Include list content in notices
-                    const listItems = Array.from(nextEl.querySelectorAll('li'));
-                    const listText = listItems.map(li => '• ' + li.textContent.trim()).join('\n');
-                    const listHTML = extractHTMLContent(nextEl);
-                    
-                    content += (content ? '\n' : '') + listText;
-                    htmlParts.push(`<${nextEl.tagName.toLowerCase()}>${listHTML}</${nextEl.tagName.toLowerCase()}>`);
-                }
-                nextEl = nextEl.nextElementSibling;
-            }
-            
-            if (content) {
-                // Create content with HTML markup for proper display
-                const htmlContent = htmlParts.length > 0 ? htmlParts.join('') : `<p>${content}</p>`;
-                
-                // Extract URL for the notice using the same anchor extraction logic
-                const noticeLink = extractSectionAnchorLink(header, service.url) || service.url;
-                
-                // Create notice without timestamp for consistent content
-                const noticeData = {
-                    id: generateContentId(header.textContent.trim(), '', content), // Deterministic ID based on content
-                    title: header.textContent.trim(),
-                    content: htmlContent, // HTML markup for proper display
-                    date: new Date().toISOString().split('T')[0],
-                    service: service.name, // Use service.name for display consistency
-                    type: 'warning',
-                    category: 'plan-for-change',
-                    status: 'active',
-                    source: 'microsoft-learn',
-                    link: noticeLink // Add URL to the notice
-                };
-                
-                notices.push(noticeData);
-            }
-        });
-        
-        return { weeklyUpdates, notices };
+        return { weeklyUpdates, notices: [] };
         
     } catch (error) {
         console.error('Error fetching updates:', error);
@@ -573,7 +932,7 @@ function mapTopicToCategory(topicText) {
     if (topic.includes('external') && topic.includes('identities')) return 'external-identities';
     if (topic.includes('application') && topic.includes('management')) return 'application-management';
     
-    // Defender for Endpoint-specific mappings
+    // Defender XDR-specific mappings
     if (topic.includes('monthly') && topic.includes('updates')) return 'monthly-updates';
     if (topic.includes('advanced') && topic.includes('hunting')) return 'threat-hunting';
     if (topic.includes('incident') || topic.includes('response')) return 'incident-response';
@@ -649,8 +1008,8 @@ function mapTitleToCategory(title, service) {
 async function generateDataFiles() {
     console.log('Starting data generation...');
     
-    // Ensure all service directories exist
-    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR, DEFENDER_UPDATES_DIR, DEFENDER_NOTICES_DIR, WINDOWS365_UPDATES_DIR, WINDOWS365_NOTICES_DIR].forEach(dir => {
+    // Ensure all service directories exist (updates only)
+    [DATA_DIR, UPDATES_DIR, INTUNE_UPDATES_DIR, ENTRA_UPDATES_DIR, DEFENDER_UPDATES_DIR, DEFENDEROFFICE_UPDATES_DIR, DEFENDERENDPOINT_UPDATES_DIR, DEFENDERIDENTITY_UPDATES_DIR, DEFENDERCLOUDAPPS_UPDATES_DIR, WINDOWS365_UPDATES_DIR].forEach(dir => {
         if (!existsSync(dir)) {
             console.log(`Creating directory: ${dir}`);
             mkdirSync(dir, { recursive: true });
@@ -662,14 +1021,12 @@ async function generateDataFiles() {
         
         // Track overall stats
         let totalUpdates = 0;
-        let totalNotices = 0;
         const allDataFiles = [];
         
         // Process each service separately
-        for (const [serviceKey, { weeklyUpdates, notices, service }] of Object.entries(serviceData)) {
+        for (const [serviceKey, { weeklyUpdates, service }] of Object.entries(serviceData)) {
             console.log(`\n=== Processing ${service.name} ===`);
             console.log(`Found ${weeklyUpdates.size} weeks of updates`);
-            console.log(`Found ${notices.length} notices`);
             
             // Generate service-specific update files
             const serviceDataFiles = [];
@@ -680,11 +1037,11 @@ async function generateDataFiles() {
             const serviceUpdatesDir = serviceKey === 'intune' ? INTUNE_UPDATES_DIR : 
                                     serviceKey === 'entra' ? ENTRA_UPDATES_DIR : 
                                     serviceKey === 'defender' ? DEFENDER_UPDATES_DIR :
+                                    serviceKey === 'defenderoffice' ? DEFENDEROFFICE_UPDATES_DIR :
+                                    serviceKey === 'defenderendpoint' ? DEFENDERENDPOINT_UPDATES_DIR :
+                                    serviceKey === 'defenderidentity' ? DEFENDERIDENTITY_UPDATES_DIR :
+                                    serviceKey === 'defendercloudapps' ? DEFENDERCLOUDAPPS_UPDATES_DIR :
                                     WINDOWS365_UPDATES_DIR;
-            const serviceNoticesDir = serviceKey === 'intune' ? INTUNE_NOTICES_DIR : 
-                                    serviceKey === 'entra' ? ENTRA_NOTICES_DIR : 
-                                    serviceKey === 'defender' ? DEFENDER_NOTICES_DIR :
-                                    WINDOWS365_NOTICES_DIR;
             
             for (const [date, weekData] of weeklyUpdates) {
                 const filename = `${date}.json`;
@@ -706,7 +1063,7 @@ async function generateDataFiles() {
                         path: `updates/${serviceKey}/${filename}`,
                         week: weekData.week || weekData.month || `Week of ${weekData.date}`,
                         date: weekData.date,
-                        service: service.name, // Use service.name instead of service.tag for display
+                        service: service.name, // Use full service name for dropdown filter display
                         serviceRelease: weekData.serviceRelease,
                         updates: updateCount
                     });
@@ -754,7 +1111,7 @@ async function generateDataFiles() {
                                         path: `updates/${serviceKey}/${filename}`,
                                         week: displayText,
                                         date: existingData.date,
-                                        service: existingData.service || service.name, // Use service.name as fallback
+                                        service: service.name, // Use full service name for dropdown filter display
                                         serviceRelease: existingData.serviceRelease || null,
                                         updates: updateCount
                                     });
@@ -772,89 +1129,8 @@ async function generateDataFiles() {
                 console.warn(`⚠️  Error scanning existing files for ${service.name}:`, scanError.message);
             }
             
-            // Generate service-specific notice files
-            const serviceNoticeFiles = [];
-            let noticesUpdated = 0;
-            
-            if (notices.length > 0) {
-                notices.forEach((notice) => {
-                    // Create a unique filename based on notice title and date
-                    const sanitizedTitle = notice.title
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]/g, '-')
-                        .replace(/-+/g, '-')
-                        .replace(/^-|-$/g, '')
-                        .substring(0, 50);
-                    
-                    const filename = `${notice.date}-${sanitizedTitle}.json`;
-                    const filePath = `${serviceNoticesDir}/${filename}`;
-                    
-                    // Check if file exists and content has changed
-                    const fileExists = existsSync(filePath);
-                    const contentChanged = hasContentChanged(filePath, notice);
-                    
-                    if (contentChanged) {
-                        // Add timestamp only when writing
-                        const noticeWithTimestamp = {
-                            ...notice,
-                            lastUpdated: new Date().toISOString()
-                        };
-                        
-                        writeFileSync(filePath, JSON.stringify(noticeWithTimestamp, null, 2));
-                        noticesUpdated++;
-                        
-                        if (fileExists) {
-                            console.log(`✅ Updated ${serviceKey}/notices/${filename} (content changed)`);
-                        } else {
-                            console.log(`✅ Created ${serviceKey}/notices/${filename} (new notice)`);
-                        }
-                    } else {
-                        if (fileExists) {
-                            console.log(`⏭️  Skipped ${serviceKey}/notices/${filename} (no changes)`);
-                        } else {
-                            console.log(`⚠️  Notice exists with same content: ${filename}`);
-                        }
-                    }
-                    
-                    serviceNoticeFiles.push({
-                        filename: filename,
-                        path: `notices/${serviceKey}/${filename}`,
-                        title: notice.title,
-                        date: notice.date,
-                        service: service.name, // Use service.name instead of service.tag for display
-                        type: notice.type,
-                        category: notice.category
-                    });
-                });
-                
-                console.log(`📁 ${service.name} - Notices processed: ${notices.length}, Files updated: ${noticesUpdated}`);
-            }
-            
-            // Create service-specific notices index
-            const serviceNoticesIndexPath = `${serviceNoticesDir}/index.json`;
-            const serviceNoticesIndexDataWithoutTimestamp = {
-                service: service.tag,
-                serviceName: service.name,
-                totalNotices: notices.length,
-                totalFiles: serviceNoticeFiles.length,
-                noticeFiles: serviceNoticeFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
-            };
-            
-            if (hasContentChanged(serviceNoticesIndexPath, serviceNoticesIndexDataWithoutTimestamp)) {
-                const serviceNoticesIndexData = {
-                    lastUpdated: new Date().toISOString(),
-                    ...serviceNoticesIndexDataWithoutTimestamp
-                };
-                
-                writeFileSync(serviceNoticesIndexPath, JSON.stringify(serviceNoticesIndexData, null, 2));
-                console.log(`✅ Updated ${serviceKey}/notices/index.json with ${serviceNoticeFiles.length} notice files`);
-            } else {
-                console.log(`⏭️  Skipped ${serviceKey}/notices/index.json (no changes)`);
-            }
-            
             // Add to overall tracking
             totalUpdates += serviceUpdates;
-            totalNotices += notices.length;
             allDataFiles.push(...serviceDataFiles);
         }
         
@@ -865,17 +1141,15 @@ async function generateDataFiles() {
             return;
         }
         
-        // Group all data files by month for the main index
-        const monthlyGroups = groupDataFilesByMonth(allDataFiles);
+        // Group all data files by month for the main index (commented out to remove monthly grouping)
+        // const monthlyGroups = groupDataFilesByMonth(allDataFiles);
         
         // Create main index data without timestamp first for comparison
         const indexDataWithoutTimestamp = {
             totalUpdates: totalUpdates,
             totalFiles: allDataFiles.length,
-            totalMonths: monthlyGroups.length,
-            totalNotices: totalNotices,
-            services: Object.keys(serviceData).map(key => serviceData[key].service.name), // Use service.name for display
-            monthlyGroups: monthlyGroups,
+            totalNotices: 0, // No notices are generated anymore
+            services: Object.keys(serviceData).map(key => serviceData[key].service.name), // Use service.name (full name) for dropdown filter display
             dataFiles: allDataFiles.sort((a, b) => new Date(b.date) - new Date(a.date))
         };
         
@@ -890,7 +1164,7 @@ async function generateDataFiles() {
         // Check if content has changed (excluding timestamp) for logging purposes
         if (hasContentChanged(indexFilePath, indexDataWithoutTimestamp)) {
             writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
-            console.log(`✅ Updated index.json with ${allDataFiles.length} data files from ${Object.keys(serviceData).length} services grouped into ${monthlyGroups.length} months`);
+            console.log(`✅ Updated index.json with ${allDataFiles.length} data files from ${Object.keys(serviceData).length} services`);
         } else {
             // Still write the file to update the timestamp, but log it differently
             writeFileSync(indexFilePath, JSON.stringify(indexData, null, 2));
@@ -899,7 +1173,7 @@ async function generateDataFiles() {
         
         console.log('\n=== Data generation completed successfully! ===');
         console.log(`Total: ${totalUpdates} updates across ${allDataFiles.length} weeks from ${Object.keys(serviceData).length} services`);
-        console.log(`Total: ${totalNotices} notices from all services`);
+        console.log(`Total: 0 notices from all services`);
         
     } catch (error) {
         console.error('Error during data generation:', error);
@@ -912,7 +1186,7 @@ async function createFallbackData() {
     console.log('Creating fallback data with service separation...');
     
     // Ensure all service directories exist
-    [DATA_DIR, UPDATES_DIR, NOTICES_DIR, INTUNE_UPDATES_DIR, INTUNE_NOTICES_DIR, ENTRA_UPDATES_DIR, ENTRA_NOTICES_DIR, DEFENDER_UPDATES_DIR, DEFENDER_NOTICES_DIR, WINDOWS365_UPDATES_DIR, WINDOWS365_NOTICES_DIR].forEach(dir => {
+    [DATA_DIR, UPDATES_DIR, INTUNE_UPDATES_DIR, ENTRA_UPDATES_DIR, DEFENDER_UPDATES_DIR, DEFENDEROFFICE_UPDATES_DIR, DEFENDERENDPOINT_UPDATES_DIR, DEFENDERIDENTITY_UPDATES_DIR, WINDOWS365_UPDATES_DIR].forEach(dir => {
         if (!existsSync(dir)) {
             console.log(`Creating directory: ${dir}`);
             mkdirSync(dir, { recursive: true });
@@ -983,11 +1257,11 @@ async function createFallbackData() {
     writeFileSync(`${ENTRA_UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackEntraData, null, 2));
     console.log('Generated fallback updates/entra/2025-07-14.json');
     
-    // Create fallback Defender for Endpoint update data
+    // Create fallback Defender XDR update data
     const fallbackDefenderData = {
         month: "July 2025", // Use month instead of week for Defender
         date: "2025-07-14",
-        service: "Defender for Endpoint", // Use full service name for consistency
+        service: "Defender XDR", // Use full service name for consistency
         serviceRelease: null,
         topics: [
             {
@@ -995,11 +1269,11 @@ async function createFallbackData() {
                 category: "monthly-updates",
                 updates: [
                     {
-                        id: generateContentId("July 2025 Updates", "Monthly Summary", "Microsoft Defender for Endpoint continues to evolve with new features for threat detection, investigation, and response capabilities."),
+                        id: generateContentId("July 2025 Updates", "Monthly Summary", "Microsoft Defender XDR continues to evolve with new features for threat detection, investigation, and response capabilities."),
                         title: "July 2025 Updates",
                         subtitle: "Monthly Summary",
                         content: "<ul><li>New advanced hunting tables are now available for preview, providing enhanced visibility into security events across Microsoft 365 workloads</li><li>Enhanced query performance and reliability for threat hunting operations</li><li>Improved integration with Microsoft Sentinel for comprehensive security operations</li><li>Updated incident response workflows with automated containment actions</li><li>Enhanced Microsoft Copilot integration for natural language threat hunting queries</li></ul>",
-                        service: "Defender for Endpoint", // Use full service name for consistency
+                        service: "Defender XDR", // Use full service name for consistency
                         link: "https://learn.microsoft.com/en-us/defender-xdr/whats-new"
                     }
                 ]
@@ -1009,6 +1283,60 @@ async function createFallbackData() {
     
     writeFileSync(`${DEFENDER_UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackDefenderData, null, 2));
     console.log('Generated fallback updates/defender/2025-07-14.json');
+    
+    // Create fallback Microsoft Defender for Identity update data
+    const fallbackDefenderIdentityData = {
+        month: "July 2025", // Use month instead of week for Defender Identity
+        date: "2025-07-14",
+        service: "Microsoft Defender for Identity", // Use full service name for consistency
+        serviceRelease: null,
+        topics: [
+            {
+                topic: "July 2025 Updates",
+                category: "monthly-updates",
+                updates: [
+                    {
+                        id: generateContentId("July 2025 Updates", "Monthly Summary", "Microsoft Defender for Identity continues to evolve with new features for identity security, threat detection, and user behavior analytics."),
+                        title: "July 2025 Updates",
+                        subtitle: "Monthly Summary",
+                        content: "<ul><li>Enhanced identity protection with improved behavioral analytics for detecting suspicious user activities</li><li>New threat intelligence integration for better detection of identity-based attacks</li><li>Improved reporting capabilities with enhanced identity security posture dashboards</li><li>Updated investigation tools for faster identity threat response</li><li>Enhanced integration with Microsoft Sentinel for comprehensive identity security operations</li></ul>",
+                        service: "Microsoft Defender for Identity", // Use full service name for consistency
+                        link: "https://learn.microsoft.com/en-us/defender-for-identity/whats-new"
+                    }
+                ]
+            }
+        ]
+    };
+    
+    writeFileSync(`${DEFENDERIDENTITY_UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackDefenderIdentityData, null, 2));
+    console.log('Generated fallback updates/defenderidentity/2025-07-14.json');
+    
+    // Create fallback Microsoft Defender for Cloud Apps update data
+    const fallbackDefenderCloudAppsData = {
+        month: "July 2025", // Use month instead of week for Defender Cloud Apps
+        date: "2025-07-14",
+        service: "Microsoft Defender for Cloud Apps", // Use full service name for consistency
+        serviceRelease: null,
+        topics: [
+            {
+                topic: "July 2025 Updates",
+                category: "monthly-updates",
+                updates: [
+                    {
+                        id: generateContentId("July 2025 Updates", "Monthly Summary", "Microsoft Defender for Cloud Apps continues to evolve with new features for cloud security, app governance, and data protection."),
+                        title: "July 2025 Updates",
+                        subtitle: "Monthly Summary",
+                        content: "<ul><li>Enhanced cloud app discovery with improved shadow IT detection capabilities</li><li>New data loss prevention policies for better protection of sensitive information in cloud apps</li><li>Improved threat protection with advanced behavioral analytics for cloud app usage</li><li>Updated governance controls for better management of cloud app permissions and access</li><li>Enhanced integration with Microsoft Purview for comprehensive data protection across cloud services</li></ul>",
+                        service: "Microsoft Defender for Cloud Apps", // Use full service name for consistency
+                        link: "https://learn.microsoft.com/en-us/defender-cloud-apps/release-notes"
+                    }
+                ]
+            }
+        ]
+    };
+    
+    writeFileSync(`${DEFENDERCLOUDAPPS_UPDATES_DIR}/2025-07-14.json`, JSON.stringify(fallbackDefenderCloudAppsData, null, 2));
+    console.log('Generated fallback updates/defendercloudapps/2025-07-14.json');
     
     // Create fallback system notice
     const fallbackNoticeBase = {
@@ -1030,56 +1358,10 @@ async function createFallbackData() {
     
     const noticeFilename = `${fallbackNotice.date}-data-generation-notice.json`;
     
-    // Create notices in all service directories for visibility
-    [INTUNE_NOTICES_DIR, ENTRA_NOTICES_DIR, DEFENDER_NOTICES_DIR].forEach(dir => {
-        writeFileSync(`${dir}/${noticeFilename}`, JSON.stringify(fallbackNotice, null, 2));
-    });
-    console.log(`Generated fallback notices in all service directories`);
+    console.log(`Generated fallback notices data structure (notices section removed)`);
     
-    // Create service-specific notices indexes
-    const noticeFileEntry = {
-        filename: noticeFilename,
-        path: `notices/system/${noticeFilename}`,
-        title: fallbackNotice.title,
-        date: fallbackNotice.date,
-        service: "System",
-        type: fallbackNotice.type,
-        category: fallbackNotice.category
-    };
-    
-    // Intune notices index
-    const intuneNoticesIndexData = {
-        lastUpdated: new Date().toISOString(),
-        service: "Intune",
-        serviceName: "Microsoft Intune",
-        totalNotices: 1,
-        totalFiles: 1,
-        noticeFiles: [noticeFileEntry]
-    };
-    writeFileSync(`${INTUNE_NOTICES_DIR}/index.json`, JSON.stringify(intuneNoticesIndexData, null, 2));
-    
-    // Entra notices index
-    const entraNoticesIndexData = {
-        lastUpdated: new Date().toISOString(),
-        service: "Entra ID",
-        serviceName: "Microsoft Entra ID",
-        totalNotices: 1,
-        totalFiles: 1,
-        noticeFiles: [noticeFileEntry]
-    };
-    writeFileSync(`${ENTRA_NOTICES_DIR}/index.json`, JSON.stringify(entraNoticesIndexData, null, 2));
-    
-    // Defender notices index
-    const defenderNoticesIndexData = {
-        lastUpdated: new Date().toISOString(),
-        service: "Defender", // Keep service tag for internal routing
-        serviceName: "Defender for Endpoint",
-        totalNotices: 1,
-        totalFiles: 1,
-        noticeFiles: [noticeFileEntry]
-    };
-    writeFileSync(`${DEFENDER_NOTICES_DIR}/index.json`, JSON.stringify(defenderNoticesIndexData, null, 2));
-    console.log('Generated fallback notices indexes for all services');
+    // Service-specific notice indexes removed - notices section eliminated
+    console.log('Notice system completely removed - Plan for Change items integrated into regular updates');
     
     // Create fallback main index
     const allDataFiles = [
@@ -1106,7 +1388,16 @@ async function createFallbackData() {
             path: "updates/defender/2025-07-14.json",
             week: "July 2025", // Use month for Defender display
             date: "2025-07-14",
-            service: "Defender for Endpoint", // Use full service name
+            service: "Defender XDR", // Use full service name
+            serviceRelease: null,
+            updates: 1
+        },
+        {
+            filename: "2025-07-14.json",
+            path: "updates/defenderidentity/2025-07-14.json",
+            week: "July 2025", // Use month for Defender Identity display
+            date: "2025-07-14",
+            service: "Defender for Identity", // Use full service name
             serviceRelease: null,
             updates: 1
         }
@@ -1116,11 +1407,11 @@ async function createFallbackData() {
     
     const indexData = {
         lastGenerated: new Date().toISOString(),
-        totalUpdates: 3,
-        totalFiles: 3,
+        totalUpdates: 4,
+        totalFiles: 4,
         totalMonths: monthlyGroups.length,
-        totalNotices: 3,
-        services: ["Intune", "Entra ID", "Defender for Endpoint"], // Use full service names
+        totalNotices: 4,
+        services: ["Intune", "Entra ID", "Defender XDR", "Defender for Identity"], // Use full service names
         monthlyGroups: monthlyGroups,
         dataFiles: allDataFiles
     };
@@ -1129,6 +1420,35 @@ async function createFallbackData() {
     console.log('Generated fallback index.json with service separation');
     
     console.log('Fallback data creation completed with service-separated structure');
+}
+
+// Helper function to clean topic text by removing type prefixes
+function cleanTopicText(topicText) {
+    // List of type prefixes to remove from topic names
+    const typePrefixes = [
+        'Plan for Change:', 'Plan for change:', 
+        'Breaking Change:', 'Breaking change:',
+        'General Availability:', 'Public Preview:', 'Private Preview:',
+        'Deprecated:', 'Important Notice:', 'Notice:', 'Announcement:',
+        'Important:', 'Update:', 'New Feature:', 'Feature Update:'
+    ];
+    
+    let cleanedText = topicText;
+    
+    // Remove type prefixes from the beginning of the topic text
+    for (const prefix of typePrefixes) {
+        if (cleanedText.startsWith(prefix)) {
+            cleanedText = cleanedText.substring(prefix.length).trim();
+            break;
+        }
+    }
+    
+    // If the cleaned text is empty or too short, return the original
+    if (!cleanedText || cleanedText.length < 10) {
+        return topicText;
+    }
+    
+    return cleanedText;
 }
 
 // Utility functions for change detection and monthly grouping
@@ -1305,7 +1625,7 @@ async function parseEntraUpdates(document, service) {
                     const monthData = {
                         month: monthText,
                         date: monthDate,
-                        service: service.name, // Use service.name for display consistency
+                        service: service.displayName || service.name, // Use displayName for table display, fallback to name
                         serviceRelease: null,
                         topics: []
                     };
@@ -1336,7 +1656,7 @@ async function parseEntraUpdates(document, service) {
         const monthData = {
             month: monthText,
             date: dateString,
-            service: service.name, // Use service.name for display consistency
+            service: service.displayName || service.name, // Use displayName for table display, fallback to name
             serviceRelease: null,
             topics: []
         };
@@ -1358,8 +1678,15 @@ async function parseEntraUpdates(document, service) {
                 console.log(`Found standalone list, checking if it should be parsed...`);
                 console.log(`List content preview: "${currentElement.textContent.trim().substring(0, 100)}..."`);
                 console.log(`isPreviousElementHeader result: ${isPreviousElementHeader(currentElement)}`);
-                parseListUpdates(currentElement, monthData);
-                foundUpdates++;
+                
+                // Skip very short lists that might be fragments of larger updates
+                const listText = currentElement.textContent.trim();
+                if (listText.length < 80) {
+                    console.log(`    Skipping short standalone list (${listText.length} chars): "${listText}"`);
+                } else {
+                    parseListUpdates(currentElement, monthData);
+                    foundUpdates++;
+                }
             } else if (currentElement.tagName === 'DIV' && currentElement.querySelector('h3, h4, table')) {
                 console.log(`Found div with content, parsing...`);
                 // Check for tables within the div
@@ -1367,11 +1694,11 @@ async function parseEntraUpdates(document, service) {
                 tables.forEach(table => parseTableUpdates(table, monthData));
                 
                 // Check for direct sections
-                parseSectionUpdates(currentElement, monthData);
+                parseSectionUpdates(currentElement, monthData, service);
                 foundUpdates++;
             } else if (currentElement.tagName === 'H3' || currentElement.tagName === 'H4') {
                 console.log(`Found ${currentElement.tagName}: "${currentElement.textContent.trim().substring(0, 50)}..."`);
-                parseDirectSection(currentElement, monthData);
+                parseDirectSection(currentElement, monthData, service);
                 foundUpdates++;
             }
             
@@ -1400,11 +1727,11 @@ async function parseEntraUpdates(document, service) {
     return weeklyUpdates;
 }
 
-// Enhanced parsing function specifically for Defender for Endpoint updates
+// Enhanced parsing function specifically for Defender XDR updates
 async function parseDefenderUpdates(document, service) {
     const weeklyUpdates = new Map();
     
-    console.log(`\n=== DEBUGGING DEFENDER FOR ENDPOINT STRUCTURE ===`);
+    console.log(`\n=== DEBUGGING DEFENDER XDR STRUCTURE ===`);
     console.log(`Processing ${service.name} from ${service.url}`);
     
     // Look for month-based headers (e.g., "July 2025", "June 2025")
@@ -1437,7 +1764,7 @@ async function parseDefenderUpdates(document, service) {
         const monthData = {
             month: monthText,
             date: dateString,
-            service: service.name, // Use service.name for display consistency
+            service: service.displayName || service.name, // Use displayName for table display, fallback to name
             serviceRelease: null,
             topics: []
         };
@@ -1451,7 +1778,242 @@ async function parseDefenderUpdates(document, service) {
         while (currentElement && !isNextMonthHeader(currentElement)) {
             if (currentElement.tagName === 'UL') {
                 console.log(`Found bullet list, collecting bullet points...`);
-                const listItems = Array.from(currentElement.querySelectorAll('li'));
+                const listItems = Array.from(currentElement.querySelectorAll(':scope > li'));
+                
+                listItems.forEach(item => {
+                    const fullText = extractTextContent(item);
+                    if (fullText.trim()) {
+                        const itemHTML = extractHTMLContent(item);
+                        allBulletPoints.push({
+                            text: fullText.trim(),
+                            html: itemHTML
+                        });
+                    }
+                });
+            }
+            
+            currentElement = currentElement.nextElementSibling;
+        }
+        
+        // If we found bullet points, create a single combined update for the month
+        if (allBulletPoints.length > 0) {
+            console.log(`Found ${allBulletPoints.length} updates in ${monthText}, combining into single update`);
+            
+            // Create combined HTML content with all bullet points
+            const combinedHTML = `<ul>${allBulletPoints.map(bp => `<li>${bp.html}</li>`).join('')}</ul>`;
+            const combinedText = allBulletPoints.map(bp => bp.text).join(' ');
+            
+            // Create a single update for the entire month
+            const monthlyUpdate = {
+                id: generateContentId(`${monthText} Updates`, 'Monthly Summary', combinedText),
+                title: `${monthText} Updates`,
+                subtitle: 'Monthly Summary',
+                content: combinedHTML,
+                service: service.name, // Use service.name for display consistency
+                link: monthLink
+            };
+            
+            // Create a single topic containing the monthly update
+            const monthlyTopic = {
+                topic: `${monthText} Updates`,
+                category: 'monthly-updates',
+                updates: [monthlyUpdate]
+            };
+            
+            monthData.topics.push(monthlyTopic);
+            
+            console.log(`✅ Created combined update for ${monthText} with ${allBulletPoints.length} bullet points`);
+            weeklyUpdates.set(dateString, monthData);
+        } else {
+            console.log(`❌ Skipping month ${monthText} - no updates found`);
+        }
+    }
+    
+    console.log(`\n=== DEFENDER XDR PARSING COMPLETE ===`);
+    console.log(`Total months with updates: ${weeklyUpdates.size}`);
+    
+    return weeklyUpdates;
+}
+
+// Enhanced parsing function specifically for Defender for Office 365 updates
+async function parseDefenderOfficeUpdates(document, service) {
+    const weeklyUpdates = new Map();
+    
+    console.log(`\n=== DEBUGGING DEFENDER FOR OFFICE 365 STRUCTURE ===`);
+    console.log(`Processing ${service.name} from ${service.url}`);
+    
+    // Look for month-based headers (e.g., "July 2025", "June 2025", "April/May 2021", "February/March 2021")
+    const monthHeaders = Array.from(document.querySelectorAll('h2'))
+        .filter(header => {
+            const text = header.textContent.trim();
+            // Match single months like "June 2021" or combined months like "April/May 2021"
+            const isMonth = /^(January|February|March|April|May|June|July|August|September|October|November|December)(\/(January|February|March|April|May|June|July|August|September|October|November|December))?\s+\d{4}$/i.test(text);
+            if (isMonth) {
+                console.log(`Found month header: "${text}" (${header.tagName})`);
+            }
+            return isMonth;
+        });
+    
+    console.log(`\nFound ${monthHeaders.length} month sections for ${service.name}`);
+    
+    // Process found month headers
+    for (const monthHeader of monthHeaders) {
+        const monthText = monthHeader.textContent.trim();
+        console.log(`\n=== Processing ${service.name}: ${monthText} ===`);
+        
+        // Extract date from month header
+        let dateString;
+        if (monthText.includes('/')) {
+            // Handle combined months like "April/May 2021" - use the last month mentioned
+            const parts = monthText.split(' ');
+            const year = parts[parts.length - 1];
+            const monthPart = parts.slice(0, -1).join(' ');
+            const lastMonth = monthPart.split('/').pop().trim();
+            const monthIndex = new Date(Date.parse(lastMonth + " 1, 2000")).getMonth();
+            const lastDayOfMonth = new Date(parseInt(year), monthIndex + 1, 0);
+            dateString = lastDayOfMonth.toISOString().split('T')[0];
+        } else {
+            // Handle single months like "June 2021"
+            const [monthName, year] = monthText.split(' ');
+            const monthIndex = new Date(Date.parse(monthName + " 1, 2000")).getMonth();
+            const lastDayOfMonth = new Date(parseInt(year), monthIndex + 1, 0);
+            dateString = lastDayOfMonth.toISOString().split('T')[0];
+        }
+        
+        // Extract URL for the month section using the month header
+        const monthLink = extractSectionAnchorLink(monthHeader, service.url) || service.url;
+        
+        const monthData = {
+            month: monthText,
+            date: dateString,
+            service: service.displayName || service.name, // Use displayName for table display, fallback to name
+            serviceRelease: null,
+            topics: []
+        };
+        
+        // Collect all bullet points for this month and combine them into a single update
+        const allBulletPoints = [];
+        let currentElement = monthHeader.nextElementSibling;
+        
+        console.log(`Looking for content after month header...`);
+        
+        while (currentElement && !isNextMonthHeader(currentElement)) {
+            if (currentElement.tagName === 'UL') {
+                console.log(`Found bullet list, collecting bullet points...`);
+                const listItems = Array.from(currentElement.querySelectorAll(':scope > li'));
+                
+                listItems.forEach(item => {
+                    const fullText = extractTextContent(item);
+                    if (fullText.trim()) {
+                        const itemHTML = extractHTMLContent(item);
+                        allBulletPoints.push({
+                            text: fullText.trim(),
+                            html: itemHTML
+                        });
+                    }
+                });
+            }
+            
+            currentElement = currentElement.nextElementSibling;
+        }
+        
+        // If we found bullet points, create a single combined update for the month
+        if (allBulletPoints.length > 0) {
+            console.log(`Found ${allBulletPoints.length} updates in ${monthText}, combining into single update`);
+            
+            // Create combined HTML content with all bullet points
+            const combinedHTML = `<ul>${allBulletPoints.map(bp => `<li>${bp.html}</li>`).join('')}</ul>`;
+            const combinedText = allBulletPoints.map(bp => bp.text).join(' ');
+            
+            // Create a single update for the entire month
+            const monthlyUpdate = {
+                id: generateContentId(`${monthText} Updates`, 'Monthly Summary', combinedText),
+                title: `${monthText} Updates`,
+                subtitle: 'Monthly Summary',
+                content: combinedHTML,
+                service: service.name, // Use service.name for display consistency
+                link: monthLink
+            };
+            
+            // Create a single topic containing the monthly update
+            const monthlyTopic = {
+                topic: `${monthText} Updates`,
+                category: 'monthly-updates',
+                updates: [monthlyUpdate]
+            };
+            
+            monthData.topics.push(monthlyTopic);
+            
+            console.log(`✅ Created combined update for ${monthText} with ${allBulletPoints.length} bullet points`);
+            weeklyUpdates.set(dateString, monthData);
+        } else {
+            console.log(`❌ Skipping month ${monthText} - no updates found`);
+        }
+    }
+    
+    console.log(`\n=== DEFENDER FOR OFFICE 365 PARSING COMPLETE ===`);
+    console.log(`Total months with updates: ${weeklyUpdates.size}`);
+    
+    return weeklyUpdates;
+}
+
+// Parse Defender for Endpoint updates with month-based structure
+async function parseDefenderEndpointUpdates(document, service) {
+    const weeklyUpdates = new Map();
+    
+    console.log(`\n=== DEBUGGING DEFENDER FOR ENDPOINT STRUCTURE ===`);
+    console.log(`Processing ${service.name} from ${service.url}`);
+    
+    // Look for month-based headers (e.g., "July 2025", "June 2025", "November-December 2024")
+    const monthHeaders = Array.from(document.querySelectorAll('h2'))
+        .filter(header => {
+            const text = header.textContent.trim();
+            
+            // Handle both single months like "January 2025" and compound months like "November-December 2024"
+            const singleMonthPattern = /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i;
+            const compoundMonthPattern = /^(January|February|March|April|May|June|July|August|September|October|November|December)[-\s]+(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}$/i;
+            
+            const isMonth = singleMonthPattern.test(text) || compoundMonthPattern.test(text);
+            if (isMonth) {
+                console.log(`Found month header: "${text}" (${header.tagName})`);
+            }
+            return isMonth;
+        });
+    
+    console.log(`\nFound ${monthHeaders.length} month sections for ${service.name}`);
+    
+    // Process found month headers
+    for (const monthHeader of monthHeaders) {
+        const monthText = monthHeader.textContent.trim();
+        console.log(`\n=== Processing ${service.name}: ${monthText} ===`);
+        
+        // Extract date from month header
+        const [monthName, year] = monthText.split(' ');
+        const monthIndex = new Date(Date.parse(monthName + " 1, 2000")).getMonth();
+        const lastDayOfMonth = new Date(parseInt(year), monthIndex + 1, 0);
+        const dateString = lastDayOfMonth.toISOString().split('T')[0];
+        
+        // Extract URL for the month section using the month header
+        const monthLink = extractSectionAnchorLink(monthHeader, service.url) || service.url;
+        
+        const monthData = {
+            month: monthText,
+            date: dateString,
+            service: service.displayName || service.name, // Use displayName for table display, fallback to name
+            serviceRelease: null,
+            topics: []
+        };
+        
+        // Collect all bullet points for this month and combine them into a single update
+        const allBulletPoints = [];
+        let currentElement = monthHeader.nextElementSibling;
+        
+        console.log(`Looking for content after month header...`);
+        
+        while (currentElement && !isNextMonthHeader(currentElement)) {
+            if (currentElement.tagName === 'UL') {
+                console.log(`Found bullet list, collecting bullet points...`);
+                const listItems = Array.from(currentElement.querySelectorAll(':scope > li'));
                 
                 listItems.forEach(item => {
                     const fullText = extractTextContent(item);
@@ -1506,125 +2068,6 @@ async function parseDefenderUpdates(document, service) {
     console.log(`Total months with updates: ${weeklyUpdates.size}`);
     
     return weeklyUpdates;
-}
-
-// DEPRECATED: Parse Defender for Endpoint bullet list updates (replaced by combined monthly updates)
-// function parseDefenderBulletList(bulletList, monthData, service) {
-//     const listItems = Array.from(bulletList.querySelectorAll('li'));
-//     let updateCount = 0;
-//     
-//     listItems.forEach(item => {
-//         const fullText = extractTextContent(item);
-//         if (!fullText.trim()) return;
-//         
-//         console.log(`Parsing Defender update: "${fullText.substring(0, 80)}..."`);
-//         
-//         // Extract status (GA, Preview) from the beginning
-//         let status = 'Update';
-//         let cleanTitle = fullText;
-//         
-//         if (fullText.startsWith('(GA)') || fullText.includes('(GA)')) {
-//             status = 'General Availability';
-//             cleanTitle = fullText.replace(/^\(GA\)\s*/, '').replace(/\(GA\)/, '').trim();
-//         } else if (fullText.startsWith('(Preview)') || fullText.includes('(Preview)')) {
-//             status = 'Preview';
-//             cleanTitle = fullText.replace(/^\(Preview\)\s*/, '').replace(/\(Preview\)/, '').trim();
-//         }
-//         
-//         // Extract the title (first sentence or until first period/colon)
-//         const titleMatch = cleanTitle.match(/^([^.]+\.?)\s*(.*)$/);
-//         const title = titleMatch ? titleMatch[1].replace(/\.$/, '').trim() : cleanTitle.split('.')[0].trim();
-//         const description = titleMatch && titleMatch[2] ? titleMatch[2].trim() : '';
-//         
-//         console.log(`Cleaned title: "${title}"`);
-//         console.log(`Status: "${status}"`);
-//         
-//         // Get HTML content for better formatting
-//         const itemHTML = extractHTMLContent(item);
-//         const contentHTML = itemHTML ? `<p>${itemHTML}</p>` : `<p>${fullText}</p>`;
-//         
-//         // Extract link from the item
-//         const links = extractLinks(item, service.url);
-//         const updateLink = links.length > 0 ? links[0].url : service.url;
-//         
-//         // Create update object
-//         const update = {
-//             id: generateContentId(title, status, fullText),
-//             title: title,
-//             subtitle: status,
-//             content: contentHTML,
-//             service: service.tag,
-//             link: updateLink
-//         };
-//         
-//         // Determine topic based on content
-//         const topicName = inferDefenderTopic(title, fullText);
-//         let topic = monthData.topics.find(t => t.topic === topicName);
-//         if (!topic) {
-//             topic = {
-//                 topic: topicName,
-//                 category: mapDefenderTopicToCategory(topicName),
-//                 updates: []
-//             };
-//             monthData.topics.push(topic);
-//         }
-//         
-//         topic.updates.push(update);
-//         updateCount++;
-//         
-//         console.log(`Created update: ${title} -> Topic: ${topicName}`);
-//     });
-//     
-//     return updateCount;
-// }
-
-// Infer topic from Defender for Endpoint update content
-function inferDefenderTopic(title, content) {
-    const lowerTitle = title.toLowerCase();
-    const lowerContent = content.toLowerCase();
-    
-    if (lowerTitle.includes('advanced hunting') || lowerContent.includes('advanced hunting')) {
-        return 'Advanced Hunting';
-    } else if (lowerTitle.includes('incident') || lowerContent.includes('incident')) {
-        return 'Incident Management';
-    } else if (lowerTitle.includes('copilot') || lowerContent.includes('copilot')) {
-        return 'Microsoft Copilot';
-    } else if (lowerTitle.includes('api') || lowerContent.includes('api')) {
-        return 'API & Integration';
-    } else if (lowerTitle.includes('attack disruption') || lowerContent.includes('attack disruption')) {
-        return 'Attack Disruption';
-    } else if (lowerTitle.includes('detection') || lowerContent.includes('detection') || lowerTitle.includes('rule')) {
-        return 'Detection Rules';
-    } else if (lowerTitle.includes('table') || lowerContent.includes('table') || lowerTitle.includes('schema')) {
-        return 'Advanced Hunting';
-    } else if (lowerTitle.includes('alert') || lowerContent.includes('alert')) {
-        return 'Alert Management';
-    } else if (lowerTitle.includes('report') || lowerContent.includes('report') || lowerTitle.includes('summary')) {
-        return 'Reporting';
-    } else if (lowerTitle.includes('threat') || lowerContent.includes('threat')) {
-        return 'Threat Analytics';
-    } else if (lowerTitle.includes('portal') || lowerContent.includes('portal')) {
-        return 'Portal Experience';
-    }
-    
-    return 'General Updates';
-}
-
-// Map Defender for Endpoint topic to category
-function mapDefenderTopicToCategory(topicName) {
-    const lowerTopic = topicName.toLowerCase();
-    
-    if (lowerTopic.includes('hunting') || lowerTopic.includes('detection')) return 'threat-hunting';
-    if (lowerTopic.includes('incident') || lowerTopic.includes('response')) return 'incident-response';
-    if (lowerTopic.includes('copilot') || lowerTopic.includes('ai')) return 'ai-security';
-    if (lowerTopic.includes('api') || lowerTopic.includes('integration')) return 'integration';
-    if (lowerTopic.includes('attack') || lowerTopic.includes('disruption')) return 'threat-protection';
-    if (lowerTopic.includes('alert') || lowerTopic.includes('management')) return 'alert-management';
-    if (lowerTopic.includes('report') || lowerTopic.includes('analytics')) return 'reporting';
-    if (lowerTopic.includes('threat')) return 'threat-intelligence';
-    if (lowerTopic.includes('portal') || lowerTopic.includes('experience')) return 'user-experience';
-    
-    return 'security-operations'; // Default category for Defender
 }
 
 // Parse table-based updates (common in Microsoft Learn)
@@ -1687,6 +2130,18 @@ function parseListUpdates(list, monthData) {
     items.forEach(item => {
         const text = extractTextContent(item);
         if (text.trim()) {
+            // Skip very short items that are likely fragments (like single DNS entries)
+            if (text.trim().length < 40) {
+                console.log(`    Skipping short list item: "${text.trim()}"`);
+                return;
+            }
+            
+            // Skip items that look like they're just DNS names or IP addresses
+            if (/^[\w\-\.]+\.[\w]+$/.test(text.trim()) || /^\d+\.\d+\.\d+\.\d+/.test(text.trim())) {
+                console.log(`    Skipping DNS/IP item: "${text.trim()}"`);
+                return;
+            }
+            
             // Get HTML content for better formatting
             const itemHTML = extractHTMLContent(item);
             const contentHTML = itemHTML ? `<div>${itemHTML}</div>` : `<p>${text}</p>`;
@@ -1718,11 +2173,11 @@ function parseListUpdates(list, monthData) {
 }
 
 // Parse section-based updates
-function parseSectionUpdates(section, monthData) {
+function parseSectionUpdates(section, monthData, service) {
     const headers = section.querySelectorAll('h3, h4');
     
     headers.forEach(header => {
-        const update = parseEntraUpdateFromHeader(header, monthData.date);
+        const update = parseEntraUpdateFromHeader(header, monthData.date, service);
         
         if (update) {
             // Use Product Capability as the topic (for "Topic" column)
@@ -1744,8 +2199,8 @@ function parseSectionUpdates(section, monthData) {
 }
 
 // Parse direct H3 sections (this is where the real Entra data is)
-function parseDirectSection(header, monthData) {
-    const update = parseEntraUpdateFromHeader(header, monthData.date);
+function parseDirectSection(header, monthData, service) {
+    const update = parseEntraUpdateFromHeader(header, monthData.date, service);
     
     if (update) {
         // Use Product Capability as the topic (for "Topic" column)
@@ -1766,7 +2221,7 @@ function parseDirectSection(header, monthData) {
 }
 
 // Parse update from header element specifically for Entra format
-function parseEntraUpdateFromHeader(header, date) {
+function parseEntraUpdateFromHeader(header, date, service = null) {
     const originalTitle = extractTextContent(header);
     console.log(`Parsing Entra update: "${originalTitle}"`);
     
@@ -1864,8 +2319,8 @@ function parseEntraUpdateFromHeader(header, date) {
         
         currentElement = currentElement.nextElementSibling;
         
-        // Don't limit description content too much, we want complete updates
-        if (descriptionParts.length >= 5) break;
+        // Allow more content to be collected to ensure complete updates
+        if (descriptionParts.length >= 10) break;
     }
     
     if (descriptionParts.length > 0) {
@@ -1893,10 +2348,10 @@ function parseEntraUpdateFromHeader(header, date) {
         title: cleanTitle, // Use cleaned title without type prefix
         subtitle: finalSubtitle || (type ? `Type: ${type}` : undefined),
         content: finalContent, // Now includes HTML markup
-        service: 'Entra ID',
+        service: service ? service.name : 'Entra ID',
         serviceCategory: serviceCategory, // Keep for topic assignment logic
         productCapability: productCapability, // Keep for topic assignment logic  
-        link: extractSectionAnchorLink(header, 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new') || extractLinks(header.parentElement)[0]?.url || 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new'
+        link: extractSectionAnchorLink(header, service ? service.url : 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new') || extractLinks(header.parentElement)[0]?.url || (service ? service.url : 'https://learn.microsoft.com/en-us/entra/fundamentals/whats-new')
     };
     
     console.log(`Created update:`, JSON.stringify(update, null, 2));
@@ -1989,7 +2444,10 @@ function extractSectionAnchorLink(header, baseUrl) {
             const hasIcon = link.querySelector('svg, i, .icon') || 
                            link.className.includes('icon') ||
                            link.className.includes('anchor') ||
-                           link.classList.contains('anchor-link');
+                           link.getAttribute('aria-label')?.includes('anchor') ||
+                           link.getAttribute('title')?.includes('anchor') ||
+                           href.includes('whats-new') // Ensure it's still on the what's new page
+            ;
             
             if (text.length <= 2 || hasIcon || text === '' || text === '#') {
                 return href.startsWith('http') ? href : `${baseUrl}${href}`;

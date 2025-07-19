@@ -1,7 +1,6 @@
-class IntuneUpdatesTracker {
+class CloudUpdatesTracker {
     constructor() {
         this.updates = [];
-        this.notices = [];
         this.indexData = {};
         this.filteredUpdates = [];
         this.displayedUpdates = [];
@@ -13,7 +12,6 @@ class IntuneUpdatesTracker {
         this.categoryFilter = document.getElementById('categoryFilter');
         this.timeFilter = document.getElementById('timeFilter');
         this.updatesContainer = document.getElementById('updatesContainer');
-        this.noticesContainer = document.getElementById('noticesContainer');
         this.loadMoreBtn = document.getElementById('loadMoreBtn');
         
         this.bindEvents();
@@ -40,15 +38,14 @@ class IntuneUpdatesTracker {
         if (this.loadMoreBtn) {
             this.loadMoreBtn.addEventListener('click', () => this.loadMoreUpdates());
         }
-
+        
         // Close modal when clicking outside
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal-overlay')) {
                 this.closeModal();
             }
         });
-
-        // Close modal on escape key
+        
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.closeModal();
@@ -61,7 +58,6 @@ class IntuneUpdatesTracker {
         try {
             const data = await this.fetchIntuneUpdates();
             this.updates = data.updates;
-            this.notices = data.notices;
             this.indexData = data.indexData;
             
             console.log('Init: indexData loaded:', this.indexData);
@@ -70,8 +66,10 @@ class IntuneUpdatesTracker {
             this.populateCategoryFilter();
             this.updateStats();
             this.filterUpdates();
-            this.displayNotices();
             this.updateDeploymentTime();
+            
+            // Report any dynamically detected categories
+            this.reportDetectedCategories();
         } catch (error) {
             console.error('Error initializing tracker:', error);
             this.showError('Failed to load updates. Please try again later.');
@@ -82,101 +80,59 @@ class IntuneUpdatesTracker {
 
     async fetchIntuneUpdates() {
         try {
-            // Load the index file to get available data files
-            const indexUrl = './data/index.json';
-            const indexResponse = await fetch(indexUrl);
-            
+            // Load main index to get list of data files
+            const indexResponse = await fetch('./data/index.json');
             if (!indexResponse.ok) {
-                console.error('Index file not found or failed to load. Status:', indexResponse.status, 'URL:', indexUrl);
-                return this.getFallbackData();
+                throw new Error(`HTTP ${indexResponse.status}: ${indexResponse.statusText}`);
             }
             
             const indexData = await indexResponse.json();
+            console.log('Index data loaded:', indexData);
             
-            // Load all update files
-            const updates = [];
-            
-            if (!indexData.dataFiles || indexData.dataFiles.length === 0) {
-                console.error('No data files found in index.json');
-                return this.getFallbackData();
-            }
+            let updates = [];
             
             for (const fileInfo of indexData.dataFiles) {
                 try {
-                    const filePath = fileInfo.path || `updates/${fileInfo.filename}`;
-                    const fullUrl = `./data/${filePath}`;
-                    const fileResponse = await fetch(fullUrl);
+                    console.log(`Loading file: ${fileInfo.path}`);
+                    const fileResponse = await fetch(`./data/${fileInfo.path}`);
                     
                     if (!fileResponse.ok) {
-                        console.warn(`Failed to load ${filePath}, status: ${fileResponse.status}`);
+                        console.warn(`Failed to load ${fileInfo.path}: HTTP ${fileResponse.status}`);
                         continue;
                     }
                     
                     const fileData = await fileResponse.json();
                     
-                    // Process each topic and its updates
+                    // Process each topic and update within the file
                     if (fileData.topics) {
-                        fileData.topics.forEach(topic => {
+                        fileData.topics.forEach((topic, topicIndex) => {
                             if (topic.updates) {
-                                topic.updates.forEach(update => {
+                                topic.updates.forEach((update, updateIndex) => {
+                                    // Regular update processing
+                                    const uniqueId = `${fileInfo.path}_${topicIndex}_${updateIndex}`;
                                     updates.push({
                                         ...update,
-                                        category: topic.category,
-                                        topic: topic.topic,
+                                        id: uniqueId,
+                                        week: fileData.week || fileData.month || `Week of ${fileData.date}`,
                                         date: fileData.date,
-                                        week: fileData.week || fileData.month, // Handle both week and month structures
-                                        service: fileData.service || update.service, // Ensure service field is set
+                                        topic: topic.topic,
+                                        category: topic.category || update.category || 'General',
                                         serviceRelease: fileData.serviceRelease
                                     });
                                 });
                             }
                         });
+                    } else {
+                        console.warn('No topics found in file:', fileInfo.path);
                     }
                 } catch (fileError) {
-                    console.error(`Error loading file ${fileInfo.filename}:`, fileError);
+                    console.error(`Error loading file ${fileInfo.path}:`, fileError);
                     console.error('File info:', fileInfo);
                 }
             }
             
-            // Load notices from both service directories
-            let notices = [];
-            try {
-                // List of service directories to check for notices
-                const serviceDirectories = ['intune', 'entra', 'windows365'];
-                
-                for (const service of serviceDirectories) {
-                    try {
-                        const noticesIndexResponse = await fetch(`./data/notices/${service}/index.json`);
-                        if (noticesIndexResponse.ok) {
-                            const noticesIndexData = await noticesIndexResponse.json();
-                            const noticeFiles = noticesIndexData.noticeFiles || [];
-                            
-                            // Load individual notice files
-                            for (const noticeFile of noticeFiles) {
-                                try {
-                                    const noticeResponse = await fetch(`./data/${noticeFile.path}`);
-                                    if (noticeResponse.ok) {
-                                        const notice = await noticeResponse.json();
-                                        notices.push(notice);
-                                    }
-                                } catch (noticeError) {
-                                    console.warn(`Error loading notice file ${noticeFile.path}:`, noticeError);
-                                }
-                            }
-                        } else {
-                            console.warn(`Notices index file not found for service: ${service}`);
-                        }
-                    } catch (serviceNoticeError) {
-                        console.warn(`Error loading notices for service ${service}:`, serviceNoticeError);
-                    }
-                }
-            } catch (noticesError) {
-                console.error('Error loading notices:', noticesError);
-            }
-            
             return {
                 updates: updates.sort((a, b) => new Date(b.date) - new Date(a.date)),
-                notices: notices,
                 indexData: indexData
             };
             
@@ -195,195 +151,146 @@ class IntuneUpdatesTracker {
         const warningDiv = document.createElement('div');
         warningDiv.className = 'alert alert-warning';
         warningDiv.innerHTML = `
-            <strong>⚠️ No Data Available:</strong> All data files have been cleared. 
-            Please regenerate data to see updates and notices.
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Unable to load data</strong> - Using fallback data. 
+            The system may be updating or experiencing temporary issues.
         `;
         
-        const container = document.querySelector('.container');
-        if (container) {
-            container.insertBefore(warningDiv, container.firstChild);
+        // Insert warning at the top of the updates container
+        if (this.updatesContainer) {
+            this.updatesContainer.insertBefore(warningDiv, this.updatesContainer.firstChild);
         }
         
         return {
             updates: [],
-            notices: [],
             indexData: {
+                totalUpdates: 0,
+                totalFiles: 0,
+                services: ['Entra ID', 'Defender XDR'],
                 dataFiles: [],
-                totalUpdates: 0
+                lastGenerated: new Date().toISOString()
             }
         };
     }
 
     populateServiceFilter() {
-        if (!this.serviceFilter || !this.updates) return;
-
-        // Extract unique services from all updates
-        const services = new Set();
+        if (!this.serviceFilter) return;
         
+        // Get unique services from updates and map to display names
+        const serviceDisplayNames = new Set();
         this.updates.forEach(update => {
-            if (update.service) {
-                services.add(update.service);
-            }
+            const displayName = this.getServiceDisplayName(update.service);
+            serviceDisplayNames.add(displayName);
         });
-
-        // Convert to array and sort alphabetically
-        const sortedServices = Array.from(services).sort();
-
-        // Create a mapping for better display names
-        const serviceDisplayNames = {
-            'Intune': 'Microsoft Intune',
-            'Entra': 'Microsoft Entra ID',
-            'Entra ID': 'Microsoft Entra ID',
-            'Defender for Endpoint': 'Microsoft Defender for Endpoint'
-        };
-
+        
+        const sortedServices = Array.from(serviceDisplayNames).sort();
+        
         // Clear existing options except "All Services"
-        this.serviceFilter.innerHTML = '<option value="all">All Services</option>';
-
-        // Add service options
-        sortedServices.forEach(service => {
+        while (this.serviceFilter.children.length > 1) {
+            this.serviceFilter.removeChild(this.serviceFilter.lastChild);
+        }
+        
+        // Add service options with clean display names
+        sortedServices.forEach(displayName => {
             const option = document.createElement('option');
-            option.value = service;
-            option.textContent = serviceDisplayNames[service] || service;
+            option.value = displayName;
+            option.textContent = displayName;
             this.serviceFilter.appendChild(option);
         });
-
-        console.log('Populated services:', sortedServices);
     }
 
     populateCategoryFilter() {
-        if (!this.categoryFilter || !this.updates) return;
-
-        // Extract unique categories from all updates
+        if (!this.categoryFilter) return;
+        
+        // Get unique categories from updates, including mapped categories
         const categories = new Set();
         
         this.updates.forEach(update => {
-            if (update.category) {
-                categories.add(update.category);
+            // Use service-specific category if available
+            const serviceSpecificCategory = this.getServiceSpecificCategory(update);
+            if (serviceSpecificCategory) {
+                categories.add(serviceSpecificCategory);
+            } else {
+                // Fall back to the update's category
+                const category = update.category || 'General';
+                categories.add(category);
             }
         });
-
-        // Convert to array and sort alphabetically
+        
         const sortedCategories = Array.from(categories).sort();
-
-        // Create a mapping for better display names
-        const categoryDisplayNames = {
-            'device-management': 'Device Management',
-            'app-management': 'App Management', 
-            'device-security': 'Device Security',
-            'device-configuration': 'Device Configuration',
-            'microsoft-intune-suite': 'Microsoft Intune Suite',
-            'intune-suite': 'Microsoft Intune Suite',
-            'intune-apps': 'Intune Apps',
-            'monitor-troubleshoot': 'Monitor & Troubleshoot',
-            'identity-management': 'Identity Management',
-            'conditional-access': 'Conditional Access',
-            'authentication': 'Authentication',
-            'identity-governance': 'Identity Governance',
-            'privileged-identity': 'Privileged Identity Management',
-            'external-identities': 'External Identities',
-            'application-management': 'Application Management',
-            'notices': 'Notices'
-        };
-
+        
         // Clear existing options except "All Categories"
-        this.categoryFilter.innerHTML = '<option value="all">All Categories</option>';
-
+        while (this.categoryFilter.children.length > 1) {
+            this.categoryFilter.removeChild(this.categoryFilter.lastChild);
+        }
+        
         // Add category options
         sortedCategories.forEach(category => {
             const option = document.createElement('option');
             option.value = category;
-            option.textContent = categoryDisplayNames[category] || 
-                category.split('-').map(word => 
-                    word.charAt(0).toUpperCase() + word.slice(1)
-                ).join(' ');
+            option.textContent = this.formatCategoryName(category);
             this.categoryFilter.appendChild(option);
         });
-
-        console.log('Populated categories:', sortedCategories);
     }
 
     filterUpdates() {
-        const searchTerm = this.searchInput?.value.toLowerCase() || '';
-        const serviceFilter = this.serviceFilter?.value || '';
-        const categoryFilter = this.categoryFilter?.value || '';
-        const timeFilter = this.timeFilter?.value || '';
-
-        console.log('=== FILTER DEBUG ===');
-        console.log('Selected service filter:', `"${serviceFilter}"`);
-        console.log('All available services:', [...new Set(this.updates.map(u => u.service))]);
-
+        const searchTerm = this.searchInput ? this.searchInput.value.toLowerCase() : '';
+        const selectedService = this.serviceFilter ? this.serviceFilter.value : 'all';
+        const selectedCategory = this.categoryFilter ? this.categoryFilter.value : 'all';
+        const selectedTimeFilter = this.timeFilter ? this.timeFilter.value : 'all';
+        
         this.filteredUpdates = this.updates.filter(update => {
             // Search filter
             const matchesSearch = !searchTerm || 
                 update.title.toLowerCase().includes(searchTerm) ||
-                update.subtitle?.toLowerCase().includes(searchTerm) ||
                 update.content.toLowerCase().includes(searchTerm) ||
-                update.topic.toLowerCase().includes(searchTerm) ||
-                (update.features && update.features.some(feature => 
-                    feature.toLowerCase().includes(searchTerm)));
-
+                (update.topic && update.topic.toLowerCase().includes(searchTerm)) ||
+                (update.service && update.service.toLowerCase().includes(searchTerm));
+            
             // Service filter
-            const matchesService = !serviceFilter || serviceFilter === 'all' || update.service === serviceFilter;
-
+            const matchesService = selectedService === 'all' || 
+                this.getServiceDisplayName(update.service) === selectedService ||
+                update.service === selectedService;
+            
             // Category filter
-            const matchesCategory = !categoryFilter || categoryFilter === 'all' || update.category === categoryFilter;
-
-            // Time filter
-            const matchesTime = this.checkTimeFilter(update.date, timeFilter);
-
-            // Debug individual update filtering
-            if (serviceFilter && serviceFilter !== 'all') {
-                console.log(`Update "${update.title.substring(0, 30)}..." - service: "${update.service}" - matches: ${matchesService}`);
+            let matchesCategory = true;
+            if (selectedCategory !== 'all') {
+                const serviceSpecificCategory = this.getServiceSpecificCategory(update);
+                const updateCategory = serviceSpecificCategory || update.category || 'General';
+                matchesCategory = updateCategory === selectedCategory;
             }
-
+            
+            // Time filter
+            const matchesTime = this.checkTimeFilter(update.date, selectedTimeFilter);
+            
             return matchesSearch && matchesService && matchesCategory && matchesTime;
         });
-
-        console.log('Total filtered updates:', this.filteredUpdates.length);
         
-        // Log service breakdown of filtered results
-        if (serviceFilter && serviceFilter !== 'all') {
-            const serviceBreakdown = {};
-            this.filteredUpdates.forEach(update => {
-                const service = update.service || 'no-service';
-                serviceBreakdown[service] = (serviceBreakdown[service] || 0) + 1;
-            });
-            console.log('Service breakdown of filtered results:', serviceBreakdown);
-        }
-        
+        // Reset pagination
         this.currentPage = 1;
         this.displayUpdates();
     }
 
     checkTimeFilter(dateString, filter) {
-        if (!filter || filter === 'all') return true;
-
+        if (filter === 'all') return true;
+        
         const updateDate = new Date(dateString);
         const now = new Date();
-        const timeDiff = now - updateDate;
-        const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-
+        const diffTime = Math.abs(now - updateDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
         switch (filter) {
-            case '7days':
-                return daysDiff <= 7;
-            case '30days':
-                return daysDiff <= 30;
-            case '90days':
-                return daysDiff <= 90;
-            default:
-                return true;
+            case '7days': return diffDays <= 7;
+            case '30days': return diffDays <= 30;
+            case '90days': return diffDays <= 90;
+            default: return true;
         }
     }
 
     displayUpdates() {
         if (!this.updatesContainer) return;
-
-        const startIndex = 0;
-        const endIndex = this.currentPage * this.updatesPerPage;
-        this.displayedUpdates = this.filteredUpdates.slice(startIndex, endIndex);
-
-        if (this.displayedUpdates.length === 0) {
+        
+        if (this.filteredUpdates.length === 0) {
             this.updatesContainer.innerHTML = `
                 <div class="no-results">
                     <i class="fas fa-search"></i>
@@ -391,148 +298,94 @@ class IntuneUpdatesTracker {
                     <p>Try adjusting your search criteria or filters.</p>
                 </div>
             `;
-        } else {
-            // Separate Entra and Intune updates
-            const entraUpdates = this.displayedUpdates.filter(update => update.service === 'Entra');
-            const intuneUpdates = this.displayedUpdates.filter(update => update.service !== 'Entra');
-                  // Debug logging
-        console.log('=== DISPLAY UPDATES DEBUG ===');
-        console.log('Total displayed updates:', this.displayedUpdates.length);
-        console.log('Entra updates:', entraUpdates.length);
-        console.log('Intune updates:', intuneUpdates.length);
-        
-        // Check for service field issues
-        const servicesFound = [...new Set(this.displayedUpdates.map(u => u.service))];
-        console.log('Unique services found:', servicesFound);
-        
-        // Check current filter state
-        console.log('Current service filter:', this.serviceFilter ? this.serviceFilter.value : 'none');
-        
-        // Log some sample updates to see their structure
-        if (this.displayedUpdates.length > 0) {
-            console.log('Sample update service fields:');
-            this.displayedUpdates.slice(0, 3).forEach((update, index) => {
-                console.log(`  Update ${index}: service="${update.service}", title="${update.title.substring(0, 50)}..."`);
-            });
+            if (this.loadMoreBtn) this.loadMoreBtn.style.display = 'none';
+            return;
         }
-            
-            // Check for undefined/null services
-            const noServiceUpdates = this.displayedUpdates.filter(u => !u.service);
-            console.log('Updates with no service field:', noServiceUpdates.length);
-            
-            if (entraUpdates.length > 0) {
-                console.log('First Entra update service field:', `"${entraUpdates[0].service}"`);
-                console.log('Entra update structure:', entraUpdates[0]);
-            }
-            if (intuneUpdates.length > 0) {
-                console.log('First Intune update service field:', `"${intuneUpdates[0].service}"`);
-            }
-            
-            let html = '';
-            
-            // Check current service filter
-            const serviceFilterValue = this.serviceFilter ? this.serviceFilter.value : 'all';
-            
-            // If a specific service is selected, show unified table view
-            if (serviceFilterValue !== 'all' && serviceFilterValue !== '') {
-                html += `
-                    <div class="unified-updates-section">
-                        <h2 class="service-section-title">
-                            <span class="service-badge service-${this.getServiceCssClass(serviceFilterValue)}">
-                                <i class="fas ${this.getServiceIcon(serviceFilterValue)}"></i>
-                                ${this.getServiceDisplayName(serviceFilterValue)}
-                            </span>
-                        </h2>
-                        <div class="updates-table-container">
-                            <table class="updates-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Month</th>
-                                        <th>Service</th>
-                                        <th>Category</th>
-                                        <th>Topic</th>
-                                        <th>Type</th>
-                                        <th>Features</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${this.displayedUpdates.map(update => this.createUpdateRow(update)).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-            } else {
-                // Default view: Show all updates in unified table
-                html += `
-                    <div class="unified-updates-section">
-                        <h2 class="service-section-title">
-                            <span class="service-badge service-system">
-                                <i class="fas fa-cloud"></i>
-                                All Microsoft Cloud Updates
-                            </span>
-                        </h2>
-                        <div class="updates-table-container">
-                            <table class="updates-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Month</th>
-                                        <th>Service</th>
-                                        <th>Category</th>
-                                        <th>Topic</th>
-                                        <th>Type</th>
-                                        <th>Features</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${this.displayedUpdates.map(update => this.createUpdateRow(update)).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            this.updatesContainer.innerHTML = html;
-        }
-
+        
+        // Calculate updates to display
+        const startIndex = 0;
+        const endIndex = this.currentPage * this.updatesPerPage;
+        this.displayedUpdates = this.filteredUpdates.slice(startIndex, endIndex);
+        
+        // Display all updates in unified table format (no more grouped displays)
+        let updatesHtml = `
+            <div class="updates-table-container">
+                <table class="updates-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${this.displayedUpdates.map(update => this.createUpdateRow(update)).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        this.updatesContainer.innerHTML = updatesHtml;
+        
         // Show/hide load more button
         if (this.loadMoreBtn) {
-            const hasMoreUpdates = this.filteredUpdates.length > this.displayedUpdates.length;
-            this.loadMoreBtn.style.display = hasMoreUpdates ? 'block' : 'none';
+            if (endIndex >= this.filteredUpdates.length) {
+                this.loadMoreBtn.style.display = 'none';
+            } else {
+                this.loadMoreBtn.style.display = 'block';
+            }
         }
     }
 
     createUpdateRow(update) {
         const formattedDate = this.formatDate(update.date);
-        const categoryName = this.formatCategoryName(update.category);
-        const featuresCount = update.features ? update.features.length : 0;
-        const monthName = this.extractMonthFromWeek(update.week || update.date);
+        const categoryClassName = this.getCategoryClassName(update);
+        const serviceSpecificCategory = this.getServiceSpecificCategory(update);
+        const displayCategory = serviceSpecificCategory || update.category || 'General';
+        const formattedCategory = this.formatCategoryName(displayCategory);
         
-        // Extract type from subtitle or fallback to title extraction
-        const type = update.subtitle || this.extractTypeFromTitle(update.title);
+        // Get and format the update type - prioritize data field over title extraction
+        // Check subtitle field first (used by Entra), then type field, then extract from title
+        let updateType = update.subtitle || update.type || this.extractTypeFromTitle(update.title) || 'update';
         
-        // This function should only handle Intune updates - Entra updates go through createGroupedEntraUpdates
+        // Clean up subtitle if it contains type information
+        if (update.subtitle && this.isTypeIndicator(update.subtitle)) {
+            updateType = update.subtitle;
+        }
+        
+        // Remove "Type: " prefix if present (common in Defender services)
+        if (typeof updateType === 'string' && updateType.toLowerCase().startsWith('type: ')) {
+            updateType = updateType.substring(6); // Remove "Type: " (6 characters)
+        }
+        
+        const formattedType = this.cleanTypeText(updateType);
+        
+        // Ensure category styles are available
+        this.ensureCategoryStyle(categoryClassName, formattedCategory);
+        
         return `
             <tr class="update-row" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
                 <td data-label="Date">${formattedDate}</td>
-                <td data-label="Month">${monthName}</td>
                 <td data-label="Service">
                     <span class="service-badge service-${this.getServiceCssClass(update.service)}">
                         <i class="fas ${this.getServiceIcon(update.service)}"></i>
-                        ${update.service || 'Unknown'}
+                        ${this.getServiceDisplayName(update.service)}
+                    </span>
+                </td>
+                <td data-label="Title">${this.truncateText(update.title, 80)}</td>
+                <td data-label="Type">
+                    <span class="type-badge type-${updateType}">
+                        ${formattedType}
                     </span>
                 </td>
                 <td data-label="Category">
-                    <span class="category-badge category-${update.category}">${categoryName}</span>
+                    <span class="category-badge ${categoryClassName}">
+                        ${formattedCategory}
+                    </span>
                 </td>
-                <td data-label="Topic">${this.truncateText(update.title, 50)}</td>
-                <td data-label="Type">${this.truncateText(type, 25)}</td>
-                <td data-label="Features">${featuresCount > 0 ? `${featuresCount} features` : 'N/A'}</td>
                 <td data-label="Action">
                     <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showUpdateModal('${update.id}')">
                         <i class="fas fa-eye"></i> View
@@ -542,79 +395,211 @@ class IntuneUpdatesTracker {
         `;
     }
 
-    createGroupedEntraUpdates(entraUpdates) {
-        // Group updates by month
-        const updatesByMonth = {};
-        
-        entraUpdates.forEach(update => {
-            const monthName = this.extractMonthFromWeek(update.week || update.date);
-            if (!updatesByMonth[monthName]) {
-                updatesByMonth[monthName] = [];
+    createGroupedWindows365Updates(windows365Updates) {
+        // Group by week, then by topic (same structure as Intune)
+        const groupedByWeek = {};
+        windows365Updates.forEach(update => {
+            const week = update.week || 'Unknown Week';
+            if (!groupedByWeek[week]) {
+                groupedByWeek[week] = {};
             }
-            updatesByMonth[monthName].push(update);
+            
+            const topic = update.topic || 'General';
+            if (!groupedByWeek[week][topic]) {
+                groupedByWeek[week][topic] = [];
+            }
+            
+            groupedByWeek[week][topic].push(update);
         });
         
-        // Sort months by date (most recent first)
-        const sortedMonths = Object.keys(updatesByMonth).sort((a, b) => {
-            // Parse month names like "June 2025" into dates for proper sorting
-            const parseMonthYear = (monthYear) => {
-                const parts = monthYear.split(' ');
-                if (parts.length === 2) {
-                    const month = parts[0];
-                    const year = parts[1];
-                    return new Date(`${month} 1, ${year}`);
-                }
-                return new Date(monthYear);
-            };
-            
-            const dateA = parseMonthYear(a);
-            const dateB = parseMonthYear(b);
+        let html = '<div class="windows365-updates-section">';
+        
+        // Sort weeks (newest first)
+        const sortedWeeks = Object.keys(groupedByWeek).sort((a, b) => {
+            const dateA = this.parseWeekToDate(a);
+            const dateB = this.parseWeekToDate(b);
             return dateB - dateA;
         });
         
-        let html = '';
-        
-        sortedMonths.forEach(monthName => {
-            const monthUpdates = updatesByMonth[monthName];
+        sortedWeeks.forEach(week => {
+            const topics = groupedByWeek[week];
+            const totalUpdates = Object.values(topics).reduce((sum, updates) => sum + updates.length, 0);
             
-            // Sort updates within each month by date (most recent first)
-            monthUpdates.sort((a, b) => new Date(b.date) - new Date(a.date));
+            html += `
+                <div class="week-group">
+                    <h3 class="week-header">
+                        <i class="fas fa-calendar-week"></i>
+                        ${week}
+                        <span class="update-count">${totalUpdates} update${totalUpdates !== 1 ? 's' : ''}</span>
+                    </h3>
+                    <div class="week-content">
+            `;
             
-            // Add month header
-            html += `<div class="month-section">`;
-            html += `<h3 class="month-header">${monthName}</h3>`;
+            // Sort topics within each week
+            const sortedTopics = Object.keys(topics).sort();
             
-            // Add all updates for this month (without individual month headers)
-            monthUpdates.forEach(update => {
-                html += this.createEntraUpdateCard(update, false); // false = don't show month
+            sortedTopics.forEach(topic => {
+                const topicUpdates = topics[topic];
+                
+                html += `
+                    <div class="topic-group">
+                        <h4 class="topic-header">
+                            <i class="fas fa-folder"></i>
+                            ${topic}
+                            <span class="topic-count">${topicUpdates.length} item${topicUpdates.length !== 1 ? 's' : ''}</span>
+                        </h4>
+                        <div class="topic-updates">
+                            ${topicUpdates.map(update => this.createWindows365UpdateCard(update)).join('')}
+                        </div>
+                    </div>
+                `;
             });
             
-            html += `</div>`;
+            html += `
+                    </div>
+                </div>
+            `;
         });
         
+        html += '</div>';
         return html;
     }
-    
+
+    createWindows365UpdateCard(update) {
+        const formattedDate = this.formatDate(update.date);
+        const categoryClassName = this.getCategoryClassName(update);
+        const serviceSpecificCategory = this.getServiceSpecificCategory(update);
+        const displayCategory = serviceSpecificCategory || update.category || 'General';
+        const formattedCategory = this.formatCategoryName(displayCategory);
+        
+        // Get and format the update type
+        let updateType = update.subtitle || update.type || this.extractTypeFromTitle(update.title) || 'update';
+        if (typeof updateType === 'string' && updateType.toLowerCase().startsWith('type: ')) {
+            updateType = updateType.substring(6);
+        }
+        const formattedType = this.cleanTypeText(updateType);
+        
+        // Ensure category styles are available
+        this.ensureCategoryStyle(categoryClassName, formattedCategory);
+        
+        return `
+            <div class="windows365-update-card" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
+                <div class="card-header">
+                    <span class="service-badge service-${this.getServiceCssClass(update.service)}">
+                        <i class="fas ${this.getServiceIcon(update.service)}"></i>
+                        ${this.getServiceDisplayName(update.service)}
+                    </span>
+                    <span class="card-date">${formattedDate}</span>
+                </div>
+                <div class="card-content">
+                    <h5 class="card-title">${update.title}</h5>
+                    <div class="card-meta">
+                        <span class="type-badge type-${updateType}">
+                            ${formattedType}
+                        </span>
+                        <span class="category-badge ${categoryClassName}">
+                            ${formattedCategory}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showUpdateModal('${update.id}')">
+                        <i class="fas fa-eye"></i> View Details
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    parseWeekToDate(weekString) {
+        // Try to extract date from week string like "Week of July 14, 2025"
+        const weekMatch = weekString.match(/Week of (.+?)(?:\s*\(|$)/);
+        if (weekMatch) {
+            const date = new Date(weekMatch[1]);
+            if (!isNaN(date.getTime())) {
+                return date;
+            }
+        }
+        
+        // Fallback: try to parse as direct date
+        const date = new Date(weekString);
+        if (!isNaN(date.getTime())) {
+            return date;
+        }
+        
+        // Last resort: return a very old date to put unknown weeks at the end
+        return new Date('1900-01-01');
+    }
+
+    createGroupedEntraUpdates(entraUpdates) {
+        // Group by month
+        const groupedByMonth = {};
+        entraUpdates.forEach(update => {
+            const month = this.extractMonthFromWeek(update.week || update.date);
+            if (!groupedByMonth[month]) {
+                groupedByMonth[month] = [];
+            }
+            groupedByMonth[month].push(update);
+        });
+        
+        let html = '<div class="entra-updates-section">';
+        
+        // Sort months (newest first)
+        const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => {
+            const dateA = new Date(a + ' 1, 2024');
+            const dateB = new Date(b + ' 1, 2024');
+            return dateB - dateA;
+        });
+        
+        sortedMonths.forEach(month => {
+            const updates = groupedByMonth[month];
+            
+            html += `
+                <div class="month-group">
+                    <h3 class="month-header">
+                        <i class="fas fa-calendar-alt"></i>
+                        ${month}
+                        <span class="update-count">${updates.length} update${updates.length !== 1 ? 's' : ''}</span>
+                    </h3>
+                    <div class="entra-cards-container">
+                        ${updates.map(update => this.createEntraUpdateCard(update)).join('')}
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        return html;
+    }
+
     createEntraUpdateCard(update, showMonth = true) {
-        const categoryName = this.formatCategoryName(update.category);
-        const type = update.subtitle || this.extractTypeFromTitle(update.title);
-        const monthName = this.extractMonthFromWeek(update.week || update.date);
+        const formattedDate = this.formatDate(update.date);
+        const categoryClassName = this.getCategoryClassName(update);
+        const serviceSpecificCategory = this.getServiceSpecificCategory(update);
+        const displayCategory = serviceSpecificCategory || update.category || 'General';
+        const formattedCategory = this.formatCategoryName(displayCategory);
+        
+        // Ensure category styles are available
+        this.ensureCategoryStyle(categoryClassName, formattedCategory);
+        
+        const displayName = this.getServiceDisplayName(update.service);
         
         return `
             <div class="entra-update-card" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
-                <div class="update-header">
-                    ${showMonth ? `<h3 class="update-month">${monthName}</h3>` : ''}
-                    <h4 class="update-topic">${update.title}</h4>
+                <div class="card-header">
+                    <span class="service-badge service-${this.getServiceCssClass(update.service)}">
+                        <i class="fas ${this.getServiceIcon(update.service)}"></i>
+                        ${displayName}
+                    </span>
+                    <span class="card-date">${formattedDate}</span>
                 </div>
-                <div class="update-meta">
-                    <div class="meta-row"><strong>Type:</strong> ${type}</div>
-                    <div class="meta-row"><strong>Service Category:</strong> <span class="category-badge category-${update.category}">${categoryName}</span></div>
-                    ${update.productCapability ? `<div class="meta-row"><strong>Product Capability:</strong> ${update.productCapability}</div>` : ''}
+                <div class="card-content">
+                    <h4 class="card-title">${update.title}</h4>
+                    <span class="category-badge ${categoryClassName}">
+                        ${formattedCategory}
+                    </span>
                 </div>
-                <div class="update-description">
-                    <p>${this.truncateText(update.content, 200)}</p>
-                </div>
-                <div class="update-actions">
+                <div class="card-footer">
                     <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showUpdateModal('${update.id}')">
                         <i class="fas fa-eye"></i> View Details
                     </button>
@@ -624,106 +609,24 @@ class IntuneUpdatesTracker {
         `;
     }
 
-    displayNotices() {
-        if (!this.noticesContainer || !this.notices.length) {
-            this.noticesContainer.innerHTML = `
-                <div class="no-results">
-                    <i class="fas fa-info-circle"></i>
-                    <h3>No important notices</h3>
-                    <p>No important notices are currently available.</p>
-                </div>
-            `;
-            return;
-        }
-
-        // Sort notices by date (most recent first)
-        const sortedNotices = [...this.notices].sort((a, b) => {
-            const dateA = new Date(a.date);
-            const dateB = new Date(b.date);
-            return dateB - dateA; // Descending order (newest first)
-        });
-
-        const noticesHtml = `
-            <div class="notices-table-container">
-                <table class="notices-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Service</th>
-                            <th>Plan Type</th>
-                            <th>Type</th>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${sortedNotices.map(notice => this.createNoticeRow(notice)).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
-
-        this.noticesContainer.innerHTML = noticesHtml;
-    }
-
-    createNoticeRow(notice) {
-        const formattedDate = this.formatDate(notice.date);
-        const statusClass = notice.status || 'active';
-        const typeClass = notice.type || 'info';
-        const serviceName = notice.service || 'Unknown';
-        
-        // Extract plan type and clean title
-        const { planType, cleanTitle } = this.extractPlanTypeFromTitle(notice.title);
-        
-        return `
-            <tr class="notice-row" onclick="window.tracker.showNoticeModal('${notice.id}')" style="cursor: pointer;">
-                <td data-label="Date">${formattedDate}</td>
-                <td data-label="Service">
-                    <span class="service-badge service-${this.getServiceCssClass(serviceName)}">
-                        <i class="fas ${this.getServiceIcon(serviceName)}"></i>
-                        ${serviceName}
-                    </span>
-                </td>
-                <td data-label="Plan Type">
-                    ${planType ? `<span class="plan-type-badge">${planType}</span>` : '<span class="plan-type-badge plan-type-none">N/A</span>'}
-                </td>
-                <td data-label="Type">
-                    <span class="notice-type-badge notice-type-${typeClass}">
-                        <i class="fas ${this.getNoticeIcon(typeClass)}"></i>
-                        ${this.formatNoticeType(typeClass)}
-                    </span>
-                </td>
-                <td data-label="Title">${this.truncateText(cleanTitle, 60)}</td>
-                <td data-label="Status">
-                    <span class="notice-status-badge status-${statusClass}">${this.formatStatus(statusClass)}</span>
-                </td>
-                <td data-label="Action">
-                    <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showNoticeModal('${notice.id}')">
-                        <i class="fas fa-eye"></i> View
-                    </button>
-                </td>
-            </tr>
-        `;
-    }
-
-    getNoticeIcon(type) {
-        switch (type) {
-            case 'warning': return 'fa-exclamation-triangle';
-            case 'error': return 'fa-times-circle';
-            case 'info': return 'fa-info-circle';
-            case 'success': return 'fa-check-circle';
-            default: return 'fa-info-circle';
-        }
-    }
-
     getServiceIcon(service) {
         switch (service.toLowerCase()) {
-            case 'intune': return 'fa-shield-alt';
+            case 'intune': return 'fa-mobile-alt';
+            case 'microsoft intune': return 'fa-mobile-alt';
             case 'entra': return 'fa-key';
             case 'entra id': return 'fa-key';
+            case 'microsoft entra id': return 'fa-key';
             case 'defender': return 'fa-shield-virus';
+            case 'defender xdr': return 'fa-shield-virus';
+            case 'microsoft defender xdr': return 'fa-shield-virus';
+            case 'defender for office 365': return 'fa-shield-virus';
+            case 'microsoft defender for office 365': return 'fa-shield-virus';
             case 'defender for endpoint': return 'fa-shield-virus';
+            case 'microsoft defender for endpoint': return 'fa-shield-virus';
+            case 'defender for identity': return 'fa-user-shield';
+            case 'microsoft defender for identity': return 'fa-user-shield';
+            case 'defender for cloud apps': return 'fa-shield-alt';
+            case 'microsoft defender for cloud apps': return 'fa-shield-alt';
             case 'windows 365': return 'fa-desktop';
             case 'teams': return 'fa-users';
             case 'exchange': return 'fa-envelope';
@@ -739,11 +642,23 @@ class IntuneUpdatesTracker {
         
         switch (service.toLowerCase()) {
             case 'intune': return 'intune';
+            case 'microsoft intune': return 'intune';
             case 'entra': return 'entra-id';
             case 'entra id': return 'entra-id';
+            case 'microsoft entra id': return 'entra-id';
             case 'defender': return 'defender';
-            case 'defender for endpoint': return 'defender-for-endpoint';
+            case 'defender xdr': return 'defender-xdr';
+            case 'microsoft defender xdr': return 'defender-xdr';
+            case 'defender for office 365': return 'defender-office';
+            case 'microsoft defender for office 365': return 'defender-office';
+            case 'defender for endpoint': return 'defender-endpoint';
+            case 'microsoft defender for endpoint': return 'defender-endpoint';
+            case 'defender for identity': return 'defender-identity';
+            case 'microsoft defender for identity': return 'defender-identity';
+            case 'defender for cloud apps': return 'defender-cloudapps';
+            case 'microsoft defender for cloud apps': return 'defender-cloudapps';
             case 'windows 365': return 'windows-365';
+            case 'microsoft teams': return 'teams';
             case 'teams': return 'teams';
             case 'exchange': return 'exchange';
             case 'sharepoint': return 'sharepoint';
@@ -754,183 +669,32 @@ class IntuneUpdatesTracker {
     }
 
     getServiceDisplayName(service) {
-        const serviceDisplayNames = {
-            'Intune': 'Microsoft Intune',
-            'Entra': 'Microsoft Entra ID',
-            'Entra ID': 'Microsoft Entra ID',
-            'Defender for Endpoint': 'Microsoft Defender for Endpoint',
-            'Windows 365': 'Windows 365'
-        };
-        return serviceDisplayNames[service] || service;
-    }
-
-    extractPlanTypeFromTitle(title) {
-        // Extract plan type prefixes from title
-        const planTypePrefixes = [
-            'Plan for Change: ',
-            'Plan for change: ',
-            'Plan for Change - ',  // Added dash variant
-            'Plan for change - ',  // Added dash variant
-            'Important Notice: ',
-            'Notice: ',
-            'Announcement: ',
-            'Breaking Change: '
-        ];
+        if (!service) return 'Unknown';
         
-        for (const prefix of planTypePrefixes) {
-            if (title.startsWith(prefix)) {
-                // Extract the plan type part, handling both colon and dash formats
-                let planType;
-                if (prefix.includes(':')) {
-                    planType = prefix.replace(': ', '').trim();
-                } else if (prefix.includes(' - ')) {
-                    planType = prefix.replace(' - ', '').trim();
-                } else {
-                    planType = prefix.trim();
-                }
-                
-                return {
-                    planType: planType,
-                    cleanTitle: title.substring(prefix.length).trim()
-                };
-            }
+        let displayName;
+        switch (service.toLowerCase()) {
+            case 'intune': displayName = 'Microsoft Intune'; break;
+            case 'microsoft intune': displayName = 'Microsoft Intune'; break;
+            case 'entra': displayName = 'Microsoft Entra ID'; break;
+            case 'entra id': displayName = 'Microsoft Entra ID'; break;
+            case 'microsoft entra id': displayName = 'Microsoft Entra ID'; break;
+            case 'defender': displayName = 'Microsoft Defender XDR'; break;
+            case 'defender xdr': displayName = 'Microsoft Defender XDR'; break;
+            case 'microsoft defender xdr': displayName = 'Microsoft Defender XDR'; break;
+            case 'defender for office 365': displayName = 'Microsoft Defender for Office 365'; break;
+            case 'microsoft defender for office 365': displayName = 'Microsoft Defender for Office 365'; break;
+            case 'defender for endpoint': displayName = 'Microsoft Defender for Endpoint'; break;
+            case 'microsoft defender for endpoint': displayName = 'Microsoft Defender for Endpoint'; break;
+            case 'defender for identity': displayName = 'Microsoft Defender for Identity'; break;
+            case 'microsoft defender for identity': displayName = 'Microsoft Defender for Identity'; break;
+            case 'defender for cloud apps': displayName = 'Microsoft Defender for Cloud Apps'; break;
+            case 'microsoft defender for cloud apps': displayName = 'Microsoft Defender for Cloud Apps'; break;
+            case 'windows 365': displayName = 'Windows 365'; break;
+            default: displayName = service; break;
         }
         
-        // If no prefix found, return original title with no plan type
-        return {
-            planType: null,
-            cleanTitle: title
-        };
-    }
-
-    formatNoticeType(type) {
-        return type.charAt(0).toUpperCase() + type.slice(1);
-    }
-
-    formatStatus(status) {
-        return status.split('-').map(word => 
-            word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' ');
-    }
-
-    showNoticeModal(noticeId) {
-        const notice = this.notices.find(n => n.id == noticeId);
-        if (!notice) return;
-
-        const formattedDate = this.formatDate(notice.date);
-        const typeClass = notice.type || 'info';
-        const { planType, cleanTitle } = this.extractPlanTypeFromTitle(notice.title);
-        
-        // Extract structured metadata from content (for Entra notices)
-        const structuredMetadata = this.extractStructuredMetadata(notice.content);
-        
-        const modalHtml = `
-            <div class="modal-overlay" onclick="window.tracker.closeModal()">
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <div class="modal-header">
-                        <h2>
-                            <i class="fas ${this.getNoticeIcon(typeClass)}"></i>
-                            ${cleanTitle}
-                        </h2>
-                        <button class="modal-close" onclick="window.tracker.closeModal()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="notice-meta-info">
-                            <div class="meta-item">
-                                <strong>Date:</strong> ${formattedDate}
-                            </div>
-                            <div class="meta-item">
-                                <strong>Service:</strong> 
-                                <span class="service-badge service-${(notice.service || 'unknown').toLowerCase()}">
-                                    <i class="fas ${this.getServiceIcon(notice.service || 'Unknown')}"></i>
-                                    ${notice.service || 'Unknown'}
-                                </span>
-                            </div>
-                            ${planType ? `
-                                <div class="meta-item">
-                                    <strong>Plan Type:</strong> 
-                                    <span class="plan-type-badge">${planType}</span>
-                                </div>
-                            ` : ''}
-                            <div class="meta-item">
-                                <strong>Type:</strong> 
-                                <span class="notice-type-badge notice-type-${typeClass}">
-                                    <i class="fas ${this.getNoticeIcon(typeClass)}"></i>
-                                    ${this.formatNoticeType(typeClass)}
-                                </span>
-                            </div>
-                            ${notice.status ? `
-                                <div class="meta-item">
-                                    <strong>Status:</strong> 
-                                    <span class="notice-status-badge status-${notice.status}">${this.formatStatus(notice.status)}</span>
-                                </div>
-                            ` : ''}
-                            ${structuredMetadata.serviceCategory || notice.category ? `
-                                <div class="meta-item">
-                                    <strong>Service Category:</strong> ${structuredMetadata.serviceCategory || this.formatStatus(notice.category)}
-                                </div>
-                            ` : ''}
-                            ${structuredMetadata.productCapability ? `
-                                <div class="meta-item">
-                                    <strong>Product Capability:</strong> ${structuredMetadata.productCapability}
-                                </div>
-                            ` : ''}
-                            ${notice.lastUpdated ? `
-                                <div class="meta-item">
-                                    <strong>Last Updated:</strong> ${this.formatDate(notice.lastUpdated.split('T')[0])}
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="notice-content-full">
-                            <h3>Notice Details</h3>
-                            <div class="notice-content">${this.renderNoticeContent(notice.content)}</div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        ${notice.link ? `
-                            <a href="${notice.link}" target="_blank" class="learn-more-btn primary">
-                                <i class="fas fa-external-link-alt"></i>
-                                Learn More
-                            </a>
-                        ` : ''}
-                        <button onclick="window.tracker.closeModal()" class="close-btn">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-    }
-
-    renderNoticeContent(content) {
-        // If content is already HTML markup, return it as-is
-        if (content.includes('<') && content.includes('>')) {
-            return content;
-        }
-        
-        // Remove structured metadata lines from content before rendering
-        let cleanContent = content;
-        
-        // Remove Type, Service category, and Product capability lines
-        cleanContent = cleanContent.replace(/\*\*Type:\*\*\s*[^\n]*\n*/gi, '');
-        cleanContent = cleanContent.replace(/\*\*Service category:\*\*\s*[^\n]*\n*/gi, '');
-        cleanContent = cleanContent.replace(/\*\*Product capability:\*\*\s*[^\n]*\n*/gi, '');
-        
-        // Remove any extra leading/trailing whitespace or newlines
-        cleanContent = cleanContent.trim();
-        
-        // Convert basic markdown-like formatting to HTML
-        return cleanContent
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **bold** to <strong>
-            .replace(/\*(.*?)\*/g, '<em>$1</em>') // *italic* to <em>
-            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>') // [text](url) to links
-            .replace(/\n/g, '<br>') // newlines to <br>
-            .replace(/`(.*?)`/g, '<code>$1</code>'); // `code` to <code>
+        // Remove "Microsoft" prefix for table display
+        return displayName.replace(/^Microsoft\s+/, '');
     }
 
     extractMonthFromWeek(weekOrDate) {
@@ -951,19 +715,19 @@ class IntuneUpdatesTracker {
             return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
         }
         
-        return 'Unknown';
+        return weekOrDate;
     }
 
     downloadFile(filename) {
-        const link = document.createElement('a');
-        link.href = `./data/${filename}`;
-        link.download = filename.split('/').pop(); // Get just the filename without path
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Navigate to the file (this will trigger browser download)
+        window.open(`./data/${filename}`, '_blank');
     }
 
     loadMoreUpdates() {
+        if (this.currentPage * this.updatesPerPage >= this.filteredUpdates.length) {
+            return; // No more updates to load
+        }
+        
         this.currentPage++;
         this.displayUpdates();
     }
@@ -971,7 +735,6 @@ class IntuneUpdatesTracker {
     updateStats() {
         const totalUpdatesElement = document.getElementById('totalUpdates');
         const totalWeeksElement = document.getElementById('totalWeeks');
-        const totalNoticesElement = document.getElementById('totalNotices');
 
         if (totalUpdatesElement) {
             totalUpdatesElement.textContent = this.updates.length;
@@ -979,37 +742,15 @@ class IntuneUpdatesTracker {
         
         if (totalWeeksElement) {
             // Use monthly groups if available, otherwise fall back to unique weeks
-            if (this.indexData?.monthlyGroups) {
-                totalWeeksElement.textContent = this.indexData.monthlyGroups.length;
-                // Update the label to show "Total Months"
-                const labelElement = totalWeeksElement.nextElementSibling;
-                if (labelElement && labelElement.classList.contains('stat-label')) {
-                    labelElement.textContent = 'Total Months';
-                }
-            } else {
-                const uniqueWeeks = new Set(this.updates.map(update => update.week));
-                totalWeeksElement.textContent = uniqueWeeks.size;
-            }
-        }
-        
-        if (totalNoticesElement) {
-            totalNoticesElement.textContent = this.notices.length;
+            const uniqueWeeks = new Set(this.updates.map(update => update.week));
+            totalWeeksElement.textContent = uniqueWeeks.size;
         }
 
-        // Update the "This Week" stat to show "Total Months" or "Total Weeks"
+        // Update the "This Week" stat to show unique weeks
         const thisWeekElement = document.getElementById('thisWeek');
         if (thisWeekElement) {
-            if (this.indexData?.monthlyGroups) {
-                thisWeekElement.textContent = this.indexData.monthlyGroups.length;
-                // Update the label
-                const labelElement = thisWeekElement.nextElementSibling;
-                if (labelElement && labelElement.classList.contains('stat-label')) {
-                    labelElement.textContent = 'Total Months';
-                }
-            } else {
-                const uniqueWeeks = new Set(this.updates.map(update => update.week));
-                thisWeekElement.textContent = uniqueWeeks.size;
-            }
+            const uniqueWeeks = new Set(this.updates.map(update => update.week));
+            thisWeekElement.textContent = uniqueWeeks.size;
         }
     }
 
@@ -1017,15 +758,8 @@ class IntuneUpdatesTracker {
         const deploymentDateElement = document.getElementById('deploymentDate');
         const deploymentTimeElement = document.getElementById('deploymentTime');
         
-        if (deploymentDateElement && deploymentTimeElement) {
-            // Use the lastGenerated time from the index data if available
-            let deploymentDate;
-            if (this.indexData && this.indexData.lastGenerated) {
-                deploymentDate = new Date(this.indexData.lastGenerated);
-            } else {
-                // Fallback to current date if no lastGenerated available
-                deploymentDate = new Date();
-            }
+        if (this.indexData && this.indexData.lastGenerated) {
+            const deploymentDate = new Date(this.indexData.lastGenerated);
             
             deploymentDateElement.textContent = deploymentDate.toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -1047,115 +781,215 @@ class IntuneUpdatesTracker {
         if (navbar && navbar.classList.contains('active')) {
             navbar.classList.remove('active');
         }
-
+        
         // Smooth scroll to section
-        if (link.startsWith('#')) {
-            const targetElement = document.querySelector(link);
-            if (targetElement) {
-                targetElement.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
+        const targetSection = document.querySelector(link);
+        if (targetSection) {
+            targetSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
     }
 
     setLoading(isLoading) {
-        const loadingElements = document.querySelectorAll('.loading');
-        const contentElements = document.querySelectorAll('.content');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        if (loadingSpinner) {
+            loadingSpinner.style.display = isLoading ? 'flex' : 'none';
+        }
         
-        loadingElements.forEach(el => {
-            el.style.display = isLoading ? 'flex' : 'none';
-        });
-        
-        contentElements.forEach(el => {
-            el.style.display = isLoading ? 'none' : 'block';
-        });
+        if (this.updatesContainer && isLoading) {
+            this.updatesContainer.innerHTML = '';
+        }
     }
 
     showError(message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'toast error';
-        errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-        document.body.appendChild(errorDiv);
+        const errorModal = document.getElementById('errorModal');
+        const errorMessage = document.getElementById('errorMessage');
         
-        setTimeout(() => errorDiv.remove(), 5000);
+        if (errorModal && errorMessage) {
+            errorMessage.textContent = message;
+            errorModal.style.display = 'block';
+        }
     }
 
     closeModal() {
+        // Remove any existing modals
         const modals = document.querySelectorAll('.modal-overlay');
         modals.forEach(modal => modal.remove());
+        
+        const errorModal = document.getElementById('errorModal');
+        if (errorModal) {
+            errorModal.style.display = 'none';
+        }
     }
 
     showUpdateModal(updateId) {
-        const update = this.updates.find(u => u.id == updateId);
-        if (!update) return;
-
-        const formattedDate = this.formatDate(update.date);
-        const categoryName = this.formatCategoryName(update.category);
-        const type = update.subtitle || this.extractTypeFromTitle(update.title);
-        const monthName = this.extractMonthFromWeek(update.week || update.date);
+        console.log('showUpdateModal called with ID:', updateId);
+        console.log('Available updates:', this.updates.length);
+        console.log('First few update IDs:', this.updates.slice(0, 5).map(u => ({ id: u.id, service: u.service, title: u.title })));
         
-        const featuresHtml = update.features ? 
-            update.features.map(feature => `<li>${feature}</li>`).join('') : '<li>No specific features listed</li>';
+        // More robust ID matching - try both string and number comparison
+        const update = this.updates.find(u => u.id == updateId || u.id === updateId || String(u.id) === String(updateId));
+        if (!update) {
+            console.error('Update not found for ID:', updateId);
+            console.error('Available IDs:', this.updates.slice(0, 10).map(u => u.id));
+            
+            // Show an error modal instead of failing silently
+            this.showErrorModal(`Update not found (ID: ${updateId})`);
+            return;
+        }
 
-        const modalHtml = `
+        console.log('Found update:', update.title, '- Service:', update.service);
+
+        try {
+            const formattedDate = this.formatDate(update.date);
+            const serviceSpecificCategory = this.getServiceSpecificCategory(update);
+            const displayCategory = serviceSpecificCategory || update.category || 'General';
+            const formattedCategory = this.formatCategoryName(displayCategory);
+            
+            // Get and format the update type (same logic as createUpdateRow)
+            let updateType = update.subtitle || update.type || this.extractTypeFromTitle(update.title) || 'update';
+            
+            // Clean up subtitle if it contains type information
+            if (update.subtitle && this.isTypeIndicator && this.isTypeIndicator(update.subtitle)) {
+                updateType = update.subtitle;
+            }
+            
+            // Remove "Type: " prefix if present (common in Defender services)
+            if (typeof updateType === 'string' && updateType.toLowerCase().startsWith('type: ')) {
+                updateType = updateType.substring(6); // Remove "Type: " (6 characters)
+            }
+            
+            const formattedType = this.cleanTypeText ? this.cleanTypeText(updateType) : updateType;
+        
+            // Check if this is an extracted feature and we need to show the full original content
+            let displayContent = update.content;
+            let isExtractedFeature = false;
+            
+            if (update.originalUpdateId) {
+                // This is an extracted feature - find the original update for full context
+                const originalUpdate = this.updates.find(u => u.id === update.originalUpdateId);
+                if (originalUpdate) {
+                    displayContent = originalUpdate.content;
+                    isExtractedFeature = true;
+                }
+            }
+            
+            // Display content as-is - no table reconstruction needed
+            
+            const modalHtml = `
+                <div class="modal-overlay" onclick="window.tracker.closeModal()">
+                    <div class="modal-content" onclick="event.stopPropagation()">
+                        <div class="modal-header">
+                            <h2>${update.title}</h2>
+                            <button class="modal-close" onclick="window.tracker.closeModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="update-meta-info">
+                                <div class="meta-item">
+                                    <strong>Service</strong>
+                                    <span class="service-badge service-${this.getServiceCssClass(update.service)}">
+                                        <i class="fas ${this.getServiceIcon(update.service)}"></i>
+                                        ${this.getServiceDisplayName(update.service)}
+                                    </span>
+                                </div>
+                                <div class="meta-item">
+                                    <strong>Date</strong>
+                                    <span>${formattedDate}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <strong>Type</strong>
+                                    <span class="type-badge type-${updateType}">
+                                        ${formattedType}
+                                    </span>
+                                </div>
+                                <div class="meta-item">
+                                    <strong>Category</strong>
+                                    <span class="category-badge ${this.getCategoryClassName(update)}">
+                                        ${formattedCategory}
+                                    </span>
+                                </div>
+                                ${update.topic ? `
+                                    <div class="meta-item">
+                                        <strong>Topic</strong>
+                                        <span>${update.topic}</span>
+                                    </div>
+                                ` : ''}
+                                ${update.serviceRelease ? `
+                                    <div class="meta-item">
+                                        <strong>Service Release</strong>
+                                        <span class="service-release-badge">${update.serviceRelease}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            ${update.subtitle ? `<div class="update-subtitle"><strong>Summary:</strong> ${update.subtitle}</div>` : ''}
+                            
+                            ${isExtractedFeature ? `
+                                <div class="feature-notice">
+                                    <i class="fas fa-info-circle"></i>
+                                    <strong>Feature Highlight:</strong> This is a specific feature from the ${update.topic} topic. The full topic content is shown below.
+                                </div>
+                            ` : ''}
+                            
+                            <div class="update-content-full">
+                                <h3>Details</h3>
+                                <div>${displayContent}</div>
+                            </div>
+                            
+                            ${update.features && update.features.length > 0 ? `
+                                <div class="update-features-full">
+                                    <h3>Key Features</h3>
+                                    <ul>
+                                        ${update.features.map(feature => `<li>${feature}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                            
+                        </div>
+                        <div class="modal-footer">
+                            ${update.link ? `
+                                <a href="${update.link}" target="_blank" class="learn-more-btn primary">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Learn More on Microsoft Learn
+                                </a>
+                            ` : ''}
+                            <button onclick="window.tracker.closeModal()" class="close-btn">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+        } catch (error) {
+            console.error('Error showing modal for update:', update.title, error);
+            this.showErrorModal(`Error displaying update details: ${error.message}`);
+        }
+    }
+    
+    showErrorModal(message) {
+        const errorModalHtml = `
             <div class="modal-overlay" onclick="window.tracker.closeModal()">
                 <div class="modal-content" onclick="event.stopPropagation()">
                     <div class="modal-header">
-                        <h2>${update.title}</h2>
+                        <h2>Error</h2>
                         <button class="modal-close" onclick="window.tracker.closeModal()">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="update-meta-info">
-                            <div class="meta-item">
-                                <strong>Date:</strong> ${formattedDate}
-                            </div>
-                            <div class="meta-item">
-                                <strong>Month:</strong> ${monthName}
-                            </div>
-                            <div class="meta-item">
-                                <strong>Service:</strong> 
-                                <span class="service-badge service-${(update.service || 'unknown').toLowerCase()}">${update.service || 'Unknown'}</span>
-                            </div>
-                            <div class="meta-item">
-                                <strong>Service Category:</strong> 
-                                <span class="category-badge category-${update.category}">${categoryName}</span>
-                            </div>
-                            <div class="meta-item">
-                                <strong>Type:</strong> ${type}
-                            </div>
-                            ${update.productCapability && update.service === 'Entra' ? `
-                                <div class="meta-item">
-                                    <strong>Product Capability:</strong> ${update.productCapability}
-                                </div>
-                            ` : ''}
-                            ${update.serviceRelease ? `
-                                <div class="meta-item">
-                                    <strong>Service Release:</strong> ${update.serviceRelease}
-                                </div>
-                            ` : ''}
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>${message}</p>
                         </div>
-                        
-                        <div class="update-content-full">
-                            <h3>Description</h3>
-                            <p>${update.content}</p>
-                        </div>
-                        
-                        ${update.features ? `
-                            <div class="update-features-full">
-                                <h3>Key Features</h3>
-                                <ul>${featuresHtml}</ul>
-                            </div>
-                        ` : ''}
                     </div>
                     <div class="modal-footer">
-                        <a href="${update.link}" target="_blank" class="learn-more-btn primary">
-                            <i class="fas fa-external-link-alt"></i>
-                            Learn More on Microsoft Learn
-                        </a>
                         <button onclick="window.tracker.closeModal()" class="close-btn">
                             Close
                         </button>
@@ -1163,26 +997,159 @@ class IntuneUpdatesTracker {
                 </div>
             </div>
         `;
-
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        document.body.insertAdjacentHTML('beforeend', errorModalHtml);
     }
 
     formatDate(dateString) {
-        try {
-            return new Date(dateString).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        } catch {
-            return dateString;
-        }
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+    formatCategoryName(category) {
+        return category
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
     }
 
-    formatCategoryName(category) {
-        return category.split('-').map(word => 
-            word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' ');
+    getServiceSpecificCategory(update) {
+        // Service-specific category mapping
+        const serviceLower = (update.service || '').toLowerCase();
+        
+        if (update.service === 'Intune' || serviceLower.includes('intune')) {
+            // Map specific Intune categories
+            if (update.category === 'app-management') return 'App Management';
+            if (update.category === 'device-management') return 'Device Management';
+            if (update.category === 'device-configuration') return 'Device Configuration';
+            if (update.category === 'device-security') return 'Device Security';
+            if (update.category === 'monitor-troubleshoot') return 'Monitor and Troubleshoot';
+            if (update.category === 'tenant-administration') return 'Tenant Administration';
+            if (update.category === 'role-based-access-control') return 'Role-based Access Control';
+            if (update.category === 'device-enrollment') return 'Device Enrollment';
+            if (update.category === 'device-compliance') return 'Device Compliance';
+        }
+        
+        if (update.service === 'Windows 365') {
+            // Map specific Windows 365 categories
+            if (update.category === 'provisioning') return 'Provisioning';
+            if (update.category === 'device-management') return 'Device Management';
+            if (update.category === 'integration') return 'Integration';
+            if (update.category === 'app-management') return 'App Management';
+            if (update.category === 'device-configuration') return 'Configuration';
+            if (update.category === 'device-security') return 'Security';
+            if (update.category === 'monitor-troubleshoot') return 'Monitoring';
+        }
+        
+        // Defender for Identity specific categories
+        if (serviceLower.includes('defender for identity')) {
+            if (update.category === 'identity-management') return 'Identity Protection';
+            if (update.category === 'security') return 'Identity Security';
+            if (update.category === 'monitoring') return 'Identity Monitoring';
+            if (update.category === 'alert-management') return 'Identity Alerts';
+            // Default for Defender for Identity
+            return 'Identity Protection';
+        }
+        
+        // Defender for Cloud Apps specific categories  
+        if (serviceLower.includes('defender for cloud apps')) {
+            if (update.category === 'identity-management') return 'Cloud App Security';
+            if (update.category === 'security') return 'Cloud Security';
+            if (update.category === 'monitoring') return 'Cloud Monitoring';
+            if (update.category === 'app-management') return 'Cloud App Management';
+            // Default for Defender for Cloud Apps
+            return 'Cloud App Security';
+        }
+        
+        return null; // Return null to use default category
+    }
+
+    getCategoryClassName(update) {
+        const serviceSpecificCategory = this.getServiceSpecificCategory(update);
+        const category = serviceSpecificCategory || update.category || 'General';
+        return 'category-' + category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    }
+
+    ensureCategoryStyle(className, displayName) {
+        // Check if style already exists
+        if (document.querySelector(`style[data-category="${className}"]`)) {
+            return;
+        }
+        
+        // Generate colors for this category
+        const colors = this.generateCategoryColors(displayName);
+        
+        // Create and inject CSS
+        const style = document.createElement('style');
+        style.setAttribute('data-category', className);
+        style.textContent = `
+            .${className} {
+                background-color: ${colors.background};
+                color: ${colors.text};
+                border: 1px solid ${colors.border};
+            }
+            
+            .${className}:hover {
+                background-color: ${colors.hover};
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    generateCategoryColors(categoryName) {
+        // Generate a hash from the category name for consistent colors
+        const hash = this.hashString(categoryName);
+        
+        // Use the hash to generate HSL values
+        const hue = Math.abs(hash) % 360;
+        const saturation = 45 + (Math.abs(hash) % 30); // 45-75%
+        const lightness = 85 + (Math.abs(hash) % 10);  // 85-95%
+        
+        // Generate color variations
+        const background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        const border = `hsl(${hue}, ${saturation + 10}%, ${lightness - 15}%)`;
+        const text = `hsl(${hue}, ${saturation + 20}%, ${Math.max(25, lightness - 60)}%)`;
+        const hover = `hsl(${hue}, ${saturation + 5}%, ${lightness - 5}%)`;
+        
+        return {
+            background,
+            border,
+            text,
+            hover
+        };
+    }
+
+    hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32-bit integer
+        }
+        return hash;
+    }
+
+    reportDetectedCategories() {
+        if (this.updates.length === 0) return;
+        
+        const categoryCounts = {};
+        this.updates.forEach(update => {
+            const serviceSpecificCategory = this.getServiceSpecificCategory(update);
+            const category = serviceSpecificCategory || update.category || 'General';
+            categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+        });
+        
+        console.log('Detected categories and their counts:');
+        Object.entries(categoryCounts)
+            .sort(([,a], [,b]) => b - a)
+            .forEach(([category, count]) => {
+                console.log(`- ${category}: ${count} updates`);
+            });
     }
 
     truncateText(text, maxLength) {
@@ -1190,22 +1157,85 @@ class IntuneUpdatesTracker {
     }
 
     extractTypeFromTitle(title) {
-        // Extract type from title for Entra updates
-        if (title.includes('General Availability')) {
-            return 'General Availability';
-        } else if (title.includes('Public Preview')) {
-            return 'Public Preview';
-        } else if (title.includes('Deprecated')) {
-            return 'Deprecated';
-        } else if (title.includes('Plan for change')) {
-            return 'Plan for change';
-        } else if (title.includes('Changed feature')) {
-            return 'Changed feature';
-        } else if (title.includes('New feature')) {
-            return 'New feature';
-        } else {
-            return 'Update';
+        if (!title) return 'update';
+        
+        // Common type indicators that might appear in titles or content
+        const lowerTitle = title.toLowerCase();
+        
+        // Check for type indicators in titles
+        const typeIndicators = [
+            { keywords: ['plan for change'], type: 'plan-for-change' },
+            { keywords: ['breaking change'], type: 'breaking-change' },
+            { keywords: ['general availability', 'generally available'], type: 'general-availability' },
+            { keywords: ['public preview'], type: 'public-preview' },
+            { keywords: ['private preview'], type: 'private-preview' },
+            { keywords: ['deprecated', 'deprecation'], type: 'deprecated' },
+            { keywords: ['important notice', 'important'], type: 'important' },
+            { keywords: ['notice'], type: 'notice' },
+            { keywords: ['monthly updates', 'monthly summary'], type: 'monthly-updates' },
+            { keywords: ['announcement'], type: 'announcement' }
+        ];
+        
+        for (const indicator of typeIndicators) {
+            if (indicator.keywords.some(keyword => lowerTitle.includes(keyword))) {
+                return indicator.type;
+            }
         }
+        
+        // Check if this looks like a topic/category header (generic titles)
+        const topicHeaders = [
+            'app management', 'device management', 'device configuration', 'device security',
+            'monitor and troubleshoot', 'identity management', 'conditional access',
+            'monthly updates', 'july 2025 updates', 'june 2025 updates'
+        ];
+        
+        if (topicHeaders.some(header => lowerTitle === header || lowerTitle.includes(header))) {
+            return 'monthly-updates'; // These are likely monthly summary items
+        }
+        
+        return 'update'; // default type
+    }
+
+    isTypeIndicator(text) {
+        if (!text) return false;
+        
+        const lowerText = text.toLowerCase();
+        const typeIndicators = [
+            'general availability', 'public preview', 'private preview',
+            'deprecated', 'plan for change', 'breaking change', 
+            'important', 'notice', 'announcement', 'new feature',
+            'changed feature', 'monthly summary', 'monthly updates'
+        ];
+        
+        return typeIndicators.some(indicator => lowerText.includes(indicator));
+    }
+
+    cleanTypeText(type) {
+        if (!type) return 'Update';
+        
+        // Map specific types to proper display names
+        const typeMap = {
+            'update': 'Update',
+            'plan-for-change': 'Plan for Change',
+            'breaking-change': 'Breaking Change',
+            'general-availability': 'General Availability',
+            'general availability': 'General Availability',
+            'public-preview': 'Public Preview',
+            'public preview': 'Public Preview',
+            'private-preview': 'Private Preview',
+            'private preview': 'Private Preview',
+            'deprecated': 'Deprecated',
+            'important': 'Important',
+            'notice': 'Notice',
+            'monthly-updates': 'Monthly Summary',
+            'monthly summary': 'Monthly Summary',
+            'announcement': 'Announcement',
+            'new feature': 'New Feature',
+            'changed feature': 'Changed Feature'
+        };
+        
+        // Return mapped value or format the type
+        return typeMap[type.toLowerCase()] || type.charAt(0).toUpperCase() + type.slice(1).replace(/[-_]/g, ' ');
     }
 
     debounce(func, wait) {
@@ -1220,40 +1250,83 @@ class IntuneUpdatesTracker {
         };
     }
 
-    extractStructuredMetadata(content) {
-        const metadata = {};
+    extractContentItems(content) {
+        if (!content) return [];
         
-        if (!content) return metadata;
+        const items = [];
         
-        // Extract service category
-        const serviceCategoryMatch = content.match(/\*\*Service category:\*\*\s*(.+?)(?:\n|$)/i);
-        if (serviceCategoryMatch) {
-            metadata.serviceCategory = serviceCategoryMatch[1].trim();
+        // Create a temporary DOM element to parse the HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        
+        // Look for h4 headers which typically indicate individual features/updates
+        const headers = tempDiv.querySelectorAll('h4');
+        
+        headers.forEach(header => {
+            const title = header.textContent.trim();
+            
+            // Get the content following this header until the next h4 or end
+            let contentParts = [];
+            let nextElement = header.nextElementSibling;
+            
+            while (nextElement && nextElement.tagName !== 'H4') {
+                if (nextElement.tagName === 'P') {
+                    contentParts.push(nextElement.outerHTML);
+                } else if (nextElement.tagName === 'UL' || nextElement.tagName === 'OL') {
+                    contentParts.push(nextElement.outerHTML);
+                } else if (nextElement.tagName === 'DIV') {
+                    contentParts.push(nextElement.outerHTML);
+                }
+                nextElement = nextElement.nextElementSibling;
+            }
+            
+            // Create the feature content
+            const featureContent = contentParts.join('');
+            
+            if (title && featureContent) {
+                items.push({
+                    title: title,
+                    content: featureContent
+                });
+            }
+        });
+        
+        // If no h4 headers found, try to extract from strong elements
+        if (items.length === 0) {
+            const strongElements = tempDiv.querySelectorAll('strong');
+            
+            strongElements.forEach(strong => {
+                const title = strong.textContent.trim();
+                
+                // Get the paragraph containing this strong element
+                const paragraph = strong.closest('p');
+                if (paragraph) {
+                    // Get content from this paragraph until next strong or end of content
+                    let content = paragraph.outerHTML;
+                    
+                    // Look for additional related paragraphs
+                    let nextPara = paragraph.nextElementSibling;
+                    while (nextPara && nextPara.tagName === 'P' && !nextPara.querySelector('strong')) {
+                        content += nextPara.outerHTML;
+                        nextPara = nextPara.nextElementSibling;
+                    }
+                    
+                    if (title && content && title.length > 5) { // Avoid very short titles
+                        items.push({
+                            title: title,
+                            content: content
+                        });
+                    }
+                }
+            });
         }
         
-        // Extract product capability
-        const productCapabilityMatch = content.match(/\*\*Product capability:\*\*\s*(.+?)(?:\n|$)/i);
-        if (productCapabilityMatch) {
-            metadata.productCapability = productCapabilityMatch[1].trim();
-        }
-        
-        return metadata;
+        return items;
     }
+
 }
 
-// Initialize the tracker when DOM is loaded
+// Initialize the tracker when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    window.tracker = new IntuneUpdatesTracker();
-});
-
-// Handle mobile menu toggle
-document.addEventListener('DOMContentLoaded', () => {
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navbar = document.querySelector('.navbar');
-    
-    if (mobileMenuBtn && navbar) {
-        mobileMenuBtn.addEventListener('click', () => {
-            navbar.classList.toggle('active');
-        });
-    }
+    window.tracker = new CloudUpdatesTracker();
 });
