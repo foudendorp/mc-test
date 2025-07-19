@@ -235,7 +235,7 @@ function parseNoticeUpdate(currentElement, service) {
         } else if (nextEl.tagName === 'P') {
             const text = nextEl.textContent.trim();
             if (text) {
-                const htmlContent = extractHTMLContent(nextEl);
+                const htmlContent = extractHTMLContent(nextEl, service.url);
                 content.push(`<p>${htmlContent}</p>`);
                 
                 // If notice title is still generic, use first meaningful paragraph
@@ -252,7 +252,7 @@ function parseNoticeUpdate(currentElement, service) {
         } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
             const listItems = Array.from(nextEl.querySelectorAll('li'));
             const listText = listItems.map(li => li.textContent.trim());
-            const listHTML = extractHTMLContent(nextEl);
+            const listHTML = extractHTMLContent(nextEl, service.url);
             
             features.push(...listText);
             if (listHTML.trim()) {
@@ -332,13 +332,13 @@ function parseH4Update(h4Element, service, category) {
         if (nextEl.tagName === 'P') {
             const text = nextEl.textContent.trim();
             if (text) {
-                const htmlContent = extractHTMLContent(nextEl);
+                const htmlContent = extractHTMLContent(nextEl, service.url);
                 content.push(`<p>${htmlContent}</p>`);
             }
         } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
             const listItems = Array.from(nextEl.querySelectorAll('li'));
             const listText = listItems.map(li => li.textContent.trim());
-            const listHTML = extractHTMLContent(nextEl);
+            const listHTML = extractHTMLContent(nextEl, service.url);
             
             features.push(...listText);
             if (listHTML.trim()) {
@@ -413,7 +413,7 @@ function parseOrphanedH4sAsNotice(startingH4Element, service) {
                 if (nextEl.tagName === 'P') {
                     const text = nextEl.textContent.trim();
                     if (text) {
-                        const htmlContent = extractHTMLContent(nextEl);
+                        const htmlContent = extractHTMLContent(nextEl, service.url);
                         content.push(`<p>${htmlContent}</p>`);
                         
                         // If we still don't have a meaningful title, use the first paragraph
@@ -427,7 +427,7 @@ function parseOrphanedH4sAsNotice(startingH4Element, service) {
                 } else if (nextEl.tagName === 'UL' || nextEl.tagName === 'OL') {
                     const listItems = Array.from(nextEl.querySelectorAll('li'));
                     const listText = listItems.map(li => li.textContent.trim());
-                    const listHTML = extractHTMLContent(nextEl);
+                    const listHTML = extractHTMLContent(nextEl, service.url);
                     
                     features.push(...listText);
                     if (listHTML.trim()) {
@@ -533,13 +533,13 @@ function parseUpdateElement(currentElement, service) {
             if (text) {
                 content += (content ? ' ' : '') + text;
                 // Preserve HTML for better formatting
-                htmlParts.push(`<p>${extractHTMLContent(nextEl)}</p>`);
+                htmlParts.push(`<p>${extractHTMLContent(nextEl, service.url)}</p>`);
             }
         } else if (nextEl.tagName === 'UL') {
             const listItems = Array.from(nextEl.querySelectorAll('li'));
             features.push(...listItems.map(li => li.textContent.trim()));
             // Preserve HTML list structure
-            const listHTML = extractHTMLContent(nextEl);
+            const listHTML = extractHTMLContent(nextEl, service.url);
             if (listHTML.trim()) {
                 htmlParts.push(`<ul>${listHTML}</ul>`);
             }
@@ -547,7 +547,7 @@ function parseUpdateElement(currentElement, service) {
             const listItems = Array.from(nextEl.querySelectorAll('li'));
             features.push(...listItems.map(li => li.textContent.trim()));
             // Preserve HTML list structure
-            const listHTML = extractHTMLContent(nextEl);
+            const listHTML = extractHTMLContent(nextEl, service.url);
             if (listHTML.trim()) {
                 htmlParts.push(`<ol>${listHTML}</ol>`);
             }
@@ -1630,7 +1630,7 @@ async function parseEntraUpdates(document, service) {
                         topics: []
                     };
                     
-                    parseTableUpdates(table, monthData);
+                    parseTableUpdates(table, monthData, service);
                     
                     if (monthData.topics.length > 0) {
                         console.log(`Parsed ${monthData.topics.length} topics from table ${index}`);
@@ -1670,7 +1670,7 @@ async function parseEntraUpdates(document, service) {
         while (currentElement && !isNextMonthHeader(currentElement)) {
             if (currentElement.tagName === 'TABLE') {
                 console.log(`Found table, parsing...`);
-                parseTableUpdates(currentElement, monthData);
+                parseTableUpdates(currentElement, monthData, service);
                 foundUpdates++;
             } else if ((currentElement.tagName === 'UL' || currentElement.tagName === 'OL') && 
                        !isPreviousElementHeader(currentElement)) {
@@ -1684,14 +1684,14 @@ async function parseEntraUpdates(document, service) {
                 if (listText.length < 80) {
                     console.log(`    Skipping short standalone list (${listText.length} chars): "${listText}"`);
                 } else {
-                    parseListUpdates(currentElement, monthData);
+                    parseListUpdates(currentElement, monthData, service);
                     foundUpdates++;
                 }
             } else if (currentElement.tagName === 'DIV' && currentElement.querySelector('h3, h4, table')) {
                 console.log(`Found div with content, parsing...`);
                 // Check for tables within the div
                 const tables = currentElement.querySelectorAll('table');
-                tables.forEach(table => parseTableUpdates(table, monthData));
+                tables.forEach(table => parseTableUpdates(table, monthData, service));
                 
                 // Check for direct sections
                 parseSectionUpdates(currentElement, monthData, service);
@@ -1783,7 +1783,7 @@ async function parseDefenderUpdates(document, service) {
                 listItems.forEach(item => {
                     const fullText = extractTextContent(item);
                     if (fullText.trim()) {
-                        const itemHTML = extractHTMLContent(item);
+                        const itemHTML = extractHTMLContent(item, service.url);
                         allBulletPoints.push({
                             text: fullText.trim(),
                             html: itemHTML
@@ -1905,7 +1905,7 @@ async function parseDefenderOfficeUpdates(document, service) {
                 listItems.forEach(item => {
                     const fullText = extractTextContent(item);
                     if (fullText.trim()) {
-                        const itemHTML = extractHTMLContent(item);
+                        const itemHTML = extractHTMLContent(item, service.url);
                         allBulletPoints.push({
                             text: fullText.trim(),
                             html: itemHTML
@@ -2018,7 +2018,7 @@ async function parseDefenderEndpointUpdates(document, service) {
                 listItems.forEach(item => {
                     const fullText = extractTextContent(item);
                     if (fullText.trim()) {
-                        const itemHTML = extractHTMLContent(item);
+                        const itemHTML = extractHTMLContent(item, service.url);
                         allBulletPoints.push({
                             text: fullText.trim(),
                             html: itemHTML
@@ -2071,7 +2071,7 @@ async function parseDefenderEndpointUpdates(document, service) {
 }
 
 // Parse table-based updates (common in Microsoft Learn)
-function parseTableUpdates(table, monthData) {
+function parseTableUpdates(table, monthData, service) {
     const rows = Array.from(table.querySelectorAll('tr'));
     
     // Skip header row if present
@@ -2091,7 +2091,7 @@ function parseTableUpdates(table, monthData) {
             const productCapability = productCapabilityCell ? extractTextContent(productCapabilityCell) : null;
             
             // Get HTML content for better formatting
-            const descriptionHTML = extractHTMLContent(descriptionCell);
+            const descriptionHTML = extractHTMLContent(descriptionCell, service?.url);
             const contentHTML = descriptionHTML ? `<div>${descriptionHTML}</div>` : `<p>${title}</p>`;
             const finalContent = contentHTML + (productCapability ? ` <span class="product-capability">- ${productCapability}</span>` : '');
             
@@ -2124,7 +2124,7 @@ function parseTableUpdates(table, monthData) {
 }
 
 // Parse list-based updates
-function parseListUpdates(list, monthData) {
+function parseListUpdates(list, monthData, service) {
     const items = Array.from(list.querySelectorAll('li'));
     
     items.forEach(item => {
@@ -2143,7 +2143,7 @@ function parseListUpdates(list, monthData) {
             }
             
             // Get HTML content for better formatting
-            const itemHTML = extractHTMLContent(item);
+            const itemHTML = extractHTMLContent(item, service?.url);
             const contentHTML = itemHTML ? `<div>${itemHTML}</div>` : `<p>${text}</p>`;
             
             // Convert to frontend-compatible format
@@ -2304,12 +2304,12 @@ function parseEntraUpdateFromHeader(header, date, service = null) {
         } else if (currentElement.tagName === 'P' && text.trim() && !text.includes('Type:')) {
             // Regular description paragraph - preserve HTML
             descriptionParts.push(text);
-            htmlParts.push(`<p>${extractHTMLContent(currentElement)}</p>`);
+            htmlParts.push(`<p>${extractHTMLContent(currentElement, service?.url)}</p>`);
         } else if (currentElement.tagName === 'UL' || currentElement.tagName === 'OL') {
             // Include list content as part of the update description - preserve HTML structure
             const listItems = Array.from(currentElement.querySelectorAll('li'));
             const textContent = listItems.map(item => '• ' + extractTextContent(item)).join('\n');
-            const htmlContent = extractHTMLContent(currentElement);
+            const htmlContent = extractHTMLContent(currentElement, service?.url);
             
             if (textContent.trim()) {
                 descriptionParts.push('The following combinations are supported:\n' + textContent);
@@ -2402,11 +2402,16 @@ function extractTextContent(element) {
 }
 
 // Extract HTML content from element while preserving structure
-function extractHTMLContent(element) {
+function extractHTMLContent(element, baseUrl = null) {
     if (!element) return '';
     
     // Clean up the HTML while preserving structure
     let html = element.innerHTML;
+    
+    // Convert relative URLs to absolute URLs if baseUrl is provided
+    if (baseUrl) {
+        html = convertRelativeUrlsToAbsolute(html, baseUrl);
+    }
     
     // Clean up Microsoft Learn specific classes and attributes
     html = html.replace(/\s*class="[^"]*"/g, '');
@@ -2420,7 +2425,83 @@ function extractHTMLContent(element) {
     html = html.replace(/>\s+</g, '><');
     html = html.trim();
     
+    // Final sanitization to catch any remaining malformed HTML
+    html = sanitizeHTML(html);
+    
     return html;
+}
+
+// Sanitize HTML content to fix malformed tags and attributes
+function sanitizeHTML(html) {
+    if (!html) return html;
+    
+    // Fix malformed link tags with unescaped > characters
+    html = html.replace(/<a([^>]*?)href="([^"]*?)"([^>]*?)>/g, (match, before, url, after) => {
+        // Sanitize the URL and reconstruct the tag
+        const cleanUrl = sanitizeUrl(url);
+        return `<a${before}href="${cleanUrl}"${after}>`;
+    });
+    
+    // Fix any remaining unescaped > characters that might break parsing
+    html = html.replace(/([^<])>([^<])/g, '$1&gt;$2');
+    
+    return html;
+}
+
+// Convert relative URLs in HTML content to absolute URLs
+function convertRelativeUrlsToAbsolute(html, baseUrl) {
+    if (!html || !baseUrl) return html;
+    
+    // Convert href attributes
+    html = html.replace(/href="([^"]+)"/g, (match, url) => {
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            // Clean up any malformed characters in absolute URLs
+            const cleanUrl = sanitizeUrl(url);
+            return `href="${cleanUrl}"`;
+        }
+        
+        if (url.startsWith('/')) {
+            // Root-relative URL - use the domain from baseUrl
+            const baseUrlObj = new URL(baseUrl);
+            const cleanUrl = sanitizeUrl(`${baseUrlObj.origin}${url}`);
+            return `href="${cleanUrl}"`;
+        }
+        
+        if (url.startsWith('#')) {
+            // Fragment-only URL - append to current page
+            const cleanUrl = sanitizeUrl(`${baseUrl}${url}`);
+            return `href="${cleanUrl}"`;
+        }
+        
+        // Relative URL - resolve against baseUrl
+        try {
+            const absoluteUrl = new URL(url, baseUrl);
+            const cleanUrl = sanitizeUrl(absoluteUrl.href);
+            return `href="${cleanUrl}"`;
+        } catch (e) {
+            // If URL parsing fails, at least sanitize what we have
+            const cleanUrl = sanitizeUrl(url);
+            return `href="${cleanUrl}"`;
+        }
+    });
+    
+    return html;
+}
+
+// Sanitize URLs to fix common issues with malformed characters
+function sanitizeUrl(url) {
+    if (!url) return url;
+    
+    // Fix common malformed URL patterns
+    return url
+        // Fix URLs with unescaped > characters in fragments
+        .replace(/#([^#]*?)>([^#]*?)$/g, '#$1-$2')  // Replace > with - in fragments
+        // Fix any other unescaped > characters that might break HTML
+        .replace(/([^=]|^)>([^<])/g, '$1%3E$2')
+        // Fix double slashes (except after protocol)
+        .replace(/([^:])\/\/+/g, '$1/')
+        // Clean up any malformed anchor patterns
+        .replace(/#[^a-zA-Z0-9-_]*$/g, '');
 }
 
 // Extract links from element, prioritizing anchor links for section headers

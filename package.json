@@ -4,7 +4,7 @@
   "description": "A modern web application to track Microsoft Intune updates and announcements",
   "main": "index.html",
   "scripts": {
-    "start": "npx serve .",
+    "start": "npm run generate-data && npx serve . -p 3000",
     "dev": "npx live-server", 
     "generate-data": "node scripts/generate-data.js || node scripts/generate-fallback-data.js",
     "generate-fallback": "node scripts/generate-fallback-data.js",

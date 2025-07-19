@@ -636,7 +636,8 @@ class CloudUpdatesTracker {
                 }
             }
             
-            // Display content as-is - no table reconstruction needed
+            // Fix any relative URLs in the content to point to Microsoft Learn
+            displayContent = this.fixRelativeUrls(displayContent);
             
             const modalHtml = `
                 <div class="modal-overlay" onclick="window.tracker.closeModal()">
@@ -996,6 +997,21 @@ class CloudUpdatesTracker {
         
         // Return mapped value or format the type
         return typeMap[type.toLowerCase()] || type.charAt(0).toUpperCase() + type.slice(1).replace(/[-_]/g, ' ');
+    }
+
+    fixRelativeUrls(htmlContent) {
+        if (!htmlContent) return htmlContent;
+        
+        // Fix relative URLs that should point to Microsoft Learn and ensure they open in new tabs
+        return htmlContent
+            // Fix URLs that start with a forward slash (absolute paths on wrong domain)
+            .replace(/href="\/([^"]*?)"/g, 'href="https://learn.microsoft.com/$1" target="_blank"')
+            // Fix any localhost URLs that got generated incorrectly
+            .replace(/href="https?:\/\/(?:127\.0\.0\.1|localhost):[0-9]+\/([^"]*?)"/g, 'href="https://learn.microsoft.com/$1" target="_blank"')
+            // Fix URLs that are missing the protocol and domain entirely (but not already processed)
+            .replace(/href="([^h][^t][^t][^p][^s]?[^:][^\/][^\/][^"]*?)"/g, 'href="https://learn.microsoft.com/en-us/$1" target="_blank"')
+            // Add target="_blank" to any existing links that don't already have it
+            .replace(/<a([^>]*?)href="([^"]*?)"(?![^>]*target=)/g, '<a$1href="$2" target="_blank"');
     }
 
     debounce(func, wait) {
