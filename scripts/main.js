@@ -636,8 +636,17 @@ class CloudUpdatesTracker {
                 }
             }
             
-            // Fix any relative URLs in the content to point to Microsoft Learn
+            // FIRST: Decode HTML entities that may have been double-encoded (before URL processing)
+            console.log('🚀 About to call decodeHTMLEntities (FIRST STEP)...');
+            displayContent = this.decodeHTMLEntities(displayContent);
+            console.log('🏁 decodeHTMLEntities call completed (FIRST STEP)');
+            
+            console.log('Content after HTML entity decoding:', displayContent.substring(0, 400));
+            
+            // SECOND: Fix any relative URLs in the content to point to Microsoft Learn
             displayContent = this.fixRelativeUrls(displayContent);
+            
+            console.log('Final displayContent for modal:', displayContent.substring(0, 400));
             
             const modalHtml = `
                 <div class="modal-overlay" onclick="window.tracker.closeModal()">
@@ -1012,6 +1021,42 @@ class CloudUpdatesTracker {
             .replace(/href="([^h][^t][^t][^p][^s]?[^:][^\/][^\/][^"]*?)"/g, 'href="https://learn.microsoft.com/en-us/$1" target="_blank"')
             // Add target="_blank" to any existing links that don't already have it
             .replace(/<a([^>]*?)href="([^"]*?)"(?![^>]*target=)/g, '<a$1href="$2" target="_blank"');
+    }
+
+    decodeHTMLEntities(htmlContent) {
+        console.log('🔧 decodeHTMLEntities function called!');
+        
+        if (!htmlContent) {
+            console.log('❌ No content provided to decodeHTMLEntities');
+            return htmlContent;
+        }
+        
+        console.log('📝 Content length:', htmlContent.length);
+        console.log('📝 Before decoding:', htmlContent.substring(0, 200) + '...');
+        
+        // Check if content actually contains HTML entities
+        const hasEntities = /&(gt|lt|amp|quot|#39|nbsp);/.test(htmlContent);
+        console.log('🔍 Contains HTML entities:', hasEntities);
+        
+        // SPECIAL CASE: Fix malformed URLs where &gt; appears inside href attributes
+        // This specifically handles URLs like: href="...url&gt;text"
+        let decoded = htmlContent
+            // Fix malformed href attributes with &gt; inside URLs
+            .replace(/href="([^"]*?)&gt;([^"]*?)"/g, 'href="$1"')
+            // Fix malformed href attributes with other entities inside URLs
+            .replace(/href="([^"]*?)&lt;([^"]*?)"/g, 'href="$1"')
+            .replace(/href="([^"]*?)&amp;([^"]*?)"/g, 'href="$1&$2"')
+            // Standard HTML entity decoding
+            .replace(/&gt;/g, '>')
+            .replace(/&lt;/g, '<')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .replace(/&nbsp;/g, ' ');
+        
+        console.log('✅ After decoding:', decoded.substring(0, 200) + '...');
+        console.log('🔧 decodeHTMLEntities function completed!');
+        return decoded;
     }
 
     debounce(func, wait) {

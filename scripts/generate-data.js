@@ -112,15 +112,10 @@ function isPreviousElementHeader(element) {
     let lookBack = 0;
     let foundParagraphCount = 0;
     
-    console.log(`    Checking if previous element is header for list...`);
-    
     // Look back up to 10 elements to find a header, but be smart about it
     while (prev && lookBack < 10) {
-        console.log(`    Looking back ${lookBack + 1}: ${prev.tagName} - "${prev.textContent.trim().substring(0, 50)}..."`);
-        
         // If we find a header, this list should be part of that header's content
         if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(prev.tagName)) {
-            console.log(`    Found header ${prev.tagName}, list belongs to header`);
             return true;
         }
         
@@ -129,14 +124,12 @@ function isPreviousElementHeader(element) {
             foundParagraphCount++;
             // If we've found more than 8 paragraphs, this list is probably standalone
             if (foundParagraphCount > 8) {
-                console.log(`    Found too many paragraphs (${foundParagraphCount}), treating as standalone`);
                 break;
             }
         }
         
         // If we find another significant structural element, stop looking
         if (['UL', 'OL', 'TABLE'].includes(prev.tagName) && prev.textContent.trim()) {
-            console.log(`    Found blocking element ${prev.tagName}, stopping search`);
             break;
         }
         
@@ -144,7 +137,6 @@ function isPreviousElementHeader(element) {
         lookBack++;
     }
     
-    console.log(`    No header found within reasonable distance, treating as standalone list`);
     return false;
 }
 
@@ -2435,19 +2427,25 @@ function extractHTMLContent(element, baseUrl = null) {
 function sanitizeHTML(html) {
     if (!html) return html;
     
-    // Fix malformed link tags with unescaped > characters
-    html = html.replace(/<a([^>]*?)href="([^"]*?)"([^>]*?)>/g, (match, before, url, after) => {
-        // Sanitize the URL and reconstruct the tag
-        const cleanUrl = sanitizeUrl(url);
-        return `<a${before}href="${cleanUrl}"${after}>`;
-    });
-    
-    // Fix any remaining unescaped > characters that might break parsing
-    html = html.replace(/([^<])>([^<])/g, '$1&gt;$2');
+    // Fix malformed HTML tags and attributes
+    html = html
+        // Fix malformed link closing tags like </a&gt; 
+        .replace(/<\/a&gt;/g, '</a>')
+        // Fix malformed code closing tags like </code&gt;
+        .replace(/<\/(code|strong|em|i|b)&gt;/g, '</$1>')
+        // Fix malformed link opening tags with unescaped entities in href
+        .replace(/<a([^>]*?)href="([^"]*?)&gt;([^"]*?)"([^>]*?)>/g, '<a$1href="$2"$4>')
+        // Fix specific issue with URLs ending with ->text instead of ">text
+        .replace(/<a([^>]*?)href="([^"]*?)->([^"]*?)"([^>]*?)>/g, '<a$1href="$2"$4>$3')
+        // Fix any remaining unescaped > that should be closing tags
+        .replace(/([a-zA-Z0-9])&gt;/g, '$1>')
+        // Fix unescaped < that should be opening tags
+        .replace(/&lt;([a-zA-Z]+)/g, '<$1');
     
     return html;
 }
 
+// Apply service-specific content fixes
 // Convert relative URLs in HTML content to absolute URLs
 function convertRelativeUrlsToAbsolute(html, baseUrl) {
     if (!html || !baseUrl) return html;
@@ -2494,13 +2492,13 @@ function sanitizeUrl(url) {
     
     // Fix common malformed URL patterns
     return url
-        // Fix URLs with unescaped > characters in fragments
-        .replace(/#([^#]*?)>([^#]*?)$/g, '#$1-$2')  // Replace > with - in fragments
-        // Fix any other unescaped > characters that might break HTML
-        .replace(/([^=]|^)>([^<])/g, '$1%3E$2')
+        // Remove any unescaped > characters that break HTML - these should not be in URLs
+        .replace(/>/g, '')
+        // Remove any unescaped < characters that break HTML - these should not be in URLs  
+        .replace(/</g, '')
         // Fix double slashes (except after protocol)
         .replace(/([^:])\/\/+/g, '$1/')
-        // Clean up any malformed anchor patterns
+        // Clean up any malformed anchor patterns - remove trailing junk after valid anchors
         .replace(/#[^a-zA-Z0-9-_]*$/g, '');
 }
 
