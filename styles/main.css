@@ -242,58 +242,10 @@ body {
 }
 
 .updates-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
+    display: block;
+    width: 100%;
 }
 
-.update-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border-left: 4px solid #0078d4;
-}
-
-.update-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.update-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-}
-
-.update-week {
-    font-size: 0.85rem;
-    color: #666;
-    background: #f8f9fa;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-weight: 500;
-    border: 1px solid #e9ecef;
-}
-
-.update-topic {
-    font-size: 0.9rem;
-    color: #0078d4;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.5rem;
-}
-
-.update-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
-}
 
 .update-subtitle {
     font-size: 1rem;
@@ -304,44 +256,8 @@ body {
     line-height: 1.4;
 }
 
-.update-date {
-    color: #666;
-    font-size: 0.85rem;
-    background: #f1f3f4;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    white-space: nowrap;
-    font-weight: 500;
-}
-
-.update-category {
-    display: inline-block;
-    background: linear-gradient(45deg, #0078d4, #106ebe);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 1rem;
-}
-
-.update-content {
-    color: #555;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-.update-content-preview {
-    font-size: 0.85rem;
-    color: #6c757d;
-    line-height: 1.4;
-    margin: 0.5rem 0;
-    font-style: italic;
-}
-
-.update-features {
+/* Modal-specific styles for features display */
+.update-features-full {
     background: #f8f9fa;
     padding: 1rem;
     border-radius: 8px;
@@ -349,42 +265,30 @@ body {
     border-left: 3px solid #0078d4;
 }
 
-.update-features h4 {
-    font-size: 0.9rem;
+.update-features-full h3 {
+    font-size: 1rem;
     color: #333;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     font-weight: 600;
 }
 
-.update-features ul {
+.update-features-full ul {
     margin: 0;
     padding-left: 1.2rem;
 }
 
-.update-features li {
+.update-features-full li {
     color: #555;
     font-size: 0.9rem;
     line-height: 1.5;
     margin-bottom: 0.3rem;
 }
 
-.update-features li:last-child {
+.update-features-full li:last-child {
     margin-bottom: 0;
 }
 
-.update-link {
-    color: #0078d4;
-    text-decoration: none;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: color 0.3s ease;
-}
 
-.update-link:hover {
-    color: #106ebe;
-}
 
 .load-more {
     text-align: center;
@@ -420,32 +324,7 @@ body {
     color: #333;
 }
 
-.notice-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-left: 4px solid #ff6b6b;
-}
 
-.notice-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #d63031;
-    margin-bottom: 0.5rem;
-}
-
-.notice-content {
-    color: #555;
-    line-height: 1.6;
-}
-
-/* Enhanced notice content styling for HTML elements */
-.notice-content strong {
-    font-weight: 600;
-    color: #333;
-}
 
 .notice-content em {
     font-style: italic;
@@ -760,234 +639,7 @@ body {
     }
 }
 
-/* Monthly Grouping Styles */
-.month-group {
-    margin: 2rem 0;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.month-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.month-header h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.month-meta {
-    font-size: 0.9rem;
-    opacity: 0.9;
-    display: block;
-    margin-bottom: 1rem;
-}
-
-.service-releases {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.service-release-badge {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.weeks-in-month {
-    padding: 1rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
-}
-
-.week-item {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 1rem;
-}
-
-.week-item .file-header h4 {
-    font-size: 0.9rem;
-    color: #495057;
-}
-
-.week-item .file-meta {
-    background: #667eea;
-    color: white;
-    font-size: 0.7rem;
-}
-
-/* Entra Update Cards */
-.service-section-title {
-    margin: 2rem 0 1rem 0;
-    padding: 0.5rem 0;
-    border-bottom: 2px solid #e9ecef;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.entra-updates-container {
-    margin-bottom: 2rem;
-    display: block;
-    width: 100%;
-}
-
-.entra-update-card {
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.entra-update-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-    border-color: #0078d4;
-}
-
-.update-header {
-    margin-bottom: 1rem;
-}
-
-.update-month {
-    color: #6c757d;
-    font-size: 0.9rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.update-topic {
-    color: #333;
-    font-size: 1.2rem;
-    font-weight: 600;
-    line-height: 1.4;
-    margin-bottom: 0;
-}
-
-.update-meta {
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.meta-row {
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
-    gap: 0.5rem;
-}
-
-.meta-row strong {
-    min-width: 140px;
-    color: #495057;
-    font-weight: 600;
-}
-
-.update-description {
-    margin-bottom: 1rem;
-}
-
-.update-description p {
-    color: #6c757d;
-    line-height: 1.6;
-    margin-bottom: 0;
-}
-
-.update-actions {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.update-separator {
-    border: none;
-    height: 2px;
-    background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 50%, #e9ecef 100%);
-    margin: 1.5rem 0;
-    border-radius: 1px;
-}
-
-.intune-updates-section {
-    margin-top: 2rem;
-}
-
-/* Service section styling */
-.entra-updates-section, .intune-updates-section {
-    display: block;
-    width: 100%;
-    margin-bottom: 2rem;
-    clear: both;
-}
-
-/* Month section styling */
-.month-section {
-    margin-bottom: 2rem;
-    display: block;
-    width: 100%;
-    clear: both;
-}
-
-.month-header {
-    color: #0078d4;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 2rem 0 1.5rem 0;
-    padding: 0.75rem 0;
-    border-bottom: 3px solid #0078d4;
-    background: linear-gradient(90deg, rgba(0, 120, 212, 0.1) 0%, rgba(0, 120, 212, 0.05) 50%, transparent 100%);
-    padding-left: 1rem;
-    border-radius: 4px 0 0 4px;
-}
-
-/* Ensure Entra updates display vertically regardless of parent layout */
-.entra-updates-section .entra-updates-container,
-.entra-updates-section .month-section,
-.entra-updates-section .entra-update-card {
-    display: block !important;
-    flex: none !important;
-    grid-column: unset !important;
-    width: 100% !important;
-    float: none !important;
-}
-
-/* Override any parent grid for month sections */
-.month-section {
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 2rem;
-    clear: both;
-}
-
-/* Ensure cards within month sections stay vertical */
-.month-section .entra-update-card {
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 1rem;
-    float: none !important;
-}
+/* Service section styling - unified table display only */
 
 /* Unified updates section styling */
 .unified-updates-section {
@@ -1015,150 +667,7 @@ body {
     width: 100% !important;
 }
 
-/* Intune Hierarchical Display Styles */
-.intune-hierarchical-display {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
 
-.week-group {
-    border-bottom: 1px solid #e1e5e9;
-}
-
-.week-group:last-child {
-    border-bottom: none;
-}
-
-.week-header {
-    background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
-    color: white;
-    padding: 1rem 1.5rem;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.week-header i {
-    font-size: 1.2rem;
-}
-
-.week-content {
-    padding: 0;
-}
-
-.topic-group {
-    border-bottom: 1px solid #f1f3f4;
-}
-
-.topic-group:last-child {
-    border-bottom: none;
-}
-
-.topic-header {
-    background: #f8f9fa;
-    color: #495057;
-    padding: 0.75rem 1.5rem;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
-    font-weight: 500;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.topic-header i {
-    color: #6c757d;
-}
-
-.topic-updates {
-    padding: 0;
-}
-
-.update-item {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #f1f3f4;
-    transition: background-color 0.2s ease;
-}
-
-.update-item:last-child {
-    border-bottom: none;
-}
-
-.update-item:hover {
-    background-color: #f8f9fa;
-}
-
-.update-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.update-date {
-    font-size: 0.85rem;
-    color: #6c757d;
-    font-weight: 500;
-}
-
-.update-type {
-    padding: 0.25rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.update-category {
-    padding: 0.25rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
-
-.update-title {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #333;
-    margin: 0 0 0.75rem 0;
-    line-height: 1.4;
-}
-
-.update-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-/* Responsive design for hierarchical display */
-@media (max-width: 768px) {
-    .week-header,
-    .topic-header {
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-    }
-    
-    .update-item {
-        padding: 0.75rem 1rem;
-    }
-    
-    .update-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .update-title {
-        font-size: 0.9rem;
-    }
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -1215,14 +724,7 @@ body {
         padding: 0.5rem;
     }
 
-    .entra-update-card {
-        padding: 1rem;
-        margin-bottom: 0.8rem;
-    }
-    
-    .update-topic {
-        font-size: 1.1rem;
-    }
+
     
     .meta-row {
         flex-direction: column;
@@ -1248,10 +750,7 @@ body {
         font-size: 1rem;
     }
 
-    .update-card,
-    .notice-card {
-        padding: 1rem;
-    }
+
 
     .updates-section h2,
     .notices-section h2,
@@ -1298,10 +797,6 @@ select:focus {
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-    .update-card {
-        border: 2px solid #000;
-    }
-    
     .hero {
         background: #000;
         color: #fff;

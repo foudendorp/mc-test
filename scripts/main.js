@@ -56,7 +56,7 @@ class CloudUpdatesTracker {
     async init() {
         this.setLoading(true);
         try {
-            const data = await this.fetchIntuneUpdates();
+            const data = await this.fetchUpdates();
             this.updates = data.updates;
             this.indexData = data.indexData;
             
@@ -78,7 +78,7 @@ class CloudUpdatesTracker {
         }
     }
 
-    async fetchIntuneUpdates() {
+    async fetchUpdates() {
         try {
             // Load main index to get list of data files
             const indexResponse = await fetch('./data/index.json');
@@ -395,220 +395,6 @@ class CloudUpdatesTracker {
         `;
     }
 
-    createGroupedWindows365Updates(windows365Updates) {
-        // Group by week, then by topic (same structure as Intune)
-        const groupedByWeek = {};
-        windows365Updates.forEach(update => {
-            const week = update.week || 'Unknown Week';
-            if (!groupedByWeek[week]) {
-                groupedByWeek[week] = {};
-            }
-            
-            const topic = update.topic || 'General';
-            if (!groupedByWeek[week][topic]) {
-                groupedByWeek[week][topic] = [];
-            }
-            
-            groupedByWeek[week][topic].push(update);
-        });
-        
-        let html = '<div class="windows365-updates-section">';
-        
-        // Sort weeks (newest first)
-        const sortedWeeks = Object.keys(groupedByWeek).sort((a, b) => {
-            const dateA = this.parseWeekToDate(a);
-            const dateB = this.parseWeekToDate(b);
-            return dateB - dateA;
-        });
-        
-        sortedWeeks.forEach(week => {
-            const topics = groupedByWeek[week];
-            const totalUpdates = Object.values(topics).reduce((sum, updates) => sum + updates.length, 0);
-            
-            html += `
-                <div class="week-group">
-                    <h3 class="week-header">
-                        <i class="fas fa-calendar-week"></i>
-                        ${week}
-                        <span class="update-count">${totalUpdates} update${totalUpdates !== 1 ? 's' : ''}</span>
-                    </h3>
-                    <div class="week-content">
-            `;
-            
-            // Sort topics within each week
-            const sortedTopics = Object.keys(topics).sort();
-            
-            sortedTopics.forEach(topic => {
-                const topicUpdates = topics[topic];
-                
-                html += `
-                    <div class="topic-group">
-                        <h4 class="topic-header">
-                            <i class="fas fa-folder"></i>
-                            ${topic}
-                            <span class="topic-count">${topicUpdates.length} item${topicUpdates.length !== 1 ? 's' : ''}</span>
-                        </h4>
-                        <div class="topic-updates">
-                            ${topicUpdates.map(update => this.createWindows365UpdateCard(update)).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += `
-                    </div>
-                </div>
-            `;
-        });
-        
-        html += '</div>';
-        return html;
-    }
-
-    createWindows365UpdateCard(update) {
-        const formattedDate = this.formatDate(update.date);
-        const categoryClassName = this.getCategoryClassName(update);
-        const serviceSpecificCategory = this.getServiceSpecificCategory(update);
-        const displayCategory = serviceSpecificCategory || update.category || 'General';
-        const formattedCategory = this.formatCategoryName(displayCategory);
-        
-        // Get and format the update type
-        let updateType = update.subtitle || update.type || this.extractTypeFromTitle(update.title) || 'update';
-        if (typeof updateType === 'string' && updateType.toLowerCase().startsWith('type: ')) {
-            updateType = updateType.substring(6);
-        }
-        const formattedType = this.cleanTypeText(updateType);
-        
-        // Ensure category styles are available
-        this.ensureCategoryStyle(categoryClassName, formattedCategory);
-        
-        return `
-            <div class="windows365-update-card" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
-                <div class="card-header">
-                    <span class="service-badge service-${this.getServiceCssClass(update.service)}">
-                        <i class="fas ${this.getServiceIcon(update.service)}"></i>
-                        ${this.getServiceDisplayName(update.service)}
-                    </span>
-                    <span class="card-date">${formattedDate}</span>
-                </div>
-                <div class="card-content">
-                    <h5 class="card-title">${update.title}</h5>
-                    <div class="card-meta">
-                        <span class="type-badge type-${updateType}">
-                            ${formattedType}
-                        </span>
-                        <span class="category-badge ${categoryClassName}">
-                            ${formattedCategory}
-                        </span>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showUpdateModal('${update.id}')">
-                        <i class="fas fa-eye"></i> View Details
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-
-    parseWeekToDate(weekString) {
-        // Try to extract date from week string like "Week of July 14, 2025"
-        const weekMatch = weekString.match(/Week of (.+?)(?:\s*\(|$)/);
-        if (weekMatch) {
-            const date = new Date(weekMatch[1]);
-            if (!isNaN(date.getTime())) {
-                return date;
-            }
-        }
-        
-        // Fallback: try to parse as direct date
-        const date = new Date(weekString);
-        if (!isNaN(date.getTime())) {
-            return date;
-        }
-        
-        // Last resort: return a very old date to put unknown weeks at the end
-        return new Date('1900-01-01');
-    }
-
-    createGroupedEntraUpdates(entraUpdates) {
-        // Group by month
-        const groupedByMonth = {};
-        entraUpdates.forEach(update => {
-            const month = this.extractMonthFromWeek(update.week || update.date);
-            if (!groupedByMonth[month]) {
-                groupedByMonth[month] = [];
-            }
-            groupedByMonth[month].push(update);
-        });
-        
-        let html = '<div class="entra-updates-section">';
-        
-        // Sort months (newest first)
-        const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => {
-            const dateA = new Date(a + ' 1, 2024');
-            const dateB = new Date(b + ' 1, 2024');
-            return dateB - dateA;
-        });
-        
-        sortedMonths.forEach(month => {
-            const updates = groupedByMonth[month];
-            
-            html += `
-                <div class="month-group">
-                    <h3 class="month-header">
-                        <i class="fas fa-calendar-alt"></i>
-                        ${month}
-                        <span class="update-count">${updates.length} update${updates.length !== 1 ? 's' : ''}</span>
-                    </h3>
-                    <div class="entra-cards-container">
-                        ${updates.map(update => this.createEntraUpdateCard(update)).join('')}
-                    </div>
-                </div>
-            `;
-        });
-        
-        html += '</div>';
-        return html;
-    }
-
-    createEntraUpdateCard(update, showMonth = true) {
-        const formattedDate = this.formatDate(update.date);
-        const categoryClassName = this.getCategoryClassName(update);
-        const serviceSpecificCategory = this.getServiceSpecificCategory(update);
-        const displayCategory = serviceSpecificCategory || update.category || 'General';
-        const formattedCategory = this.formatCategoryName(displayCategory);
-        
-        // Ensure category styles are available
-        this.ensureCategoryStyle(categoryClassName, formattedCategory);
-        
-        const displayName = this.getServiceDisplayName(update.service);
-        
-        return `
-            <div class="entra-update-card" onclick="window.tracker.showUpdateModal('${update.id}')" style="cursor: pointer;">
-                <div class="card-header">
-                    <span class="service-badge service-${this.getServiceCssClass(update.service)}">
-                        <i class="fas ${this.getServiceIcon(update.service)}"></i>
-                        ${displayName}
-                    </span>
-                    <span class="card-date">${formattedDate}</span>
-                </div>
-                <div class="card-content">
-                    <h4 class="card-title">${update.title}</h4>
-                    <span class="category-badge ${categoryClassName}">
-                        ${formattedCategory}
-                    </span>
-                </div>
-                <div class="card-footer">
-                    <button class="view-details-btn" onclick="event.stopPropagation(); window.tracker.showUpdateModal('${update.id}')">
-                        <i class="fas fa-eye"></i> View Details
-                    </button>
-                </div>
-            </div>
-            <hr class="update-separator">
-        `;
-    }
-
     getServiceIcon(service) {
         switch (service.toLowerCase()) {
             case 'intune': return 'fa-mobile-alt';
@@ -695,32 +481,6 @@ class CloudUpdatesTracker {
         
         // Remove "Microsoft" prefix for table display
         return displayName.replace(/^Microsoft\s+/, '');
-    }
-
-    extractMonthFromWeek(weekOrDate) {
-        if (!weekOrDate) return 'Unknown';
-        
-        // Try to extract date from week string like "Week of July 14, 2025"
-        const weekMatch = weekOrDate.match(/Week of (.+?)(?:\s*\(|$)/);
-        if (weekMatch) {
-            const date = new Date(weekMatch[1]);
-            if (!isNaN(date.getTime())) {
-                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-            }
-        }
-        
-        // Fallback: try to parse as direct date
-        const date = new Date(weekOrDate);
-        if (!isNaN(date.getTime())) {
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-        }
-        
-        return weekOrDate;
-    }
-
-    downloadFile(filename) {
-        // Navigate to the file (this will trigger browser download)
-        window.open(`./data/${filename}`, '_blank');
     }
 
     loadMoreUpdates() {
@@ -1249,81 +1009,6 @@ class CloudUpdatesTracker {
             timeout = setTimeout(later, wait);
         };
     }
-
-    extractContentItems(content) {
-        if (!content) return [];
-        
-        const items = [];
-        
-        // Create a temporary DOM element to parse the HTML
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = content;
-        
-        // Look for h4 headers which typically indicate individual features/updates
-        const headers = tempDiv.querySelectorAll('h4');
-        
-        headers.forEach(header => {
-            const title = header.textContent.trim();
-            
-            // Get the content following this header until the next h4 or end
-            let contentParts = [];
-            let nextElement = header.nextElementSibling;
-            
-            while (nextElement && nextElement.tagName !== 'H4') {
-                if (nextElement.tagName === 'P') {
-                    contentParts.push(nextElement.outerHTML);
-                } else if (nextElement.tagName === 'UL' || nextElement.tagName === 'OL') {
-                    contentParts.push(nextElement.outerHTML);
-                } else if (nextElement.tagName === 'DIV') {
-                    contentParts.push(nextElement.outerHTML);
-                }
-                nextElement = nextElement.nextElementSibling;
-            }
-            
-            // Create the feature content
-            const featureContent = contentParts.join('');
-            
-            if (title && featureContent) {
-                items.push({
-                    title: title,
-                    content: featureContent
-                });
-            }
-        });
-        
-        // If no h4 headers found, try to extract from strong elements
-        if (items.length === 0) {
-            const strongElements = tempDiv.querySelectorAll('strong');
-            
-            strongElements.forEach(strong => {
-                const title = strong.textContent.trim();
-                
-                // Get the paragraph containing this strong element
-                const paragraph = strong.closest('p');
-                if (paragraph) {
-                    // Get content from this paragraph until next strong or end of content
-                    let content = paragraph.outerHTML;
-                    
-                    // Look for additional related paragraphs
-                    let nextPara = paragraph.nextElementSibling;
-                    while (nextPara && nextPara.tagName === 'P' && !nextPara.querySelector('strong')) {
-                        content += nextPara.outerHTML;
-                        nextPara = nextPara.nextElementSibling;
-                    }
-                    
-                    if (title && content && title.length > 5) { // Avoid very short titles
-                        items.push({
-                            title: title,
-                            content: content
-                        });
-                    }
-                }
-            });
-        }
-        
-        return items;
-    }
-
 }
 
 // Initialize the tracker when the page loads
